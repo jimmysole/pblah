@@ -1,6 +1,3 @@
-p-Blah
-
-
 p-Blah is diverse, simple yet powerful forum management system.
 
 
