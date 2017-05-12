@@ -1,0 +1,68 @@
+<div class="w3-row">
+	<div class="w3-col sm-12">
+		<p class="w3-large w3-center">It looks like you haven't set up your
+			profile, would you like to do so now?</p>
+	</div>
+</div>
+
+
+<div class="w3-card-2 w3-round">
+	<div class="w3-accordion w3-white">
+		<button onclick="expand('side-1')"
+			class="w3-btn-block w3-theme-l1 w3-left-align">
+			<i class="fa fa-edit fa-fw w3-margin-right"></i> Display Name
+		</button>
+
+		<div id="side-1" class="w3-accordion-content w3-container">
+			<p contenteditable="true">Click to set your display name</p>
+		</div>
+
+		<button onclick="expand('side-2')"
+			class="w3-btn-block w3-theme-l1 w3-left-align">
+			<i class="fa fa-edit fa-fw w3-margin-right"></i> Email Address
+		</button>
+
+		<div id="side-2" class="w3-accordion-content w3-container">
+			<p contenteditable="true">Click to set your email address</p>
+		</div>
+
+		<button onclick="expand('side-3')"
+			class="w3-btn-block w3-theme-l1 w3-left-align">
+			<i class="fa fa-edit fa-fw w3-margin-right"></i> My Age
+		</button>
+
+		<div id="side-3" class="w3-accordion-content w3-container">
+			<p contenteditable="true">Click to set your age</p>
+		</div>
+
+		<button onclick="expand('side-4')"
+			class="w3-btn-block w3-theme-l1 w3-left-align">
+			<i class="fa fa-edit fa-fw w3-margin-right"></i> My Location
+		</button>
+
+		<div id="side-4" class="w3-accordion-content w3-container">
+			<p contenteditable="true">Click to set your location</p>
+		</div>
+
+		<button onclick="expand('side-5')"
+			class="w3-btn-block w3-theme-l1 w3-left-align">
+			<i class="fa fa-edit fa-fw w3-margin-right"></i> Bio
+		</button>
+
+		<div id="side-5" class="w3-accordion-content w3-container">
+			<p contenteditable="true">Click to set your Bio</p>
+		</div>
+	</div>
+</div>
+
+<br><br>
+
+<div class="w3-display-container">
+	<div class="w3-display-bottomright">
+		<button class="w3-btn-block w3-theme-l1" id="save">Save</button>
+	</div>
+</div>
+
+<script type="text/javascript">
+	getProfileData('[contenteditable]', $('#save'));
+</script>

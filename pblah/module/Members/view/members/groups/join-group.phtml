@@ -1,0 +1,194 @@
+<div class="w3-row-padding">
+	<div class="w3-col-m7">
+		<div class="w3-row-padding">
+			<div class="w3-col m12">
+				<div class="w3-card-4 w3-round w3-white">
+					<div class="w3-container w3-padding">
+						<h2 class="w3-center">Send A Request to Join This Group</h2>
+						<br>
+						<?php 
+						      $this->form->setAttribute('action', $this->url('members/groups', array('action' => 'jgroup')));
+						      
+						      $this->form->prepare();
+						      
+						      echo $this->form()->openTag($this->form);
+						?>
+						
+						<br>
+						
+						<input type="hidden" name="group_id" id="group_id" value="<?php echo $this->id; ?>">
+						
+						<?php 
+						     echo $this->formRow($this->form->get('first-name'));
+						     
+						     echo "<div id=\"first-name-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+			                         <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+			                             &times;
+			                         </span>
+			                      ";
+						     
+						     echo "<p>First Name cannot be empty.</p>";
+						     
+						     echo "</div>";
+						     
+						     echo "<div id=\"first-name-size-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+						             <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+						                 &times;
+						             </span>
+						          ";
+						     
+						     echo "<p>First Name size must be between 3 and 15 characters.</p>";
+						     
+						     echo "</div>";
+						     
+						     
+						     echo "<br>";
+						     
+						     
+						     echo $this->formRow($this->form->get('last-name'));
+						     
+						     echo "<div id=\"last-name-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+			                         <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+			                             &times;
+			                         </span>
+			                      ";
+						     
+						     echo "<p>Last Name cannot be empty.</p>";
+						     
+						     echo "</div>";
+						     
+						     echo "<div id=\"last-name-size-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+						             <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+						                 &times;
+						             </span>
+						          ";
+						     
+						     echo "<p>Last Name size must be between 3 and 15 characters.</p>";
+						     
+						     echo "</div>";
+						     
+						     
+						     echo "<br>";
+						     
+						     
+						     echo $this->formRow($this->form->get('age'));
+						     
+						     echo "<div id=\"age-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+			                         <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+			                             &times;
+			                         </span>
+			                      ";
+						     
+						     echo "<p>Age cannot be empty.</p>";
+						     
+						     echo "</div>";
+						     
+						     echo "<div id=\"age-size-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+						             <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+						                 &times;
+						             </span>
+						          ";
+						     
+						     echo "<p>Age size must be between 2 and 3 characters.</p>";
+						     
+						     echo "</div>";
+						     
+						     echo "<br>";
+						     
+						     
+						     echo $this->formRow($this->form->get('message'));
+						     
+						     echo "<div id=\"message-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+			                         <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+			                             &times;
+			                         </span>
+			                      ";
+						     
+						     echo "<p>Message cannot be empty.</p>";
+						     
+						     echo "</div>";
+						     
+						     echo "<div id=\"message-size-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+						             <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+						                 &times;
+						             </span>
+						          ";
+						     
+						     echo "<p>Message size must be between 15 and 1000 characters.</p>";
+						     
+						     echo "</div>";
+						     
+						     
+						     echo $this->formElement($this->form->get('csrf_security'));
+						     
+						     echo "<br><br>";
+						     
+						     
+						     echo $this->formElement($this->form->get('submit'));
+						     
+						     echo $this->form()->closeTag();
+						?>
+					</div>
+					
+					<script type="text/javascript">
+						 $('#first-name').on('blur', function() {
+							if ($(this).val() == "" || $(this).val() == undefined) {
+								$('#first-name-error').css('display', 'block');
+								$(this).focus();
+								return;
+							}
+
+							if ($(this).val().length < 3 || $(this).val().length > 15) {
+								$('#first-name-size-error').css('display', 'block');
+								$(this).focus();
+								return;
+							}
+						 });
+
+						 $('#last-name').on('blur', function() {
+							if ($(this).val() == "" || $(this).val() == undefined) {
+								$('#last-name-error').css('display', 'block');
+								$(this).focus();
+								return;
+							}
+
+							if ($(this).val().length < 3 || $(this).val().length > 15) {
+								$('#last-name-size-error').css('display', 'block');
+								$(this).focus();
+								return;
+							}
+						 });
+
+						 $('#age').on('blur', function() {
+							if ($(this).val() == "" || $(this).val() == undefined) {
+								$('#age-error').css('display', 'block');
+								$(this).focus();
+								return;
+							}
+
+							if ($(this).val().length < 2 || $(this).val().length > 3) {
+								$('#age-size-error').css('display', 'block');
+								$(this).focus();
+								return;
+							}
+						 });
+
+						 $('#message').on('blur', function() {
+							if ($(this).val() == "" || $(this).val() == undefined) {
+								$('#message-error').css('display', 'block');
+								$(this).focus();
+								return;
+							}
+
+							if ($(this).val().length < 15 || $(this).val().length > 1000) {
+								$('#message-size-error').css('display', 'block');
+								$(this).focus();
+								return;
+							}
+						 });
+					</script>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

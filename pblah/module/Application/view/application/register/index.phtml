@@ -1,0 +1,39 @@
+<br><br>
+<div class="w3-row">
+	<div class="w3-col w3-container m6 l6">
+	<?php
+	    $this->form->setAttribute('action', $this->url(
+	        'home/register', array('action' => 'reg')));
+
+	    $this->form->prepare();
+
+
+	    echo $this->form()->openTag($this->form);
+	?>
+
+	<?php
+
+
+	      echo $this->formRow($this->form->get('username'));
+
+	      echo "<br>";
+
+	      echo $this->formRow($this->form->get('password'));
+
+	      echo "<br>";
+
+	      echo $this->formRow($this->form->get('email_address'));
+
+
+	      echo $this->formElement($this->form->get('csrf_security'));
+
+	      echo "<br>";
+
+	      echo $this->formElement($this->form->get('submit'));
+
+	      echo "<br><br>";
+
+	      echo $this->form()->closeTag();
+	?>
+	</div>
+</div>

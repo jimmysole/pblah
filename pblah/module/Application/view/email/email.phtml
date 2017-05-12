@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+	<title>Thanks for registering with <?php echo $this->name; ?> on our forum</title>
+
+	<style type="text/css">
+        body {
+        	background-color: #fff;
+        }
+
+        .main {
+        	margin: auto;
+        	width: 50%;
+        	border: thin solid #000;
+        	padding: 10px;
+        }
+
+        .message.text {
+        	color: #000;
+        	font-size: 14px;
+        	font-family: Verenda, Arial, sans-serif;
+        	font-weight: normal;
+        }
+    </style>
+</head>
+
+	<div class="main">
+		<header>
+			Thanks for registering with us <?php echo $this->name; ?>!
+		</header>
+
+		<div class="message">
+			<p class="text">
+			   In order to continue with the registration process, please click this link: <a href="<?php echo $this->link; ?>">verify email</a>.
+
+			   <br><br>
+			    Thanks again for registering with us!
+			</p>
+		</div>
+	</div>
+</html>

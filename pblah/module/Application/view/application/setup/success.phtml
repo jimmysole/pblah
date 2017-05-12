@@ -1,0 +1,14 @@
+<div class="w3-row">
+	<div class="w3-col sm-12 w3-center">
+		<p class="w3-large">
+			<?php echo $this->flashMessenger()
+			           ->setMessageOpenFormat('<div%s<p>')
+			           ->setMessageSeparatorString('</p><p>')
+			           ->setMessageCloseString('</p></div>')
+			           ->render('success'); ?>
+
+			You can now login<a href="<?php echo $this->url('home/admin-login', array('action' => 'index')); ?>"> here</a>
+		</p>
+	</div>
+</div>
+

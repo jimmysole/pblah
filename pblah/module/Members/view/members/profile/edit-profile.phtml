@@ -1,0 +1,123 @@
+<div class="w3-row">
+	<!-- left col -->
+	<div class="w3-col m3">
+		<div class="w3-card-2 w3-round w3-theme-l1">
+			<div class="w3-clear"></div>
+
+			<h5 class="w3-center w3-text-white">Quick Edit</h5>
+			<br>
+		</div>
+
+		<br>
+
+		<div class="w3-card-2 w3-round w3-theme-d2">
+			<div class="w3-accordion w3-white">
+				<button onclick="expand('display_name')" class="w3-btn-block w3-theme-d2 w3-left-align">
+					<i class="fa fa-drivers-license-o fa-fw w3-margin-right"></i> Display Name
+				</button>
+
+				<div id="display_name" class="w3-accordion-content w3-container">
+					<div class="w3-display-container">
+							<p id="d-name" contenteditable="true">
+								<?php echo $this->layout()->display_name; ?>
+
+						<div class="w3-display-right">
+							<button class="w3-btn-block w3-theme-d2" id="save-displayname">Save</button>
+						</div>
+
+						<script type="text/javascript">
+							quickEditName('#d-name[contenteditable=true]', $('#save-displayname'));
+						</script>
+					</div>
+				</div>
+
+				<br>
+
+				<button onclick="expand('location')" class="w3-btn-block w3-theme-d2 w3-left-align">
+					<i class="fa fa-map fa-fw w3-margin-right"></i> Location
+				</button>
+
+				<div id="location" class="w3-accordion-content w3-container">
+					<div class="w3-display-container">
+						<p id="loc" contenteditable="true">
+							<?php echo $this->layout()->location; ?>
+						</p>
+
+						<div class="w3-display-right">
+							<button class="w3-btn-block w3-theme-d2" id="save-location">Save</button>
+						</div>
+
+						<script type="text/javascript">
+							quickEditLocation('#loc[contenteditable=true]', $('#save-location'));
+						</script>
+					</div>
+				</div>
+
+				<br>
+
+				<button onclick="expand('age')" class="w3-btn-block w3-theme-d2 w3-left-align">
+					<i class="fa fa-birthday-cake fa-fw w3-margin-right"></i> Age
+				</button>
+
+				<div id="age" class="w3-accordion-content w3-container">
+					<div class="w3-display-container">
+						<p id="age1" contenteditable="true">
+							<?php echo $this->layout()->age; ?>
+						</p>
+
+						<div class="w3-display-right">
+							<button class="w3-btn block w3-theme-d2" id="save-age">Save</button>
+						</div>
+
+						<script type="text/javascript">
+							quickEditAge('#age1[contenteditable=true]', $('#save-age'));
+						</script>
+					</div>
+				</div>
+
+				<br>
+
+				<button onclick="expand('bio')" class="w3-btn-block w3-theme-d2 w3-left-align">
+					<i class="fa fa-book fa-fw w3-margin-right"></i> Bio
+				</button>
+
+				<div id="bio" class="w3-accordion-content w3-container">
+					<div class="w3-display-container">
+						<p id="bio-user" contenteditable="true">
+							<?php echo $this->layout()->bio; ?>
+						</p>
+
+						<div class="w3-display-right">
+							<button class="w3-btn-block w3-theme-d2" id="save-bio">Save</button>
+						</div>
+
+						<script type="text/javascript">
+							quickEditBio('#bio-user[contenteditable=true]', $('#save-bio'));
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end left col -->
+
+	<!-- mid col -->
+	<div class="w3-col m7">
+		<div class="w3-row-padding">
+			<div class="w3-col m12">
+				<div class="w3-card-2 w3-round w3-white">
+					<div class="w3-container w3-padding" id="edit-profile-info">
+						<p>
+						   Welcome to your edit profile page. Here you can change various profile related information,
+						   upload photos, make photo albums and various other edits to your profile.
+						   <br><br>
+						   A full list of features is listed below
+						   <br>
+				        </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end mid col -->
+</div>

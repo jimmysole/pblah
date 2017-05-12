@@ -1,0 +1,247 @@
+<div class="w3-row">
+<!-- Left Column -->
+	<div class="w3-col m3">
+		<!-- Profile -->
+		<div class="w3-card-2 w3-round w3-theme-d2">
+			<div class="w3-container">
+				<p class="w3-center" id="profile-pic">
+					<script type="text/javascript">
+					   $.ajax({
+							type: "POST",
+							url: "/members/profile/get-profile-image",
+					   }).done(function(data) {
+						    $("#profile-pic").html(data);
+					   }).fail(function(data) {
+							alert("Error loading image");
+					   });
+					</script>
+				</p>
+
+				<hr class="w3-clear">
+
+				<p id="profile-error"></p>
+
+				<p id="display-name"></p>
+
+				<p id="location"></p>
+
+				<p id="age"></p>
+
+				<script type="text/javascript">
+					$.ajax({
+						type: "POST",
+						url: "/members/profile/get-profile",
+						dataType: "json"
+					}).done(function(msg) {
+						if (msg.display_name === undefined && msg.location === undefined && msg.age === undefined) {
+							$('#profile-error').html(msg.message);
+							return false;
+						} else {
+							$("#display-name").html("Display Name: " + msg.display_name !== undefined ? "Display Name: " + msg.display_name : "");
+							$("#location").html(msg.location !== undefined ? "Location: " + msg.location : "");
+							$("#age").html("Age: " + msg.age !== undefined ? "Age: " + msg.age : "");
+						}
+					}).fail(function(msg) {
+						$("#profile-error").html(msg.message);
+					});
+				</script>
+
+			</div>
+		</div>
+
+		<br>
+
+		<!-- Accordion -->
+		<div class="w3-card-2 w3-round w3-theme-d2">
+			<div class="w3-accordion w3-white">
+				<button onclick="expand('side-1')"
+					class="w3-btn-block w3-theme-d2 w3-left-align">
+					<i class="fa fa-users fa-fw w3-margin-right"></i> My
+					Groups
+				</button>
+
+				<div id="side-1" class="w3-accordion-content w3-container">
+					<p id="groups"></p>
+
+					<script type="text/javascript">
+						$(document).ready(function() {
+							$.ajax({
+								type: "GET",
+								url: "/members/groups/get-groups",
+								dataType: "json",
+							}).done(function(msg) {
+								if (msg.group_id == undefined || msg.group_name == undefined) {
+									$('#groups').html("You aren't a part of any groups.");
+								} else {
+									$.each(msg.group_id, function(i, item) {
+										$("#groups").append('<a href="<?php echo $this->url('members/groups', array('action' => 'index')); ?>/group-home/' + msg.group_id[i] + '">' + msg.group_name[i] + '</a>');
+									});
+								}
+							}).fail(function(msg) {
+								$('#groups').html(msg);
+							});
+						});
+					</script>
+				</div>
+
+				<button onclick="expand('side-2')"
+					class="w3-btn-block w3-theme-d2 w3-left-align">
+					<i class="fa fa-calendar-check-o fa-fw w3-margin-right"></i> My
+					Events
+				</button>
+
+				<div id="side-2" class="w3-accordion-content w3-container">
+					<p>Some other text..</p>
+				</div>
+
+				<button onclick="expand('side-3')"
+					class="w3-btn-block w3-theme-d2 w3-left-align">
+					<i class="fa fa-photo fa-fw w3-margin-right"></i> My Photos
+				</button>
+
+				<div id="side-3" class="w3-accordion-content w3-container">
+					<div class="w3-row-padding" id="left-photos">
+						<br>
+						<?php
+						    foreach ($this->layout()->my_images as $image):
+						?>
+						<div class="w3-half">
+							<?php echo $image; ?>
+						</div>
+
+						<?php
+						      endforeach;
+						?>
+
+						<script type="text/javascript">
+							var string_replace;
+							var replaced;
+							var original_image;
+
+							// event handler on click image
+							$('#left-photos img').on('click', function() {
+								document.getElementById("p-modal").style.display = "block";
+
+								// get the original image
+								// width and height
+								original_image = $(this).attr('src');
+
+								$('#original-image').attr('href', original_image);
+
+
+								// replace the path of the image
+								// to display the image title (e.g. my_image)
+								// without the extension or directory path
+								string_replace = $(this).attr('src');
+
+								replaced = string_replace.replace(/(images|profile|<?php echo $this->identity(); ?>|.jpg|.jpeg|.png|)/gi, '')
+								.replace(/\//g, '');
+
+								$('#picked_image').html(replaced.charAt(0).toUpperCase() + replaced.slice(1));
+
+								$('#clicked-photo').html("<img class=\"w3-round w3-border\" style=\"width: 250px; height: 170px;\" id=\"other-photo\" src=" + $(this).attr('src') + ">");
+							});
+
+
+						</script>
+
+						<!-- modal -->
+						<div class="w3-modal" id="p-modal">
+							<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 320px;">
+								<div class="w3-container">
+									<p class="w3-center w3-small" id="photo-modal">
+										<span onclick="document.getElementById('p-modal').style.display = 'none'" class="w3-closebtn">&times;</span>
+									</p>
+
+									<p id="picked_image" class="w3-center w3-small"></p>
+
+									<br>
+
+									<div class="w3-row-padding w3-center" id="clicked-photo"></div>
+
+									<br><br>
+
+									<div class="w3-display-container">
+										<div class="w3-display-left">
+											<p class="w3-small">
+												<a target="_blank" id="original-image" class="w3-theme-d2">View Original Image</a>
+											</p>
+											<br>
+										</div>
+
+										<div class="w3-display-right">
+											<p class="w3-small">
+												<button id="make-profile-photo" class="w3-btn w3-theme-d2 w3-round-large">Make Profile Picture</button>
+											</p>
+											<br>
+										</div>
+									</div>
+
+									<br>
+
+									<script type="text/javascript">
+										$('#make-profile-photo').on('click', function() {
+											$.ajax({
+												type: "POST",
+												url: "/members/profile/change-profile-picture",
+												data: { image: $('#other-photo').attr('src') }
+											}).done(function() {
+												document.getElementById('p-modal').style.display = 'none';
+
+												$('#profile-pic').load('/members/profile/get-profile-image');
+												$('#current-photo').load('/members/profile/get-profile-image');
+											});
+										});
+									</script>
+
+									<div class="w3-clear"></div>
+								</div>
+							</div>
+						</div>
+						<!-- end modal -->
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Left Column -->
+	</div>
+
+	<!-- middle -->
+	<div class="w3-col m7">
+		<div class="w3-row-padding">
+			<div class="w3-col m12">
+				<div class="w3-card-2 w3-round w3-white">
+					<div class="w3-container w3-padding">
+						<p class="w3-left">
+							<a href="<?php echo $this->url('members/profile', array('action' => 'edit-profile')); ?>"
+							class="w3-medium"> Edit Profile</a> &nbsp;&nbsp;
+
+							<a href="<?php echo $this->url('members/profile', array('action' => 'remove-profile')); ?>"
+							class="w3-medium"> Remove Profile</a> &nbsp;&nbsp;
+
+							<a href="<?php echo $this->url('members/profile', array('action' => 'profile-settings')); ?>"
+							class="w3-medium"> Profile Settings</a> &nbsp;&nbsp;
+
+							<a href="<?php echo $this->url('members/profile', array('action' => 'profile-views')); ?>"
+							class="w3-medium"> Profile Views</a> &nbsp;&nbsp;
+						</p>
+
+						<br>
+						<br>
+
+						<hr class="w3-clear">
+
+						<p>
+					    	Welcome to your profile page! Here you can edit, remove and/or change your profile settings
+			           	    (such as publicly visible, privately visible and various other settings). To use these tools, click
+			           		on the above links that are relevant to your desire.
+			        	</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end mid -->
+
+</div>
