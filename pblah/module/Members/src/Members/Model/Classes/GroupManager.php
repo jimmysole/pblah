@@ -289,8 +289,6 @@ class GroupManager extends Groups implements GroupAdmin
                 } else {
                     throw new GroupsException("No rank was supplied, please fix this and try again.");
                 }
-            } else if ($this->choice['choice'] == 'delete_rank') {
-                
             } else if ($this->choice['choice'] == 'ban_user') {
                 
             } else if ($this->choice['choice'] == 'suspend_user') {
