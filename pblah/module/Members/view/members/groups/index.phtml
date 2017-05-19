@@ -12,8 +12,8 @@
 						 function buildOnlineMemberList() {
 							$.ajax({
 								type: "GET",
-							    url: "/members/groups/get-group-members-online" ,
-							    dataType: "json",
+							    url: "/members/groups/get-group-members-online",
+							    dataType: "json"
 							}).done(function(msg) {
 								if (msg.display_name == "" || msg.display_name == undefined) {
 									$('#members-online').html("No group members are online.");
@@ -25,13 +25,13 @@
 							}).fail(function() {
 							   $('#members-online').html("Error retrieving group list.");
 							});
-						  }
+						 }
 
-						  setInterval(function() {
+						 setInterval(function() {
 						  	buildOnlineMemberList();
-						  }, 5000);
+						 }, 5000);
 
-					      buildOnlineMemberList();
+					     buildOnlineMemberList();
 					});
 				</script>
 			</div>

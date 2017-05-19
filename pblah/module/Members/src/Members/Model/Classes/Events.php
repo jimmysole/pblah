@@ -62,7 +62,7 @@ class Events extends Profile
                 throw new EventsException("Error inserting event, please try again.");
             }
         } else {
-            throw new EventsException("To create an event, you must fill out all the required event details");
+            throw new EventsException("To create an event, you must fill out all the required event details.");
         }
     }
 }
