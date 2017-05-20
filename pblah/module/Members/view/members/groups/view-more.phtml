@@ -72,7 +72,7 @@
 	<!-- end left column -->
 
    <?php
-		  if (count($this->paginator) <= 0):
+		  if (count($this->groups) <= 0):
    ?>
 	<div class="w3-responsive">
 		<p class="w3-center" id="no-groups">No more groups found.</p>
@@ -92,9 +92,9 @@
 					<div class="w3-container w3-padding">
 						<h2
 							class="w3-center w3-white w3-border w3-border-white w3-round-xlarge"
-							style="text-shadow: 1px 1px 0 #000">All Of Your Groups</h2>
+							style="text-shadow: 1px 1px 0 #000">All Groups</h2>
 
-						<p class="w3-left">To view more information about your group(s),
+						<p class="w3-left">To view more information about the group(s),
 							just click the group id number to the left of the table below.</p>
 					</div>
 				</div>
@@ -108,16 +108,18 @@
 					<thead>
 						<tr class="w3-white">
 							<th>Group Id</th>
+							<th>Group Name</th>
 						</tr>
 					</thead>
 
 		<?php
-		        foreach ($this->paginator as $value):
+		        foreach ($this->groups as $value):
         ?>
 					<tr class="w3-hover-text-red w3-text-black">
 						<td><a
-							href="<?php echo $this->url('members/groups', array('action' => 'group-home', 'id' => $value['group_id'])); ?>">
-							<?php echo $value['group_id']; ?></a></td>
+							href="<?php echo $this->url('members/groups', array('action' => 'group-home', 'id' => $value['id'])); ?>">
+							<?php echo $value['id']; ?></a></td>
+						<td><?php echo $value['group_name']; ?></td>
 					</tr>
 <?php
                 endforeach;
@@ -128,10 +130,6 @@
 				<br class="w3-clear">
 			</div>
 			
-			<br>
-			<div class="w3-right">
-				<?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination.phtml', array('route' => 'paginator')); ?>
-			</div>
 		</div>
 	</div>
 	<!-- end middle column -->

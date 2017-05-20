@@ -76,7 +76,9 @@
 		  if ($this->groups === null):
    ?>
 	<div class="w3-responsive">
-		<p class="w3-center" id="no-groups">You aren't part of any groups.</p>
+		<p class="w3-center" id="no-groups">You aren't part of any groups!<br><br>
+			<a href="<?php echo $this->url('members/groups', array('action' => 'view-more')); ?>">Search Groups</a>
+		</p>
 	</div>
 
 	<script type="text/javascript">

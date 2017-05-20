@@ -103,7 +103,8 @@
 										// return back to the groups page
 										location.href = "/members/groups";
 									}).fail(function(msg) {
-										alert(msg.group_error);
+										$('#group-error').css('display', 'block');
+										$('#group-error p').html(msg.group_error);
 									});
 								} else {
 									return false;
@@ -111,6 +112,10 @@
 							});
 						</script>
 
+						<div id="group-error" class="w3-panel w3-red w3-card-2" style="display: none;">
+							<span onclick="this.parentElement.style.display='none'" class="w3-button w3-red w3-large w3-right">&times;</span>
+							<p></p>	
+						</div>
 						<br class="w3-clear">
 					</div>
 				</div>

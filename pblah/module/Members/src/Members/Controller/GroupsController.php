@@ -6,8 +6,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 
 use Zend\View\Model\ViewModel;
 
-use Zend\Paginator\Paginator;
-use Zend\Paginator\Adapter\DbTableGateway;
+//use Zend\Paginator\Paginator;
+//use Zend\Paginator\Adapter\DbTableGateway;
 
 use Zend\Db\TableGateway\TableGateway;
 
@@ -44,6 +44,7 @@ class GroupsController extends AbstractActionController
     
     public function viewmoreAction()
     {
+        /*
         $paginator = new Paginator(new DbTableGateway($this->getGroupsTable(), array('member_id' => $this->getGroupsService()->grabUserId())));
         
         $page = 1;
@@ -56,6 +57,9 @@ class GroupsController extends AbstractActionController
         $paginator->setItemCountPerPage(5);
         
         return new ViewModel(array('paginator' => $paginator));
+        */
+        
+        return new ViewModel(array('groups' => $this->getGroupsService()->listAllGroups()));
     }
 
 
