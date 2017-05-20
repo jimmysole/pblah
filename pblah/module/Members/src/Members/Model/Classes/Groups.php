@@ -239,9 +239,12 @@ class Groups extends Profile
                     parent::$sql->buildSqlString($delete_from_group_admins),
                     Adapter::QUERY_MODE_EXECUTE
                 );
-
-                if (count($execute) > 0 && count($query) > 0) {
-                    return true;
+                
+                if (count($execute) < 0) {
+                    // not an admin
+                    return array('message' => 'You left the group successfully.');
+                } else if (count($execute) > 0 && count($query) > 0) {
+                    return array('message' => 'You left the group successfully.');
                 } else {
                     throw new GroupsException("An error occurred while attempting to process your request to leave the group specified, please try again.");
                 }
