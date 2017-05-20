@@ -101,9 +101,10 @@
 										dataType: "json",
 									}).done(function(msg) {
 										// return back to the groups page
-										location.href = "/members/groups";
+										$('#g-leave-modal').css('display', 'block');
+										$('#group-leave p').html("You have left the group");
 									}).fail(function(msg) {
-										$('#group-error').css('display', 'block');
+										$('#error-modal').css('display', 'block');
 										$('#group-error p').html(msg.group_error);
 									});
 								} else {
@@ -112,11 +113,41 @@
 							});
 						</script>
 
-						<div id="group-error" class="w3-panel w3-red w3-card-2" style="display: none;">
-							<span onclick="this.parentElement.style.display='none'" class="w3-button w3-red w3-large w3-right">&times;</span>
-							<p></p>	
-						</div>
 						<br class="w3-clear">
+						
+						<div class="w3-modal" id="error-modal">
+							<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 320px;">
+								<div class="w3-container">
+									<p class="w3-center w3-small" id="error-modal-x">
+										<span onclick="document.getElementById('error-modal').style.display = 'none'" class="w3-closebtn">&times;</span>
+									</p>
+									
+									<div class="w3-row-padding w3-center" id="group-error">
+										<p></p>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="w3-modal" id="g-leave-modal">
+							<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 260px; height: 200px;">
+								<div class="w3-container">
+									<p class="w3-center w3-small" id="group-modal-x">
+										<span onclick="document.getElementById('g-leave-modal').style.display = 'none'" class="w3-closebtn" id="x">&times;</span>
+									</p>
+									
+									<script type="text/javascript">
+										$('#x').on('click', function() {
+											location.href = "/members/groups";
+										});
+									</script>
+									
+									<div class="w3-row-padding w3-center" id="group-leave">
+										<p></p>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
