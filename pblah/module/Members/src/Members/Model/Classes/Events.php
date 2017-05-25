@@ -68,6 +68,13 @@ class Events extends Profile
         }
     }
 
+    /**
+     * Allows for editing of an event
+     * @param int $event_id
+     * @param array $event_edits
+     * @throws EventsException
+     * @return boolean
+     */
     public static function editEvent($event_id, array $event_edits)
     {
         if (empty($event_id)) {
