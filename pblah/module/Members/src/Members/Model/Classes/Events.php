@@ -29,25 +29,31 @@ class Events extends Profile
         // assign data to array
         // for insertion
         $holder = array(
-            'member_id'         => parent::getUserId()['id'],
-            'event_name'        => $event->event_name,
+            'member_id' => parent::getUserId()['id'],
+            'event_name' => $event->event_name,
             'event_description' => $event->event_description,
-            'start_date'        => $event->start_date,
-            'end_date'          => $event->end_date,
+            'start_date' => $event->start_date,
+            'end_date' => $event->end_date
         );
         
         // insert event details into the event table
         $insert = new Insert('events');
         
-        $insert->columns(array('member_id', 'event_name', 'event_description', 'start_date', 'end_date'))
-        ->values(array('member_id' => $holder['member_id'], 'event_name' => $holder['event_name'],
-            'event_description' => $holder['event_description'], 'start_date' => $holder['start_date'], 'end_date' => $holder['end_date']
+        $insert->columns(array(
+            'member_id',
+            'event_name',
+            'event_description',
+            'start_date',
+            'end_date'
+        ))->values(array(
+            'member_id' => $holder['member_id'],
+            'event_name' => $holder['event_name'],
+            'event_description' => $holder['event_description'],
+            'start_date' => $holder['start_date'],
+            'end_date' => $holder['end_date']
         ));
         
-        $query = parent::$sql->getAdapter()->query(
-            parent::$sql->buildSqlString($insert),
-            Adapter::QUERY_MODE_EXECUTE
-        );
+        $query = parent::$sql->getAdapter()->query(parent::$sql->buildSqlString($insert), Adapter::QUERY_MODE_EXECUTE);
         
         if (count($query) > 0) {
             return true;
@@ -58,8 +64,9 @@ class Events extends Profile
 
     /**
      * Allows for editing of an event
-     * @param int $event_id
-     * @param array $event_edits
+     * 
+     * @param int $event_id            
+     * @param array $event_edits            
      * @throws EventsException
      * @return boolean
      */
@@ -101,7 +108,6 @@ class Events extends Profile
                         $updated_event[$key] = $value;
                     }
                     
-       
                     // check if the updates haven't changed from the original
                     // if not, keep the original
                     // if so, use updated ones
@@ -123,11 +129,7 @@ class Events extends Profile
                         'id' => intval($event_id)
                     ));
                     
-                    
-                    $query = parent::$sql->getAdapter()->query(
-                        parent::$sql->buildSqlString($update),
-                        Adapter::QUERY_MODE_EXECUTE
-                    );
+                    $query = parent::$sql->getAdapter()->query(parent::$sql->buildSqlString($update), Adapter::QUERY_MODE_EXECUTE);
                     
                     // check to be sure the query executed okay
                     if ($query->count() > 0) {
@@ -145,20 +147,44 @@ class Events extends Profile
             }
         }
     }
-    
-    
+
     /**
-     * Gets the events the user is a part of or has created
+     * Gets the events the user is a part of or has created (first 5)
+     * 
      * @return array
      */
     public static function viewEvents()
     {
-        $connection = parent::$sql->getAdapter()->getDriver()->getConnection();
+        $connection = parent::$sql->getAdapter()
+            ->getDriver()
+            ->getConnection();
         
         $query = $connection->execute("SELECT events.id AS event_id, events.event_name AS ename, events.event_description AS event_desc,
                                        events.start_date AS sdate, events.end_date AS edate FROM events
                                        INNER JOIN members ON events.member_id = members.id
                                        WHERE members.id = " . parent::getUserId()['id'] . " ORDER BY events.id LIMIT 5");
+        
+        if (count($query) > 0) {
+            $events_holder = array();
+            
+            foreach ($query as $key => $value) {
+                $events_holder[$key] = $value;
+            }
+            
+            return $events_holder;
+        }
+    }
+
+    public static function viewAllEvents()
+    {
+        $connection = parent::$sql->getAdapter()
+            ->getDriver()
+            ->getConnection();
+        
+        $query = $connection->execute("SELECT events.id AS event_id, events.event_name AS ename, events.event_description AS event_desc,
+                                       events.start_date AS sdate, events.end_date AS edate FROM events
+                                       INNER JOIN members ON events.member_id = members.id
+                                       WHERE members.id = " . parent::getUserId()['id'] . " ORDER BY events.id");
         
         if (count($query) > 0) {
             $events_holder = array();

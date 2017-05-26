@@ -37,8 +37,14 @@ class EventsModel extends Events
     }
     
     
-    public function viewEvents()
+    public function view()
     {
-        
+        return parent::viewEvents();
+    }
+    
+    
+    public function viewAll()
+    {
+        return parent::viewAllEvents();
     }
 }

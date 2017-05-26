@@ -18,7 +18,7 @@ class EventsController extends AbstractActionController
     
     public function indexAction()
     {
-
+        return new ViewModel(array('events' => $this->getEventService()->view()));
     }
     
     
@@ -81,9 +81,9 @@ class EventsController extends AbstractActionController
     }
     
     
-    public function vieweventsAction()
+    public function viewallAction()
     {
-        
+        return new ViewModel(array('events' => $this->getEventService()->viewAllEvents()));
     }
     
     
