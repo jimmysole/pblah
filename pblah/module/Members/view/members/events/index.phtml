@@ -115,7 +115,7 @@
 					       foreach ($this->events as $value):
 					?>
 						<tr class="w3-hover-text-red w3-text-black">
-							<td><a href="<?php echo $this->url('members/events', array('action' => 'events-home', 'id' => $value['event_id'])); ?>">
+							<td><a href="<?php echo $this->url('members/events', array('action' => 'event-home', 'id' => $value['event_id'])); ?>">
 								<?php echo $value['event_id']; ?>
 								</a>
 							</td>

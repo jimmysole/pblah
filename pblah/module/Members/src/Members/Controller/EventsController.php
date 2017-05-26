@@ -22,6 +22,22 @@ class EventsController extends AbstractActionController
     }
     
     
+    public function eventhomeAction()
+    {
+        $id = $this->params()->fromRoute('id', 0);
+        
+        if (0 === $id) {
+            return $this->redirect()->toRoute('members/events', array('action' => 'index'));
+        }
+        
+        if (!$this->getEventService()->getEventInformation($id)) {
+            return $this->redirect()->toRoute('members/events', array('action' => 'index'));
+        }
+        
+        return new ViewModel(array('event_info' => $this->getEventService()->getEventInformation($id)));
+    }
+    
+    
     public function createeventAction()
     {
         $form = new CreateEventForm();
