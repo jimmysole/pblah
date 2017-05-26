@@ -175,6 +175,11 @@ class Events extends Profile
         }
     }
 
+    /**
+     * Shows all events for the user
+     * 
+     * @return array
+     */
     public static function viewAllEvents()
     {
         $connection = parent::$sql->getAdapter()
@@ -194,6 +199,32 @@ class Events extends Profile
             }
             
             return $events_holder;
+        }
+    }
+    
+    
+    /**
+     * Gets all the events that the user is not a part of
+     * @throws EventsException
+     * @return string[]
+     */
+    public static function getOtherEvents()
+    {
+        $connection = parent::$sql->getAdapter()->getDriver()->getConnection();
+        
+        $query = $connection->execute("SELECT id, member_id, event_name, event_description, start_date, end_date FROM events
+            WHERE member_id != " . parent::getUserId()['id']);
+        
+        if (count($query) > 0) {
+            $all_events_holder = array();
+            
+            foreach ($query as $key => $events) {
+                $all_events_holder[$key] = $events;
+            }
+            
+            return $all_events_holder;
+        } else {
+            throw new EventsException("No other events were found.");
         }
     }
 }

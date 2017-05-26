@@ -97,6 +97,26 @@ class EventsController extends AbstractActionController
     }
     
     
+    public function vieweventsAction()
+    {
+        try {
+            $events = $this->getEventService()->viewOtherEvents();
+            
+            return new ViewModel(array('events' => $events));
+        } catch (EventsException $e) {
+            $this->flashMessenger()->addErrorMessage((string)$e->getMessage());
+            
+            return $this->redirect()->toUrl('no-events');
+        }
+    }
+    
+    
+    public function noeventsAction()
+    {
+        
+    }
+    
+    
     public function viewallAction()
     {
         return new ViewModel(array('events' => $this->getEventService()->viewAllEvents()));

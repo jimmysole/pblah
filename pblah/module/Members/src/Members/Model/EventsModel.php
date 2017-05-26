@@ -65,6 +65,16 @@ class EventsModel extends Events
     
     
     /**
+     * Gets the events that the user is not a part of
+     * @return string[]
+     */
+    public function viewOtherEvents()
+    {
+        return parent::getOtherEvents();
+    }
+    
+    
+    /**
      * Gets all the event information
      * @param int $event_id
      * @return boolean|array[]|ArrayObject[]|NULL[]
