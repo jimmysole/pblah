@@ -35,4 +35,10 @@ class EventsModel extends Events
     {
         return parent::createEvent($event);
     }
+    
+    
+    public function viewEvents()
+    {
+        
+    }
 }

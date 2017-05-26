@@ -81,6 +81,12 @@ class EventsController extends AbstractActionController
     }
     
     
+    public function vieweventsAction()
+    {
+        
+    }
+    
+    
     
     public function getEventService()
     {

@@ -147,5 +147,27 @@ class Events extends Profile
     }
     
     
-    
+    /**
+     * Gets the events the user is a part of or has created
+     * @return array
+     */
+    public static function viewEvents()
+    {
+        $connection = parent::$sql->getAdapter()->getDriver()->getConnection();
+        
+        $query = $connection->execute("SELECT events.id AS event_id, events.event_name AS ename, events.event_description AS event_desc,
+                                       events.start_date AS sdate, events.end_date AS edate FROM events
+                                       INNER JOIN members ON events.member_id = members.id
+                                       WHERE members.id = " . parent::getUserId()['id'] . " ORDER BY events.id LIMIT 5");
+        
+        if (count($query) > 0) {
+            $events_holder = array();
+            
+            foreach ($query as $key => $value) {
+                $events_holder[$key] = $value;
+            }
+            
+            return $events_holder;
+        }
+    }
 }
