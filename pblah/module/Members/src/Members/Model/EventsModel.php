@@ -6,6 +6,7 @@ namespace Members\Model;
 use Zend\Db\TableGateway\TableGateway;
 
 use Members\Model\Classes\Events;
+use Members\Model\Filters\CreateEvent;
 
 
 class EventsModel extends Events
@@ -30,8 +31,8 @@ class EventsModel extends Events
     }
     
     
-    public function createAEvent(array $event_details)
+    public function createAEvent(CreateEvent $event)
     {
-        return parent::createEvent($event_details);
+        return parent::createEvent($event);
     }
 }
