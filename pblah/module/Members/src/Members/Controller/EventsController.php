@@ -85,6 +85,20 @@ class EventsController extends AbstractActionController
     }
     
     
+    public function geteventsAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        echo json_encode($this->getEventService()->viewAllEvents());
+        
+        return $view_model;
+    }
+    
+    
     public function createeventsuccessAction()
     {
         return;

@@ -192,13 +192,18 @@ class Events extends Profile
                                        WHERE members.id = " . parent::getUserId()['id'] . " ORDER BY events.id");
         
         if (count($query) > 0) {
-            $events_holder = array();
+            $event_id   = array();
+            $event_name = array();
             
-            foreach ($query as $key => $value) {
-                $events_holder[$key] = $value;
+            foreach ($query as $value) {
+                // list the event id and name
+                $event_id[] = $value['event_id'];
+                $event_name[] = $value['ename'];
             }
             
-            return $events_holder;
+            return array('event_id' => $event_id, 'event_name' => $event_name);
+        } else {
+            return array('no_events' => array("No events either created by you or that you are a part of."));
         }
     }
     

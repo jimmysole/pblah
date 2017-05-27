@@ -127,7 +127,7 @@
 									return false;
 								} else {
 									$.each(msg.group_id, function(i, item) {
-										$("#groups").append('<a href="<?php echo $this->url('members/groups', array('action' => 'index')); ?>/group-home/' + msg.group_id[i] + '">' + msg.group_name[i] + '</a>');
+										$("#groups").append('<a href="<?php echo $this->url('members/groups', array('action' => 'index')); ?>/group-home/' + msg.group_id[i] + '">' + msg.group_name[i] + '</a><br>');
 									})
 								};
 							}).fail(function(msg) {
@@ -144,7 +144,28 @@
 				</button>
 
 				<div id="side-2" class="w3-accordion-content w3-container">
-					<p>Some other text..</p>
+					<p id="events"></p>
+					
+					<script type="text/javascript">
+						$(document).ready(function() {
+							$.ajax({
+								type: "GET",
+								url: "/members/events/get-events",
+								dataType: "json"
+							}).done(function(msg) {
+								if (msg.event_id == undefined) {
+									$('#events').html("You have no events created or a part of.");
+									return false;
+								} else {
+									$.each(msg.event_id, function(i, item) {
+        								$('#events').append('<a href="<?php echo $this->url('members/events', array('action' => 'index')); ?>/event-home/' + msg.event_id[i] + '">' + msg.event_name[i] + '</a><br>');
+									});
+								}
+							}).fail(function(msg) {
+								$('#events').html(msg);
+							});
+						});
+					</script>
 				</div>
 
 				<button onclick="expand('side-3')"
