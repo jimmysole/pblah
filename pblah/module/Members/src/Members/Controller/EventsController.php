@@ -87,13 +87,13 @@ class EventsController extends AbstractActionController
     
     public function createeventsuccessAction()
     {
-        
+        return;
     }
     
     
     public function createeventfailureAction()
     {
-        
+        return;
     }
     
     
@@ -113,7 +113,7 @@ class EventsController extends AbstractActionController
     
     public function noeventsAction()
     {
-        
+        return;
     }
     
     

@@ -111,9 +111,6 @@
 						<tr class="w3-white">
 							<th>Event Id</th>
 							<th>Event Name</th>
-							<th>Event Description</th>
-							<th>Start Date</th>
-							<th>End Date</th>
 						</tr>
 					</thead>
 
@@ -123,9 +120,6 @@
 					<tr class="w3-hover-text-red w3-text-black">
 						<td><a href="<?php echo $this->url('members/events', array('action' => 'event-home', 'id' => $value['id'])); ?>"><?php echo $value['id']; ?></a></td>
 						<td><?php echo $value['event_name']; ?></td>
-						<td><?php echo $value['event_description']; ?></td>
-						<td><?php echo $value['start_date']; ?></td>
-						<td><?php echo $value['end_date']; ?></td>
 					</tr>
 <?php
                 endforeach;

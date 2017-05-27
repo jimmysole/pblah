@@ -212,7 +212,7 @@ class Events extends Profile
     {
         $connection = parent::$sql->getAdapter()->getDriver()->getConnection();
         
-        $query = $connection->execute("SELECT id, member_id, event_name, event_description, start_date, end_date FROM events
+        $query = $connection->execute("SELECT id, member_id, event_name FROM events
             WHERE member_id != " . parent::getUserId()['id']);
         
         if (count($query) > 0) {
