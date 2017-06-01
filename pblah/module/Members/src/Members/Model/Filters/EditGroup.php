@@ -29,12 +29,6 @@ class EditGroup implements InputFilterAwareInterface
     public $group_description;
     
     
-    /**
-     * @var string
-     */
-    public $group_members;
-  
-    
     
     /**
      * @var InputFilter|null
