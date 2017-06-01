@@ -182,7 +182,7 @@ class GroupsModel extends Groups
         
         return array(
             'admins' => implode(", ", $group_admins),
-            'members' => implode(", ", $member_username),
+            'members' => implode(", ", $member_username),            
             'info' => $row
         );
     }

@@ -114,6 +114,21 @@ return array(
                             ),
                         ),
                     ),
+                    
+                    'group-admin' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/group-admin[/:action][/:id]',
+                            'constraints' => array(
+                                'id' => '[0-9]+',
+                            ),
+                        ),
+                        
+                        'defaults' => array(
+                            'controller' => 'Members\Controller\GroupAdmin',
+                            'index'      => 'index',
+                        ),
+                    ),
                 ),
             ),
             
