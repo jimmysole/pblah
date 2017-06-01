@@ -37,7 +37,7 @@ class EditGroup implements InputFilterAwareInterface
     
     
     /**
-     * Assigns the data array to the objects related to editing profile
+     * Assigns the data array to the objects related to editing group
      * @param array $data
      */
     public function exchangeArray($data)
