@@ -8,7 +8,7 @@ use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\InputFilter\InputFilter;
 
-use Zend\Filter\ToInt;
+
 use Zend\Filter\StripTags;
 use Zend\Filter\StringTrim;
 use Zend\Validator\StringLength;
@@ -73,7 +73,7 @@ class EditGroup implements InputFilterAwareInterface
             $factory      = new InputFactory();
             
             $input_filter->add($factory->createInput(array(
-                'name'     => 'display_name',
+                'name'     => 'group_name',
                 'required' => false,
                 'filters'  => array(
                     array('name' => StripTags::class),
@@ -94,50 +94,7 @@ class EditGroup implements InputFilterAwareInterface
             
             
             $input_filter->add($factory->createInput(array(
-                'name'     => 'email_address',
-                'required' => false,
-                'filters'  => array(
-                    array('name' => StripTags::class),
-                    array('name' => StringTrim::class),
-                ),
-                
-                'validators' => array(
-                    array(
-                        'name'    => StringLength::class,
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 10,
-                            'max'      => 75,
-                        ),
-                    ),
-                ),
-            )));
-            
-            
-            $input_filter->add($factory->createInput(array(
-                'name'     => 'age',
-                'required' => false,
-                'filters'  => array(
-                    array('name' => StripTags::class),
-                    array('name' => StringTrim::class),
-                    array('name' => ToInt::class),
-                ),
-                
-                'validators' => array(
-                    array(
-                        'name'    => StringLength::class,
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 2,
-                            'max'      => 3,
-                        ),
-                    ),
-                ),
-            )));
-            
-            
-            $input_filter->add($factory->createInput(array(
-                'name'     => 'location',
+                'name'     => 'group_description',
                 'required' => false,
                 'filters'  => array(
                     array('name' => StripTags::class),
@@ -148,27 +105,7 @@ class EditGroup implements InputFilterAwareInterface
                         'name'    => StringLength::class,
                         'options' => array(
                             'encoding' => 'UTF-8',
-                            'min'      => 10,
-                            'max'      => 150,
-                        ),
-                    ),
-                ),
-            )));
-            
-            
-            $input_filter->add($factory->createInput(array(
-                'name'      => 'bio',
-                'required'  => false,
-                'filters'   => array(
-                    array('name' => StripTags::class),
-                ),
-                
-                'validators' => array(
-                    array(
-                        'name'    => StringLength::class,
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 10,
+                            'min'      => 50,
                             'max'      => 3000,
                         ),
                     ),
