@@ -133,6 +133,7 @@ class SetupModel
         $groups_table->addColumn(new Column\Char('group_name', 100));
         $groups_table->addColumn(new Column\Char('group_creator', 15));
         $groups_table->addColumn(new Column\Datetime('group_created_date'));
+        $groups_table->addColumn(new Column\Text('group_description'));
 
         // add the constraints
         $groups_table->addConstraint(new Constraint\UniqueKey('group_name'));
