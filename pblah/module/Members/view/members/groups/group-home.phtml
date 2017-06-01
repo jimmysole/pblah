@@ -67,13 +67,16 @@
 					</script>
 			</div>
 		</div>
+		<br class="w3-clear">
 	</div>
+	
 	<!-- end left column -->
 
+	
 	<!-- middle column -->
-	<div class="w3-col m7">
+	<div class="w3-col l9 m8">
 		<div class="w3-row-padding">
-			<div class="w3-col m12">
+			<div class="w3-col l12 m8">
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding">
 						<h2
@@ -87,7 +90,7 @@
 		</div>
 
 
-		<div class="w3-col m-12">
+		<div class="w3-col l12 m8">
 			<div class="w3-container w3-card-2 w3-theme-d2 w3-margin w3-round">
 				<div class="w3-container w3-padding">
 					<br class="w3-clear">
@@ -98,6 +101,7 @@
 								<tr class="w3-white">
 									<th style="white-space: nowrap;">Group Name</th>
 									<th style="white-space: nowrap;">Group Creator</th>
+									<th style="white-space: nowrap;">Group Description</th>
 									<th style="white-space: nowrap;">Group Admins</th>
 									<th style="white-space: nowrap;">Group Members</th>
 									<th style="white-space: nowrap;"></th>
@@ -107,6 +111,7 @@
 							<tr class="w3-text-black">
 								<td><?php echo $this->group_info['info']['group_name']; ?></td>
 								<td><?php echo $this->group_info['info']['group_creator']; ?></td>
+								<td><?php echo $this->group_info['info']['group_description']; ?></td>
 								<td><?php echo $this->group_info['admins']; ?></td>
 								<td><?php echo $this->group_info['members']; ?></td>
 								<?php if ($this->group_info['members'] == 'No members found.'): ?>
