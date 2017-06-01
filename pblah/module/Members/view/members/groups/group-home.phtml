@@ -36,6 +36,37 @@
 				</script>
 			</div>
 		</div>
+		
+		<br><br>
+		
+		<div class="w3-card-2 w3-round w3-theme-d2">
+			<div class="w3-container w3-round w3-theme-d2">
+				<h6 class="w3-center" style="border-bottom: 1px solid #ddd;">Group Functions</h6>
+					<p id="group-opts">
+						<a href="<?php echo $this->url('members/groups', array('action' => 'create-group')); ?>">Create Group</a>
+
+						<br>
+
+						<a href="<?php echo $this->url('members/groups', array('action' => 'view-groups')); ?>">Browse Groups</a>
+
+						<br>
+
+						<a href="<?php echo $this->url('members/groups', array('action' => 'post-group-event')); ?>">Post Group Event</a>
+
+						<br>
+
+						<a href="<?php echo $this->url('members/groups', array('action' => 'post-group-message')); ?>">Post Group Message</a>
+
+						<br>
+
+						<a href="<?php echo $this->url('members/groups', array('action' => 'start-group-chat')); ?>">Start Group Chat</a>
+					</p>
+
+					<script type="text/javascript">
+						$('#group-opts a').addClass('w3-hover-text-red');
+					</script>
+			</div>
+		</div>
 	</div>
 	<!-- end left column -->
 
