@@ -155,6 +155,7 @@ class SetupModel
         $group_mems_table->addColumn(new Column\Integer('group_id', false, null, array('unsigned' => true)));
         $group_mems_table->addColumn(new Column\Integer('member_id', false, null, array('unsigned' => true)));
         $group_mems_table->addColumn(new Column\Boolean('banned', false, 0));
+        $group_mems_table->addColumn(new Column\Boolean('suspended', false, 0));
 
         // add the constraints
         $group_mems_table->addConstraint(new Constraint\ForeignKey('group_id_fk', 'group_id', 'groups', 'id', 'cascade', 'cascade'));
