@@ -109,17 +109,17 @@
 							</thead>
 
 							<tr class="w3-text-black">
-								<td><?php echo $this->group_info['info']['group_name']; ?></td>
-								<td><?php echo $this->group_info['info']['group_creator']; ?></td>
-								<td><?php echo $this->group_info['info']['group_description']; ?></td>
-								<td><?php echo $this->group_info['admins']; ?></td>
-								<td><?php echo $this->group_info['members']; ?></td>
+								<td style="text-overflow: ellipsis;"><?php echo $this->group_info['info']['group_name']; ?></td>
+								<td style="text-overflow: ellipsis;"><?php echo $this->group_info['info']['group_creator']; ?></td>
+								<td style="text-overflow: ellipsis;"><?php echo $this->group_info['info']['group_description']; ?></td>
+								<td style="text-overflow: ellipsis;"><?php echo $this->group_info['admins']; ?></td>
+								<td style="text-overflow: ellipsis;"><?php echo $this->group_info['members']; ?></td>
 								<?php if ($this->group_info['members'] == 'No members found.'): ?>
 								<td></td>
-								<?php else:?>
+								<?php else: ?>
 								<td><a id="leave-group" href="<?php echo $this->url('members/groups', array('action' => 'leave-group', 'id' => $this->group_info['info']['id'])); ?>">
 									Leave Group</a></td>
-								<?php endif;?>
+								<?php endif; ?>
 							</tr>
 						</table>
 
