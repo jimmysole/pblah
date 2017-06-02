@@ -98,11 +98,12 @@ class GroupManager extends Groups implements GroupAdmin
                 }
             } else if ($this->choice['choice'] == 'remove_member') {
                 $exec = $connection->execute("DELETE FROM group_members WHERE group_id = " . intval($group_id) . "
-                   AND member_id = " . array_values($member_ids['member_id'])[0] . " LIMIT 1");
+                   AND member_id = " . array_values($this->member_ids['member_id'])[0] . " LIMIT 1");
                 
                 if (count($exec) > 0) {
                     // delete from group_members_table
-                    $exec = $connection->execute("DELETE FROM group_members_online WHERE member_id = " . array_values($member_ids['member_id'][0]) . " AND group_id = " . intval($group_id));
+                    $exec = $connection->execute("DELETE FROM group_members_online WHERE member_id = " . array_values($this->member_ids['member_id'][0]) . "
+                        AND group_id = " . intval($group_id));
                     
                     if ($exec > 0) {
                         return $this;
@@ -122,7 +123,7 @@ class GroupManager extends Groups implements GroupAdmin
                         
                         $select->columns(array(
                             '*'
-                        ))->where('group_id = ' . $group_id . ' AND user_id IN (' . implode(", ", $member_ids['member_id']) . ')');
+                        ))->where('group_id = ' . $group_id . ' AND user_id IN (' . implode(", ", $this->member_ids['member_id']) . ')');
                         
                         $query = parent::$sql->getAdapter()->query(parent::$sql->buildSqlString($select), Adapter::QUERY_MODE_EXECUTE);
                         
@@ -164,7 +165,7 @@ class GroupManager extends Groups implements GroupAdmin
                         
                         $select->columns(array(
                             '*'
-                        ))->where('group_id = ' . $group_id . ' AND user_id IN (' . implode(", ", $member_ids['member_id']) . ')');
+                        ))->where('group_id = ' . $group_id . ' AND user_id IN (' . implode(", ", $this->member_ids['member_id']) . ')');
                         
                         $query = parent::$sql->getAdapter()->query(parent::$sql->buildSqlString($select), Adapter::QUERY_MODE_EXECUTE);
                         
@@ -206,7 +207,7 @@ class GroupManager extends Groups implements GroupAdmin
                         
                         $select->columns(array(
                             '*'
-                        ))->where('group_id = ' . $group_id . ' AND user_id IN (' . implode(", ", $member_ids['member_id']) . ')');
+                        ))->where('group_id = ' . $group_id . ' AND user_id IN (' . implode(", ", $this->member_ids['member_id']) . ')');
                         
                         $query = parent::$sql->getAdapter()->query(parent::$sql->buildSqlString($select), Adapter::QUERY_MODE_EXECUTE);
                         
@@ -248,7 +249,7 @@ class GroupManager extends Groups implements GroupAdmin
                         
                         $select->columns(array(
                             '*'
-                        ))->where('group_id = ' . $group_id . ' AND user_id IN (' . implode(", ", $member_ids['member_id']) . ')');
+                        ))->where('group_id = ' . $group_id . ' AND user_id IN (' . implode(", ", $this->member_ids['member_id']) . ')');
                         
                         $query = parent::$sql->getAdapter()->query(parent::$sql->buildSqlString($select), Adapter::QUERY_MODE_EXECUTE);
                         
@@ -289,10 +290,74 @@ class GroupManager extends Groups implements GroupAdmin
                 } else {
                     throw new GroupsException("No rank was supplied, please fix this and try again.");
                 }
-            } else if ($this->choice['choice'] == 'ban_user') {
+            } else if ($this->choice['choice'] == 'ban_users') {
+                // use the member id(s) passed
+                // to ban multiple users
+                $select = new Select('group_members');
                 
-            } else if ($this->choice['choice'] == 'suspend_user') {
+                $select->columns(array('*'))
+                ->where('group_id = ' . $group_id . ' AND member_id IN (' . implode(", ", $this->member_ids['member_id']) . ')');
                 
+                $query = parent::$sql->getAdapter()->query(
+                    parent::$sql->buildSqlString($select),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                if ($query->count() > 0) {
+                    // member(s) found
+                    // set to banned
+                    $update = new Update('group_members');
+                    
+                    $update->set(array('banned' => 1))
+                    ->where('group_id = ' . $group_id . ' AND member_id IN (' . implode(", ", $this->member_ids['member_id']) . ')');
+                    
+                    $query = parent::$sql->getAdapter()->query(
+                        parent::$sql->buildSqlString($update),
+                        Adapter::QUERY_MODE_EXECUTE
+                    );
+                    
+                    if ($query->count() > 0) {
+                        // banned status set
+                        return $this;
+                    } else {
+                        throw new GroupsException("Error setting the status of the member to banned, please try again.");
+                    }
+                } else {
+                    throw new GroupsException("No member was found with the id supplied.");
+                }
+            } else if ($this->choice['choice'] == 'suspend_users') {
+                // use the member id(s) passed
+                // to suspend multiple users
+                $select = new Select('group_members');
+                
+                $select->columns(array('*'))
+                ->where('group_id = ' . $group_id . ' AND member_id IN (' . implode(", ", $this->member_ids['member_id']) . ')');
+                
+                $query = parent::$sql->getAdapter()->query(
+                    parent::$sql->buildSqlString($select),
+                    Adapter::QUERY_MODE_EXECUTE
+                ); 
+                
+                if ($query->count() > 0) {
+                    // member(s) found
+                    // set to suspended
+                    $update = new Update('group_members');
+                    
+                    $update->set(array('suspended' => 1))
+                    ->where('group_id = ' . $group_id . ' AND member_id IN (' . implode(", ", $this->member_ids['member_id']) . ')');
+                    
+                    $query = parent::$sql->getAdapter()->query(
+                        parent::$sql->buildSqlString($update),
+                        Adapter::QUERY_MODE_EXECUTE
+                    );
+                    
+                    if ($query->count() > 0) {
+                        // suspended status set
+                        return $this;
+                    } else {
+                        throw new GroupsException("Error setting the status of the member to suspended, please try again.");
+                    }
+                }
             }
         } else {
             throw new GroupsException("No values were found for member ids and/or choices, please fix this and try again.");
@@ -307,7 +372,9 @@ class GroupManager extends Groups implements GroupAdmin
      * @return self
      */
     public function manageGroup($group_id)
-    {}
+    {
+        
+    }
 
     /**
      * Manages multiple groups
