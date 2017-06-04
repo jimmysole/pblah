@@ -1,7 +1,7 @@
 <div class="w3-row">
 	<!-- left col -->
 	<div class="w3-col m3">
-		<div class="w3-card-2 w3-round w3-theme-l1">
+		<div class="w3-card-2 w3-round w3-theme-d2">
 			<div class="w3-clear"></div>
 
 			<h5 class="w3-center w3-text-white">Quick Edit</h5>
@@ -112,7 +112,16 @@
 						   upload photos, make photo albums and various other edits to your profile.
 						   <br><br>
 						   A full list of features is listed below
-						   <br>
+				        </p>
+				        
+				        <p class="w3-left">
+				        	&raquo; <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'upload-file')); ?>">Upload File(s)</a>
+				        	<br>
+				        	&raquo; <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'profile-views')); ?>">Profile Views</a>
+				        	<br>
+				        	&raquo; <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'make-photo-album')); ?>">Create a Photo Album</a>
+				        	<br>
+				        	&raquo; <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'change-profile-theme')); ?>">Change Profile Theme</a>
 				        </p>
 					</div>
 				</div>

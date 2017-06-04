@@ -384,7 +384,9 @@ class GroupManager extends Groups implements GroupAdmin
      * @return self
      */
     public function manageGroups(array $group_id)
-    {}
+    {
+        
+    }
 
     /**
      * Manages a groups events
@@ -395,5 +397,7 @@ class GroupManager extends Groups implements GroupAdmin
      * @return self
      */
     public function manageGroupEvents($group_id, Events $event_id)
-    {}
+    {
+        
+    }
 }
