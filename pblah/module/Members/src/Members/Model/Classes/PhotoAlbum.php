@@ -17,8 +17,10 @@ class PhotoAlbum extends Profile
     
     protected $album_photo_holder;
     
+    protected $album_edits = array();
     
-    protected static function createAlbum($album_name, $album_created_date, array $album_photos)
+    
+    public function __construct($album_name, $album_created_date, array $album_photos)
     {
         $this->album_name = !empty($album_name) ? $album_name : null;
         
@@ -36,7 +38,16 @@ class PhotoAlbum extends Profile
                 return false;
             }
         };
-        
+    }
+    
+    
+    /**
+     * Creates a photo album 
+     * @throws PhotoAlbumException
+     * @return string
+     */
+    protected function createAlbum()
+    {
         $file_info = array();
         
         // create the album 
@@ -139,14 +150,41 @@ class PhotoAlbum extends Profile
     }
     
     
-    public static function editAlbum($album_name, array $edits) 
+    public function editAlbum(array $edits) 
     {
-         
+        if (count($edits, 1) > 0) {
+            foreach ($edits as $key => $value) {
+                $this->album_edits[$key] = $value;
+            }
+        } else {
+            throw new PhotoAlbumException("Please provide a edit option for your photo album.");
+        }
     }
     
     
-    public static function deleteAlbum($album_name)
+    /**
+     * Deletes a photo album
+     * @throws PhotoAlbumException
+     * @return boolean
+     */
+    public function deleteAlbum()
     {
-        
+        if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name)) {
+            // remove the files inside the directory
+            // since PHP won't allow rmdir() to remove a directory unless it is empty
+            foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name, 1), array('.', '..')) as $values) {
+                unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name, $values);
+            }
+            
+            // now remove the directory
+            if (rmdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name)) {
+                // directory removed
+                return true;
+            } else {
+                throw new PhotoAlbumException("Error deleting your photo album, please try again.");
+            }
+        } else {
+            throw new PhotoAlbumException("Photo album does not exist.");
+        }
     }
 }
