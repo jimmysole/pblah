@@ -156,6 +156,14 @@ class PhotoAlbum extends Profile
             foreach ($edits as $key => $value) {
                 $this->album_edits[$key] = $value;
             }
+            
+            // determine which edit option was passed
+            // supported options are:
+            // 1) edit album name
+            // 2) edit album location (for tagging)
+            // 3) edit album photos (photo editor)
+            // 4) add photos to album
+            // 5) remove photos from album
         } else {
             throw new PhotoAlbumException("Please provide a edit option for your photo album.");
         }
