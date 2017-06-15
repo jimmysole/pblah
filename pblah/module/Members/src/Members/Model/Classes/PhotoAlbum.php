@@ -7,19 +7,48 @@ use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
 class PhotoAlbum extends Profile
 {
+    /**
+     * @var mixed
+     */
     protected $album_name;
     
+    
+    /**
+     * @var string
+     */
     protected $album_created_date;
     
+    
+    /** 
+     * @var int
+     */
     protected $album_photo_count;
     
+    
+    /**
+     * @var array
+     */
     protected $album_photos = array();
     
+    
+    /**
+     * @var Closure
+     */
     protected $album_photo_holder;
     
+    
+    /**
+     * @var array
+     */
     protected $album_edits = array();
     
     
+    /**
+     * Constructor
+     * @param mixed $album_name
+     * @param unknown $album_created_date
+     * @param array $album_photos
+     */
     public function __construct($album_name, $album_created_date, array $album_photos)
     {
         $this->album_name = !empty($album_name) ? $album_name : null;
@@ -150,6 +179,12 @@ class PhotoAlbum extends Profile
     }
     
     
+    /**
+     * Allows various edits of the Photo Album
+     * @param array $edits
+     * @throws PhotoAlbumException
+     * @return boolean
+     */
     public function editAlbum(array $edits) 
     {
         if (count($edits, 1) > 0) {
@@ -164,6 +199,19 @@ class PhotoAlbum extends Profile
             // 3) edit album photos (photo editor)
             // 4) add photos to album
             // 5) remove photos from album
+            if ($this->album_edits['edit_name']) {
+                $edit_name = (new EditPhotoAlbumName($this->album_name, $this->album_edits['edit_name']['new_album_name']))->editName();
+                
+                if (is_string($edit_name)) {
+                    if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_SUCCESS) {
+                        return true; // photo album was renamed successfully
+                    } else if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_FAILURE) {
+                        throw new PhotoAlbumException(EditPhotoAlbumName::EDIT_PHOTO_ALBUM_FAILURE); // error renaming photo album
+                    } else {
+                        throw new PhotoAlbumException("A unknown error occurred, please try again.");
+                    }
+                }
+            }
         } else {
             throw new PhotoAlbumException("Please provide a edit option for your photo album.");
         }

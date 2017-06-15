@@ -2,6 +2,8 @@
 
 namespace Members\Model\Classes;
 
+use Members\Model\Classes\Exceptions\PhotoAlbumException;
+
 
 class EditPhotoAlbumPhotos
 {
