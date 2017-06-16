@@ -49,11 +49,11 @@ class PhotoAlbum extends Profile
      * @param unknown $album_created_date
      * @param array $album_photos
      */
-    public function __construct($album_name, $album_created_date, array $album_photos)
+    public function __construct($album_name, array $album_photos)
     {
         $this->album_name = !empty($album_name) ? $album_name : null;
         
-        $this->album_created_date = !empty($album_created_date) ? $album_created_date : date('Y-m-d', strtotime('now'));
+        $this->album_created_date =  date('Y-m-d', strtotime('now'));
         
         // this closure will bind to $_FILES
         $this->album_photo_holder = function() use ($album_photos) {
@@ -87,7 +87,7 @@ class PhotoAlbum extends Profile
         // and then create a directory with the album name
         // and upload the photos
         if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser())) {
-            mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name, 0777);
+            mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date, 0777);
             
             // write the htaccess file
             $server_name = str_replace(array('https', 'http', 'www'), '', $_SERVER['SERVER_NAME']); // only need the actual server name, not the protocols or www
@@ -99,7 +99,7 @@ class PhotoAlbum extends Profile
                 RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$server_name [NC]
                 RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]";
             
-            file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '/.htaccess', $data);
+            file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/.htaccess', $data);
             
             // handle the photos now
             if (count($this->album_photo_holder(), 1) > 1) {
@@ -109,10 +109,10 @@ class PhotoAlbum extends Profile
                 for ($i=0; $i<count($this->album_photo_count); $i++) {
                     $file = $this->album_photo_holder()['name'][$i];
                     
-                    $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . $file;
+                    $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file;
                     
                     move_uploaded_file($this->album_photo_holder()['tmp_name'], 
-                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '/' . $this->album_photo_holder()['name']);
+                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name .  '_' . $this->album_created_date . '/' . $this->album_photo_holder()['name']);
                 }
                 
                 // return the file information in json format
@@ -121,10 +121,10 @@ class PhotoAlbum extends Profile
                 // single photo
                 $file_name = $this->album_photo_holder()['name'];
                 
-                $file_info[$file_name] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . $file_name;
+                $file_info[$file_name] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file_name;
                 
                 move_uploaded_file($this->album_photo_holder()['tmp_name'],
-                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '/' . $this->album_photo_holder()['name']);
+                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['name']);
                 
                 // return the file information in json format
                 return json_encode($file_info);
@@ -133,7 +133,7 @@ class PhotoAlbum extends Profile
             }
         } else {
             mkdir(getcwd() . '/public/images/profile/' . parent::getUser(), 0777);
-            mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name, 0777);
+            mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date, 0777);
             
             // write the htaccess file
             $server_name = str_replace(array('https', 'http', 'www'), '', $_SERVER['SERVER_NAME']); // only need the actual server name, not the protocols or www
@@ -145,7 +145,7 @@ class PhotoAlbum extends Profile
             RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$server_name [NC]
             RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]";
             
-            file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '/.htaccess', $data);
+            file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/.htaccess', $data);
             
             // handle the photos now
             if (count($this->album_photo_holder(), 1) > 1) {
@@ -155,10 +155,10 @@ class PhotoAlbum extends Profile
                 for ($i=0; $i<count($this->album_photo_count); $i++) {
                     $file = $this->album_photo_holder()['name'][$i];
                     
-                    $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . $file;
+                    $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file;
                     
                     move_uploaded_file($this->album_photo_holder()['tmp_name'],
-                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '/' . $this->album_photo_holder()['name']);
+                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['name']);
                 }
                 
                 // return the file information in json format
@@ -168,7 +168,7 @@ class PhotoAlbum extends Profile
                 $file_name = $this->album_photo_holder()['name'];
                 
                 move_uploaded_file($this->album_photo_holder()['tmp_name'],
-                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '/' . $this->album_photo_holder()['name']);
+                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['name']);
                 
                 // return the file information in json format
                 return json_encode($file_info);
@@ -200,7 +200,7 @@ class PhotoAlbum extends Profile
             // 4) add photos to album
             // 5) remove photos from album
             if ($this->album_edits['edit_name']) {
-                $edit_name = (new EditPhotoAlbumName($this->album_name, $this->album_edits['edit_name']['new_album_name']))->editName();
+                $edit_name = (new EditPhotoAlbumName($this->album_name . '_' . $this->album_created_date, $this->album_edits['edit_name']['new_album_name']))->editName();
                 
                 if (is_string($edit_name)) {
                     if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_SUCCESS) {

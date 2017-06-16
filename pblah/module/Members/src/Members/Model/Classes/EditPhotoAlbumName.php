@@ -54,7 +54,7 @@ class EditPhotoAlbumName
     {
         // rename the photo album directory
         if (rename(getcwd() . '/public/images/profile/' . Profile::getUser() . '/' . $this->current_album_name . '/', 
-            getcwd() . '/public/images/profile/' . Profile::getUser() . '/' . $this->new_album_name)) {
+            getcwd() . '/public/images/profile/' . Profile::getUser() . '/' . $this->new_album_name . '_' . date('Y-m-d', strtotime("now")))) {
             return self::EDIT_PHOTO_ALBUM_NAME_SUCCESS; 
         }
         
