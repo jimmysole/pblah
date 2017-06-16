@@ -7,15 +7,15 @@ use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
 class EditPhotoAlbumName 
 {
-    final const EDIT_PHOTO_ALBUM_SUCCESS  = 'Your photo album\'s name was edited successfully.';
+    final const EDIT_PHOTO_ALBUM_NAME_SUCCESS  = 'Your photo album\'s name was edited successfully.';
     
-    final const EDIT_PHOTO_ALBUM_FAILURE = 'Error editing your photo album\'s name.';
+    final const EDIT_PHOTO_ALBUM_NAME_FAILURE = 'Error editing your photo album\'s name.';
     
     
     /**
      * @var mixed
      */
-    public $current_albume_name;
+    public $current_album_name;
     
     
     /**
@@ -32,7 +32,7 @@ class EditPhotoAlbumName
      */
     public function __construct($current_album_name, $new_album_name)
     {
-        $this->current_albume_name = $current_album_name;
+        $this->current_album_name = $current_album_name;
         
         try {
             if (!empty($album_name)) {
@@ -53,11 +53,11 @@ class EditPhotoAlbumName
     public function editName()
     {
         // rename the photo album directory
-        if (rename(getcwd() . '/public/images/profile/' . Profile::getUser() . '/' . $this->current_albume_name . '/', 
+        if (rename(getcwd() . '/public/images/profile/' . Profile::getUser() . '/' . $this->current_album_name . '/', 
             getcwd() . '/public/images/profile/' . Profile::getUser() . '/' . $this->new_album_name)) {
-            return self::EDIT_PHOTO_ALBUM_SUCCESS; 
+            return self::EDIT_PHOTO_ALBUM_NAME_SUCCESS; 
         }
         
-        return self::EDIT_PHOTO_ALBUM_FAILURE;
+        return self::EDIT_PHOTO_ALBUM_NAME_FAILURE;
     }
 }

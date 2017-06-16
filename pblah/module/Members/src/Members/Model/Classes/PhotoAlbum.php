@@ -203,10 +203,10 @@ class PhotoAlbum extends Profile
                 $edit_name = (new EditPhotoAlbumName($this->album_name, $this->album_edits['edit_name']['new_album_name']))->editName();
                 
                 if (is_string($edit_name)) {
-                    if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_SUCCESS) {
+                    if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_SUCCESS) {
                         return true; // photo album was renamed successfully
-                    } else if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_FAILURE) {
-                        throw new PhotoAlbumException(EditPhotoAlbumName::EDIT_PHOTO_ALBUM_FAILURE); // error renaming photo album
+                    } else if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_FAILURE) {
+                        throw new PhotoAlbumException(EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_FAILURE); // error renaming photo album
                     } else {
                         throw new PhotoAlbumException("A unknown error occurred, please try again.");
                     }
