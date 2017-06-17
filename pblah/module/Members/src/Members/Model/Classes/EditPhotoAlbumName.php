@@ -7,9 +7,9 @@ use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
 class EditPhotoAlbumName 
 {
-    final const EDIT_PHOTO_ALBUM_NAME_SUCCESS  = 'Your photo album\'s name was edited successfully.';
+    const EDIT_PHOTO_ALBUM_NAME_SUCCESS  = 'Your photo album\'s name was edited successfully.';
     
-    final const EDIT_PHOTO_ALBUM_NAME_FAILURE = 'Error editing your photo album\'s name.';
+    const EDIT_PHOTO_ALBUM_NAME_FAILURE = 'Error editing your photo album\'s name.';
     
     
     /**

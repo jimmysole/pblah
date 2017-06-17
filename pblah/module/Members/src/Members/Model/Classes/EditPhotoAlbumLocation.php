@@ -7,9 +7,9 @@ use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
 class EditPhotoAlbumLocation
 {
-    final const EDIT_PHOTO_ALBUM_LOCATION_SUCCESS = 'Your photo album\'s location was edited successfully.';
+    const EDIT_PHOTO_ALBUM_LOCATION_SUCCESS = 'Your photo album\'s location was edited successfully.';
     
-    final const EDIT_PHOTO_ALBUM_LOCATION_FAILURE = 'Error editing your photo album\'s location.';
+    const EDIT_PHOTO_ALBUM_LOCATION_FAILURE = 'Error editing your photo album\'s location.';
     
     
     /**
