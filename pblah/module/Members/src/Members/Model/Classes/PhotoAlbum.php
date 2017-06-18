@@ -32,6 +32,12 @@ class PhotoAlbum extends Profile
     
     
     /**
+     * @var string
+     */
+    protected $location;
+    
+    
+    /**
      * @var Closure
      */
     protected $album_photo_holder;
@@ -46,14 +52,16 @@ class PhotoAlbum extends Profile
     /**
      * Constructor
      * @param mixed $album_name
-     * @param unknown $album_created_date
      * @param array $album_photos
+     * @param string $location
      */
-    public function __construct($album_name, array $album_photos)
+    public function __construct($album_name, array $album_photos, $location = "")
     {
         $this->album_name = !empty($album_name) ? $album_name : null;
         
         $this->album_created_date =  date('Y-m-d', strtotime('now'));
+        
+        $this->location = !empty($location) ? $location : null;
         
         // this closure will bind to $_FILES
         $this->album_photo_holder = function() use ($album_photos) {
@@ -77,6 +85,17 @@ class PhotoAlbum extends Profile
      */
     protected function createAlbum()
     {
+        // first check if a location was provided
+        $write_location = function() {
+            if (null !== $this->location) {
+                file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . 'location.txt', $this->location);
+                
+                return true;
+            } else {
+                return false;
+            }
+        };
+        
         $file_info = array();
         
         // create the album 
@@ -101,8 +120,12 @@ class PhotoAlbum extends Profile
             
             file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/.htaccess', $data);
             
+            
             // handle the photos now
             if (count($this->album_photo_holder(), 1) > 1) {
+                // call $write_location() for location tagging of album (if provided)
+                $write_location();
+                
                 // multiple photos
                 $this->album_photo_count = count($this->album_photo_holder());
                 
@@ -118,6 +141,9 @@ class PhotoAlbum extends Profile
                 // return the file information in json format
                 return json_encode($file_info);
             } else if (count($this->album_photo_holder(), 1) == 1) {
+                // call $write_location() for location tagging of album (if provided)
+                $write_location();
+                
                 // single photo
                 $file_name = $this->album_photo_holder()['name'];
                 
@@ -147,8 +173,12 @@ class PhotoAlbum extends Profile
             
             file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/.htaccess', $data);
             
+            
             // handle the photos now
             if (count($this->album_photo_holder(), 1) > 1) {
+                // call $write_location() for location tagging of album (if provided)
+                $write_location();
+                
                 // multiple photos
                 $this->album_photo_count = count($this->album_photo_holder());
                 
@@ -164,6 +194,9 @@ class PhotoAlbum extends Profile
                 // return the file information in json format
                 return json_encode($file_info);
             } else if (count($this->album_photo_holder(), 1) == 1) {
+                // call $write_location() for location tagging of album (if provided)
+                $write_location();
+                
                 // single photo
                 $file_name = $this->album_photo_holder()['name'];
                 
