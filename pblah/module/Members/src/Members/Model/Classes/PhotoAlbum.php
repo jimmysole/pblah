@@ -234,15 +234,23 @@ class PhotoAlbum extends Profile
             // 5) remove photos from album
             if ($this->album_edits['edit_name']) {
                 $edit_name = (new EditPhotoAlbumName($this->album_name . '_' . $this->album_created_date, $this->album_edits['edit_name']['new_album_name']))->editName();
+ 
+                if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_SUCCESS) {
+                    return true; // photo album was renamed successfully
+                } else if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_FAILURE) {
+                    throw new PhotoAlbumException(EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_FAILURE); // error renaming photo album
+                } else {
+                    throw new PhotoAlbumException("A unknown error occurred, please try again.");
+                }
+            } else if ($this->album_edits['edit_location']) {
+                $edit_location = (new EditPhotoAlbumLocation($this->album_name . '_' . $this->album_created_date, $this->album_edits['edit_location']['new_location']))->changeLocation();
                 
-                if (is_string($edit_name)) {
-                    if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_SUCCESS) {
-                        return true; // photo album was renamed successfully
-                    } else if ($edit_name == EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_FAILURE) {
-                        throw new PhotoAlbumException(EditPhotoAlbumName::EDIT_PHOTO_ALBUM_NAME_FAILURE); // error renaming photo album
-                    } else {
-                        throw new PhotoAlbumException("A unknown error occurred, please try again.");
-                    }
+                if ($edit_location == EditPhotoAlbumLocation::EDIT_PHOTO_ALBUM_LOCATION_SUCCESS) {
+                    return true; // photo album location was edited successfully
+                } else if ($edit_location == EditPhotoAlbumLocation::EDIT_PHOTO_ALBUM_LOCATION_FAILURE) {
+                    throw new PhotoAlbumException(EditPhotoAlbumLocation::EDIT_PHOTO_ALBUM_LOCATION_FAILURE); // error changing location
+                } else {
+                    throw new PhotoAlbumException("A unknown error occurred, please try again.");
                 }
             }
         } else {

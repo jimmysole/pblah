@@ -46,4 +46,10 @@ class RemovePhotosPhotoAlbum
             echo $e->getMessage();
         }
     }
+    
+    
+    public function removePhotos()
+    {
+        
+    }
 }

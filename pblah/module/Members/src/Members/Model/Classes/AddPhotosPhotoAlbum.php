@@ -46,4 +46,10 @@ class AddPhotosPhotoAlbum
             echo $e->getMessage();
         }
     }
+    
+    
+    public function addPhotos()
+    {
+        
+    }
 }
