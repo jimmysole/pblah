@@ -89,7 +89,7 @@ class EditPhotoAlbumPhotos
     
     /**
      * Crops the supplied image
-     * @return void
+     * @return \Members\Model\Classes\EditPhotoAlbumPhotos
      * @throws \ImagickException
      */
     public function cropImage()
@@ -104,12 +104,14 @@ class EditPhotoAlbumPhotos
         
         // crop the image
         $this->imagick->cropImage($crop_width, $crop_height, $x, $y);
+        
+        return $this;
     }
 
    
     /**
      * Performs an adaptive blur on the supplied image
-     * @return void
+     * @return \Members\Model\Classes\EditPhotoAlbumPhotos
      * @throws \ImagickException
      */
     public function blurImage()
@@ -121,24 +123,28 @@ class EditPhotoAlbumPhotos
         
         // perform the adaptive blur on the image
         $this->imagick->adaptiveBlurImage($radius, $sigma);
+        
+        return $this;
     }
     
     
     /**
      * Enhances the image
-     * @return void
+     * @return \Members\Model\Classes\EditPhotoAlbumPhotos
      * @throws \ImagickException
      */
     public function enhanceImage()
     {
         // use Imagick::enhanceImage to enhance the image
         $this->imagick->enhanceImage();
+        
+        return $this;
     }
     
     
     /**
      * Crops the image to make a thumbnail
-     * @return void
+     * @return \Members\Model\Classes\EditPhotoAlbumPhotos
      * @throws \ImagickException
      */
     public function makeThumbnail()
@@ -149,6 +155,8 @@ class EditPhotoAlbumPhotos
         $crop_thumbnail_height = is_int($this->edits['crop']['t_height']) ? $this->edits['crop']['t_height'] : 0;
         
         $this->imagick->cropThumbnailImage($crop_thumbnail_width, $crop_thumbnail_height);
+        
+        return $this;
     }
     
     
