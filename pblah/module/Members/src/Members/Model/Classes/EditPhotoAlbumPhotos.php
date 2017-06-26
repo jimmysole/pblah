@@ -89,8 +89,7 @@ class EditPhotoAlbumPhotos
     
     /**
      * Crops the supplied image
-     * 
-     * @return boolean
+     * @return void
      * @throws \ImagickException
      */
     public function cropImage()
@@ -105,19 +104,12 @@ class EditPhotoAlbumPhotos
         
         // crop the image
         $this->imagick->cropImage($crop_width, $crop_height, $x, $y);
-        
-        $this->imagick->setImageFormat('jpeg'); // set the format of the image to jpeg
-                                                
-        // save the cropped image
-        $this->imagick->writeImageFile(@fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/' . $this->album_name . '/' . $this->photos['files']));
-        
-        return true;
     }
 
    
     /**
      * Performs an adaptive blur on the supplied image
-     * @return boolean
+     * @return void
      * @throws \ImagickException
      */
     public function blurImage()
@@ -129,16 +121,48 @@ class EditPhotoAlbumPhotos
         
         // perform the adaptive blur on the image
         $this->imagick->adaptiveBlurImage($radius, $sigma);
-        
-        $this->imagick->setImageFormat('jpeg'); // set the format of the image to jpeg
-                                                
-        // save the blurred image
-        $this->imagick->writeImageFile(@fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/' 
-            . $this->album_name . '/' . $this->photos['files']));
-        
-        return true;
     }
     
     
+    /**
+     * Enhances the image
+     * @return void
+     * @throws \ImagickException
+     */
+    public function enhanceImage()
+    {
+        // use Imagick::enhanceImage to enhance the image
+        $this->imagick->enhanceImage();
+    }
     
+    
+    /**
+     * Crops the image to make a thumbnail
+     * @return void
+     * @throws \ImagickException
+     */
+    public function makeThumbnail()
+    {
+        // set the thumbnail width + height
+        // if empty, default to zero
+        $crop_thumbnail_width  = is_int($this->edits['crop']['t_width'])  ? $this->edits['crop']['t_width']  : 0;
+        $crop_thumbnail_height = is_int($this->edits['crop']['t_height']) ? $this->edits['crop']['t_height'] : 0;
+        
+        $this->imagick->cropThumbnailImage($crop_thumbnail_width, $crop_thumbnail_height);
+    }
+    
+    
+    /**
+     * Saves the image
+     * @return void
+     * @throws \ImagickException
+     */
+    public function saveImage()
+    {
+        $this->imagick->setImageFormat('jpeg'); // set the format of the image to jpeg
+        
+        // save the image
+        $this->imagick->writeImageFile(@fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/'
+            . $this->album_name . '/' . $this->photos['files']));
+    }
 }

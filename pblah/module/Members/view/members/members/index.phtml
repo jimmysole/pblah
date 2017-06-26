@@ -23,6 +23,7 @@
 
 						    	replaced_src = $("#avatar").attr('src');
 
+						    	// load the original image (outside the current/defaults folder)
 								replace = replaced_src.replace(/(current|defaults)/g, '');
 
 								$("#avatar-photo").html("<img src='" + replace + "' alt='Avatar' class='w3-center w3-round w3-border' id='enlarged-photo'>");
