@@ -252,7 +252,31 @@ class PhotoAlbum extends Profile
                 } else {
                     throw new PhotoAlbumException("A unknown error occurred, please try again.");
                 }
-            }
+            } else if ($this->album_edits['edit_photo_album']) {
+                if ($this->album_edits['edit_photo_album']['crop']) {
+                    // crop the image, then save it
+                    try {
+                        $crop_image = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date,
+                            $this->album_edits['edit_photo_album']['photos'], $this->album_edits['edit_photo_album']['crop_image']))
+                        ->cropImage()
+                        ->saveImage();
+                    } catch (\ImagickException $e) {
+                        return false;
+                    }
+                } 
+                
+                if ($this->album_edits['edit_photo_album']['blur']) {
+                    // blur the image, then save it
+                    try {
+                        $blur_image = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date,
+                            $this->album_edits['edit_photo_album']['photos'], $this->album_edits['edit_photo_album']['blur_image']))
+                        ->blurImage()
+                        ->saveImage();
+                    } catch (\ImagickException $e) {
+                        return false;
+                    }
+                }
+            } 
         } else {
             throw new PhotoAlbumException("Please provide a edit option for your photo album.");
         }
