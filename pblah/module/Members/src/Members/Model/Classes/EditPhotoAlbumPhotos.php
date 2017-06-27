@@ -49,7 +49,8 @@ class EditPhotoAlbumPhotos
     /**
      * Constructor
      *
-     * @param mixed $album_name            
+     * @param mixed $album_name
+     * @param array $photos            
      * @param array $edits            
      * @throws PhotoAlbumException
      */
