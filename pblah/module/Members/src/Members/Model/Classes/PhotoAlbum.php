@@ -257,10 +257,14 @@ class PhotoAlbum extends Profile
                     // crop the image, then save it
                     try {
                         $crop_image = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date,
-                            $this->album_edits['edit_photo_album']['photos'], $this->album_edits['edit_photo_album']['crop_image']))
+                            array('files' => $this->album_photo_holder()['name']), $this->album_edits['crop_image']))
                         ->cropImage()
                         ->saveImage();
                     } catch (\ImagickException $e) {
+                        echo $e->getMessage();
+                        return false;
+                    } catch (PhotoAlbumException $e) {
+                        echo $e->getMessage();
                         return false;
                     }
                 } 
@@ -269,10 +273,46 @@ class PhotoAlbum extends Profile
                     // blur the image, then save it
                     try {
                         $blur_image = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date,
-                            $this->album_edits['edit_photo_album']['photos'], $this->album_edits['edit_photo_album']['blur_image']))
+                            array('files' => $this->album_photo_holder()['name']), $this->album_edits['blur_image']))
                         ->blurImage()
                         ->saveImage();
+                    } catch (\ImagickException $e) { 
+                        echo $e->getMessage();
+                        return false;
+                    } catch (PhotoAlbumException $e) {
+                        echo $e->getMessage();
+                        return false;
+                    }
+                }
+                
+                if ($this->album_edits['edit_photo_album']['enhance_image']) {
+                    // enhance the image, then save it
+                    try {
+                        $enhance_image = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date,
+                            array('files' => $this->album_photo_holder()['name']), $this->album_edits['enhance_image']))
+                        ->enhanceImage()
+                        ->saveImage();
                     } catch (\ImagickException $e) {
+                        echo $e->getMessage();
+                        return false;
+                    } catch (PhotoAlbumException $e) {
+                        echo $e->getMessage();
+                        return false;
+                    }
+                }
+                
+                if ($this->album_edits['edit_photo_album']['make_thumbnail']) {
+                    // scale the image to thumbnail size, then save it
+                    try {
+                        $make_thumbnail = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date, 
+                            array('files' => $this->album_photo_holder()['name']), $this->album_edits['crop']))
+                        ->makeThumbnail()
+                        ->saveImage();
+                    } catch (\ImagickException $e) {
+                        echo $e->getMessage();
+                        return false;
+                    } catch (PhotoAlbumException $e) {
+                        echo $e->getMessage();
                         return false;
                     }
                 }

@@ -62,24 +62,38 @@ class EditPhotoAlbumPhotos
         }
         
         try {
-            if (!empty($album_name) && count($photos, 1) > 0 && count($edits, 1) > 0) {
+            if (empty($album_name)) {
+                throw new PhotoAlbumException("Invalid album name provided, please fix this and try again.");
+            } else {
                 $this->album_name = $album_name;
-                
-                foreach ($photos as $k => $v) {
-                    $this->photos[$k] = $v;
+            
+                if (count($photos, 1) > 1) {
+                    // multiple images
+                    foreach ($photos as $k => $v) {
+                        $this->photos[$k] = $v;
+                    }
+                } else if (count($photos, 1) == 1) {
+                    // single image
+                    $this->photos['files'] = $photos;
+                } else {
+                    throw new PhotoAlbumException("No photos provided, please select some photos and try again.");
                 }
                 
-                foreach ($edits as $key => $value) {
-                    $this->edits[$key] = $value;
+                // get the edit(s) passed
+                if (count($edits, 1) > 0) {
+                    foreach ($edits as $key => $value) {
+                        $this->edits[$key] = $value;
+                    }
+                } else {
+                    throw new PhotoAlbumException("Invalid edit options passed, please fix this and try again.");
                 }
+                
                 
                 if ($this->imagick_loaded !== false) {
                     $this->imagick = new \Imagick($this->photos['files']);
                 } else {
                     throw new PhotoAlbumException(self::IMAGICK_LOADED_FAILURE);
                 }
-            } else {
-                throw new PhotoAlbumException("Invalid photo album and/or edits provided, please fix this and try again.");
             }
         } catch (PhotoAlbumException $e) {
             echo $e->getMessage();
@@ -162,15 +176,19 @@ class EditPhotoAlbumPhotos
     
     /**
      * Saves the image
-     * @return void
+     * @return bool
      * @throws \ImagickException
      */
     public function saveImage()
     {
         $this->imagick->setImageFormat('jpeg'); // set the format of the image to jpeg
         
-        // save the image
-        $this->imagick->writeImageFile(@fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/'
-            . $this->album_name . '/' . $this->photos['files']));
+        foreach ($this->photos as $key => $value) {
+            // save the image
+            $this->imagick->writeImageFile(@fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/'
+                . $this->album_name . '/' . $value), false);
+        }
+        
+        return true;
     }
 }
