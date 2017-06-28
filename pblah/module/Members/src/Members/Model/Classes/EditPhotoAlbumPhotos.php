@@ -22,9 +22,9 @@ class EditPhotoAlbumPhotos
     
     /**
      *
-     * @var array
+     * @var string
      */
-    public $photos = array();
+    public $photo;
 
     /**
      *
@@ -50,11 +50,11 @@ class EditPhotoAlbumPhotos
      * Constructor
      *
      * @param mixed $album_name
-     * @param array $photos            
+     * @param string $photos            
      * @param array $edits            
      * @throws PhotoAlbumException
      */
-    public function __construct($album_name, array $photos, array $edits)
+    public function __construct($album_name, $photo, array $edits)
     {
         if (extension_loaded('imagick')) {
             $this->imagick_loaded = true;
@@ -68,16 +68,10 @@ class EditPhotoAlbumPhotos
             } else {
                 $this->album_name = $album_name;
             
-                if (count($photos, 1) > 1) {
-                    // multiple images
-                    foreach ($photos as $k => $v) {
-                        $this->photos[$k] = $v;
-                    }
-                } else if (count($photos, 1) == 1) {
-                    // single image
-                    $this->photos['files'] = $photos;
+                if (is_file($photo)) {
+                    $this->photo = $photo;
                 } else {
-                    throw new PhotoAlbumException("No photos provided, please select some photos and try again.");
+                    $this->photo = null;
                 }
                 
                 // get the edit(s) passed
@@ -184,11 +178,10 @@ class EditPhotoAlbumPhotos
     {
         $this->imagick->setImageFormat('jpeg'); // set the format of the image to jpeg
         
-        foreach ($this->photos as $key => $value) {
-            // save the image
-            $this->imagick->writeImageFile(@fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/'
-                . $this->album_name . '/' . $value), false);
-        }
+        // save the image
+        $this->imagick->writeImageFile(@fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/'
+           . $this->album_name . '/' . $this->photo), false);
+       
         
         return true;
     }
