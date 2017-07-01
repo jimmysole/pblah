@@ -1,27 +1,59 @@
 <div class="w3-row">
 	<!-- left col -->
 	<div class="w3-col m3">
+		<!-- group members currently online col (left) -->
 		<div class="w3-card-2 w3-round w3-theme-d2">
-			<div class="w3-clear"></div>
+			<div class="w3-container w3-round w3-theme-d2">
+				<h6 class="w3-center" style="border-bottom: 1px solid #ddd;">Group
+					Members Online</h6>
 
-			<h5 class="w3-center w3-text-white">Quick Edit</h5>
-			
-			<h6 class="w3-text-white w3-padding">To Quick Edit, simply click on the below sections, edit, then hit the save button.</h6>
-			
+				<p id="members-online"></p>
+
+				<script type="text/javascript">
+					$(function() {
+						 function buildOnlineMemberList() {
+							$.ajax({
+								type: "GET",
+							    url: "/members/groups/get-group-members-online",
+							    dataType: "json"
+							}).done(function(msg) {
+								if (msg.display_name == "" || msg.display_name == undefined) {
+									$('#members-online').html("No group members are online.");
+									return false;
+								} else {
+							    	var displayNames = msg.display_name.join('<br />');
+							    	$("#members-online").html(displayNames);
+								}
+							}).fail(function() {
+							   		$('#members-online').html("Error retrieving group list.");
+							});
+						 }
+
+						 setInterval(function() {
+						  	buildOnlineMemberList();
+						 }, 5000);
+
+					     buildOnlineMemberList();
+					});
+				</script>
+			</div>
 		</div>
 
-		<br>
+		<br> <br>
 
 		<div class="w3-card-2 w3-round w3-theme-d2">
 			<div class="w3-accordion w3-white">
-				<button onclick="expand('display_name')" class="w3-btn-block w3-theme-d2 w3-left-align">
-					<i class="fa fa-drivers-license-o fa-fw w3-margin-right"></i> Display Name
+				<button onclick="expand('display_name')"
+					class="w3-btn-block w3-theme-d2 w3-left-align">
+					<i class="fa fa-drivers-license-o fa-fw w3-margin-right"></i>
+					Display Name
 				</button>
 
 				<div id="display_name" class="w3-accordion-content w3-container">
 					<div class="w3-display-container">
-							<p id="d-name" contenteditable="true" style="word-wrap: break-word; width: 150px;">
-								<?php echo $this->layout()->display_name; ?>
+						<p id="d-name" contenteditable="true"
+							style="word-wrap: break-word; width: 150px;">
+								<?php echo $this->layout()->display_name; ?></p>
 
 						<div class="w3-display-right">
 							<button class="w3-btn-block w3-theme-d2" id="save-displayname">Save</button>
@@ -35,13 +67,15 @@
 
 				<br>
 
-				<button onclick="expand('location')" class="w3-btn-block w3-theme-d2 w3-left-align">
+				<button onclick="expand('location')"
+					class="w3-btn-block w3-theme-d2 w3-left-align">
 					<i class="fa fa-map fa-fw w3-margin-right"></i> Location
 				</button>
 
 				<div id="location" class="w3-accordion-content w3-container">
 					<div class="w3-display-container">
-						<p id="loc" contenteditable="true" style="word-wrap: break-word; width: 60px;">
+						<p id="loc" contenteditable="true"
+							style="word-wrap: break-word; width: 60px;">
 							<?php echo $this->layout()->location; ?>
 						</p>
 
@@ -57,13 +91,15 @@
 
 				<br>
 
-				<button onclick="expand('age')" class="w3-btn-block w3-theme-d2 w3-left-align">
+				<button onclick="expand('age')"
+					class="w3-btn-block w3-theme-d2 w3-left-align">
 					<i class="fa fa-birthday-cake fa-fw w3-margin-right"></i> Age
 				</button>
 
 				<div id="age" class="w3-accordion-content w3-container">
 					<div class="w3-display-container">
-						<p id="age1" contenteditable="true" style="word-wrap: break-word; width: 60px;">
+						<p id="age1" contenteditable="true"
+							style="word-wrap: break-word; width: 60px;">
 							<?php echo $this->layout()->age; ?>
 						</p>
 
@@ -79,13 +115,15 @@
 
 				<br>
 
-				<button onclick="expand('bio')" class="w3-btn-block w3-theme-d2 w3-left-align">
+				<button onclick="expand('bio')"
+					class="w3-btn-block w3-theme-d2 w3-left-align">
 					<i class="fa fa-book fa-fw w3-margin-right"></i> Bio
 				</button>
 
 				<div id="bio" class="w3-accordion-content w3-container">
 					<div class="w3-display-container">
-						<p id="bio-user" contenteditable="true" style="word-wrap: break-word; width: 250px;">
+						<p id="bio-user" contenteditable="true"
+							style="word-wrap: break-word; width: 250px;">
 							<?php echo $this->layout()->bio; ?>
 						</p>
 
@@ -110,21 +148,26 @@
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding" id="edit-profile-info">
 						<p>
-						   Welcome to your edit profile page. Here you can change various profile related information,
-						   upload photos, make photo albums and various other edits to your profile.
-						   <br><br>
-						   A full list of features is listed below
-				        </p>
-				        
-				        <p class="w3-left">
-				        	&raquo; <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'upload-file')); ?>">Upload File(s)</a>
-				        	<br>
-				        	&raquo; <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'profile-views')); ?>">Profile Views</a>
-				        	<br>
-				        	&raquo; <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'make-photo-album')); ?>">Create a Photo Album</a>
-				        	<br>
-				        	&raquo; <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'change-profile-theme')); ?>">Change Profile Theme</a>
-				        </p>
+							Welcome to your edit profile page. Here you can change various
+							profile related information, upload photos, make photo albums and
+							various other edits to your profile. <br> <br> A full list of
+							features is listed below
+						</p>
+
+						<p class="w3-left">
+							&raquo; <a class="w3-hover-text-red w3-text-black"
+								href="<?php echo $this->url('members/profile', array('action' => 'upload-file')); ?>">Upload
+								File(s)</a> <br> &raquo; <a
+								class="w3-hover-text-red w3-text-black"
+								href="<?php echo $this->url('members/profile', array('action' => 'profile-views')); ?>">Profile
+								Views</a> <br> &raquo; <a
+								class="w3-hover-text-red w3-text-black"
+								href="<?php echo $this->url('members/profile', array('action' => 'make-photo-album')); ?>">Create
+								a Photo Album</a> <br> &raquo; <a
+								class="w3-hover-text-red w3-text-black"
+								href="<?php echo $this->url('members/profile', array('action' => 'change-profile-theme')); ?>">Change
+								Profile Theme</a>
+						</p>
 					</div>
 				</div>
 			</div>

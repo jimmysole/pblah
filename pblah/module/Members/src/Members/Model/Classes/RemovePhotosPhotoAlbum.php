@@ -48,8 +48,13 @@ class RemovePhotosPhotoAlbum
     }
     
     
+    /**
+     * Removes photo(s) from album
+     */
     public function removePhotos()
     {
-        
+        foreach ($this->photos as $key => $value) {
+            unlink(getcwd() . '/public/images/profile/' . Profile::getUser() . '/' . $this->album_name . '/' . $value);
+        }
     }
 }

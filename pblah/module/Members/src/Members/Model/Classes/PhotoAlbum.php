@@ -130,12 +130,12 @@ class PhotoAlbum extends Profile
                 $this->album_photo_count = count($this->album_photo_holder());
                 
                 for ($i=0; $i<count($this->album_photo_count); $i++) {
-                    $file = $this->album_photo_holder()['name'][$i];
+                    $file = $this->album_photo_holder()['photos']['name'][$i];
                     
                     $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file;
                     
-                    move_uploaded_file($this->album_photo_holder()['tmp_name'], 
-                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name .  '_' . $this->album_created_date . '/' . $this->album_photo_holder()['name']);
+                    move_uploaded_file($this->album_photo_holder()['photos']['tmp_name'], 
+                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name .  '_' . $this->album_created_date . '/' . $this->album_photo_holder()['photos']['name']);
                 }
                 
                 // return the file information in json format
@@ -145,12 +145,12 @@ class PhotoAlbum extends Profile
                 $write_location();
                 
                 // single photo
-                $file_name = $this->album_photo_holder()['name'];
+                $file_name = $this->album_photo_holder()['photos']['name'];
                 
                 $file_info[$file_name] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file_name;
                 
-                move_uploaded_file($this->album_photo_holder()['tmp_name'],
-                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['name']);
+                move_uploaded_file($this->album_photo_holder()['photos']['tmp_name'],
+                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['photos']['name']);
                 
                 // return the file information in json format
                 return json_encode($file_info);
@@ -183,12 +183,12 @@ class PhotoAlbum extends Profile
                 $this->album_photo_count = count($this->album_photo_holder());
                 
                 for ($i=0; $i<count($this->album_photo_count); $i++) {
-                    $file = $this->album_photo_holder()['name'][$i];
+                    $file = $this->album_photo_holder()['photos']['name'][$i];
                     
                     $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file;
                     
                     move_uploaded_file($this->album_photo_holder()['tmp_name'],
-                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['name']);
+                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['photos']['name']);
                 }
                 
                 // return the file information in json format
@@ -198,10 +198,10 @@ class PhotoAlbum extends Profile
                 $write_location();
                 
                 // single photo
-                $file_name = $this->album_photo_holder()['name'];
+                $file_name = $this->album_photo_holder()['photos']['name'];
                 
                 move_uploaded_file($this->album_photo_holder()['tmp_name'],
-                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['name']);
+                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['photos']['name']);
                 
                 // return the file information in json format
                 return json_encode($file_info);
@@ -316,7 +316,11 @@ class PhotoAlbum extends Profile
                         return false;
                     }
                 }
-            } 
+            } else if ($this->album_edits['add_photos']) {
+                
+            } else if ($this->album_Edits['remove_photos']) {
+                
+            }
         } else {
             throw new PhotoAlbumException("Please provide a edit option for your photo album.");
         }

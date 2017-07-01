@@ -4,6 +4,8 @@ namespace Members\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Members\Model\Classes\Exceptions\ProfileException;
+use Members\Form\CreateAlbumForm;
+use Members\Model\Classes\Exceptions\PhotoAlbumException;
 class ProfileController extends AbstractActionController
 {
 
@@ -42,15 +44,13 @@ class ProfileController extends AbstractActionController
     }
 
 
-
-
     public function uploadfileAction()
     {
         if ($this->request->isPost()) {
             if (!empty($_FILES[$this->identity()])) {
                 $file_info = array();
                 
-                // make directory if it doesnt exist
+                // make directory if it doesn't exist
                 if (!is_dir(getcwd() . '/public/images/profile/' . $this->identity())) {
                     mkdir(getcwd() . '/public/images/profile/' . $this->identity(), 0777);
                     mkdir(getcwd() . '/public/images/profile/' . $this->identity() . '/current');
@@ -118,6 +118,51 @@ class ProfileController extends AbstractActionController
                 }
             }
         }
+    }
+    
+    
+    public function makephotoalbumAction()
+    {
+        $form = new CreateAlbumForm('create-album');
+        
+        $request = $this->getRequest();
+        
+        if ($request->isPost()) {
+            $files = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
+            
+            $form->setData($files);
+            
+            if ($form->isValid()) {
+                $data = $form->getData();
+                try {
+                    
+                    $this->flashMessenger()->addSuccessMessage("Photo album was created successfully!");
+                    
+                    return $this->redirect()->toUrl('photo-album-created-success');
+                } catch (PhotoAlbumException $e) {
+                    $this->flashMessenger()->addErrorMessage((string)$e->getMessage());
+                    
+                    return $this->redirect()->toUrl('photo-album-created-failure');
+                } 
+            }
+        }
+        
+        return new ViewModel(array('form' => $form));
+    }
+    
+    
+    public function photoalbumcreatedsuccessAction()
+    {
+        return;
+    }
+    
+    
+    public function photoalbumcreatedfailureAction()
+    {
+        return;
     }
 
 
@@ -536,6 +581,9 @@ class ProfileController extends AbstractActionController
 
         return $view_model;
     }
+    
+    
+   
 
 
 
