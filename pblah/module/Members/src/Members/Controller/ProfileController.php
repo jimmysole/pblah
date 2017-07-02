@@ -125,13 +125,20 @@ class ProfileController extends AbstractActionController
     {
         $form = new CreateAlbumForm('create-album');
         
+        return new ViewModel(array('form' => $form));
+    }
+    
+    public function mphotoalbumAction()
+    {
+        $form = new CreateAlbumForm();
+        
         $request = $this->getRequest();
         
         if ($request->isPost()) {
             $files = array_merge_recursive(
                 $request->getPost()->toArray(),
                 $request->getFiles()->toArray()
-            );
+                );
             
             $form->setData($files);
             
@@ -146,13 +153,10 @@ class ProfileController extends AbstractActionController
                     $this->flashMessenger()->addErrorMessage((string)$e->getMessage());
                     
                     return $this->redirect()->toUrl('photo-album-created-failure');
-                } 
+                }
             }
         }
-        
-        return new ViewModel(array('form' => $form));
     }
-    
     
     public function photoalbumcreatedsuccessAction()
     {

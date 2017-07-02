@@ -67,7 +67,69 @@
 					<div class="w3-container w3-padding">
 						<p>Create album here</p>
 
-						<p>ewwwahrwsdfhfdhfdshfdzshfdshjreerhjerhjdrfxzhjdfjsdfjhdfsjhxdfx</p>
+						<p>
+							<?php 
+							    $this->form->setAttribute('action', $this->url('members/profile', array('action' => 'mphotoalbum')));
+							    
+							    $this->form->prepare();
+							    
+							    echo $this->form()->openTag();
+							?>
+							
+							<br>
+							
+							<?php 
+							      echo $this->formRow($this->form->get('album-name'));
+							      
+							      echo "<div id=\"album-name-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+			                         <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+			                             &times;
+			                         </span>
+			                      ";
+							      
+							      echo "<p>Photo Album Name cannot be empty.</p>";
+							      
+							      echo "</div>";
+							      
+							      echo "<div id=\"album-size-error\" class=\"w3-panel w3-red w3-card-2\" style=\"display: none;\">
+						             <span onclick=\"this.parentElement.style.display='none'\" class=\"w3-button w3-red w3-large w3-right w3-hover-red\">
+						                 &times;
+						             </span>
+						          ";
+							      
+							      echo "<p>Photo Album Name size must be between 10 and 100 characters.</p>";
+							      
+							      echo "</div>";
+							      
+							      echo "<br>";
+							      
+							      echo $this->formRow($this->form->get('photos'));
+							      
+							      echo $this->formElement($this->form->get('csrf_security'));
+							      
+							      echo "<br><br>";
+							      
+							      echo $this->formElement($this->form->get('submit'));
+							      
+							      echo $this->form()->closeTag();
+							?>
+						</p>
+						
+						<script type="text/javascript">
+							$('#album-name').on('blur', function() {
+								if ($(this).val() == "" || $(this).val() == undefined) {
+									$('#album-name-error').css('display', 'block');
+									$(this).focus();
+									return;
+								}
+
+								if ($(this).val().length < 10 || $(this).val().length > 100) {
+									$('#album-size-error').css('display', 'block');
+									$(this).focus();
+									return;
+								}
+							});
+						</script>
 					</div>
 				</div>
 			</div>
