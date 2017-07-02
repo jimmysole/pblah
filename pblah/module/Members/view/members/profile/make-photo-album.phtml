@@ -73,7 +73,7 @@
 							    
 							    $this->form->prepare();
 							    
-							    echo $this->form()->openTag();
+							    echo $this->form()->openTag($this->form);
 							?>
 							
 							<br>
@@ -130,6 +130,7 @@
 								}
 							});
 
+							
 							$('#submit').on('click', function(e) {
 								if ($('#album-name').val() == "" || $('#album-name').val() == undefined) {
 									e.preventDefault();
@@ -144,7 +145,7 @@
 									$('#album-name').focus();
 									return;
 								}
-							});
+							}); 
 						</script>
 					</div>
 				</div>

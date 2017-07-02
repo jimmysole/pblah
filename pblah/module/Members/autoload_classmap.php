@@ -10,6 +10,7 @@ return array(
     'Members\Model\Classes\GroupManager'                     => __DIR__ . '/src/Members/Model/Classes/GroupManager.php',
     'Members\Model\Classes\GroupMembersOnline'               => __DIR__ . '/src/Members/Model/Classes/GroupMembersOnline.php',
     'Members\Model\Classes\JoinGroup'                        => __DIR__ . '/src/Members/Model/Classes/JGroup.php',
+    'Members\Model\Classes\PhotoAlbum'                       => __DIR__ . '/src/Members/Model/Classes/PhotoAlbum.php',
     
 
     'Members\Model\Classes\Exceptions\GroupsExceptions'            => __DIR__ . '/src/Members/Model/Classes/Exceptions/GroupsException.php',

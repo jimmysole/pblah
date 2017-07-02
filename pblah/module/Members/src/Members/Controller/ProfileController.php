@@ -3,9 +3,14 @@ namespace Members\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+
 use Members\Model\Classes\Exceptions\ProfileException;
-use Members\Form\CreateAlbumForm;
 use Members\Model\Classes\Exceptions\PhotoAlbumException;
+
+use Members\Form\CreateAlbumForm;
+
+
+
 class ProfileController extends AbstractActionController
 {
 
@@ -123,10 +128,11 @@ class ProfileController extends AbstractActionController
     
     public function makephotoalbumAction()
     {
-        $form = new CreateAlbumForm('create-album');
+        $form = new CreateAlbumForm();
         
         return new ViewModel(array('form' => $form));
     }
+    
     
     public function mphotoalbumAction()
     {

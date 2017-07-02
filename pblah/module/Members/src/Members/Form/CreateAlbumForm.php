@@ -13,7 +13,7 @@ class CreateAlbumForm extends Form
 {
     public function __construct($name = null)
     {
-        parent::__construct('p-blah_create-album');
+        parent::__construct('pblah-create-album');
         
         // set the attributes for the form
         $this->setAttribute('method', 'post')
