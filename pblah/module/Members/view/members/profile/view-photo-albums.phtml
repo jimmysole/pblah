@@ -1,0 +1,82 @@
+<div class="w3-row">
+	<!-- left col -->
+	<div class="w3-col m3">
+		<!-- group members currently online col (left) -->
+		<div class="w3-card-2 w3-round w3-theme-d2">
+			<div class="w3-container w3-round w3-theme-d2">
+				<h6 class="w3-center" style="border-bottom: 1px solid #ddd;">Group
+					Members Online</h6>
+
+				<p id="members-online"></p>
+
+				<script type="text/javascript">
+					$(function() {
+						 function buildOnlineMemberList() {
+							$.ajax({
+								type: "GET",
+							    url: "/members/groups/get-group-members-online",
+							    dataType: "json"
+							}).done(function(msg) {
+								if (msg.display_name == "" || msg.display_name == undefined) {
+									$('#members-online').html("No group members are online.");
+									return false;
+								} else {
+							    	var displayNames = msg.display_name.join('<br />');
+							    	$("#members-online").html(displayNames);
+								}
+							}).fail(function() {
+							   		$('#members-online').html("Error retrieving group list.");
+							});
+						 }
+
+						 setInterval(function() {
+						  	buildOnlineMemberList();
+						 }, 5000);
+
+					     buildOnlineMemberList();
+					});
+				</script>
+			</div>
+		</div>
+
+		<br> <br>
+		<div class="w3-card-2 w3-round w3-theme-d2">
+			<div class="w3-container w3-round w3-theme-d2">
+				<h6 class="w3-center" style="border-bottom: 1px solid #ddd;">Photo
+					Options</h6>
+				<p class="w3-left">
+					<a
+						href="<?php echo $this->url('members/profile', array('action' => 'add-photos')); ?>">Add
+						Photos</a> <br> <a
+						href="<?php echo $this->url('members/profile', array('action' => 'edit-photos')); ?>">Edit
+						Photos</a> <br> <a
+						href="<?php echo $this->url('members/profile', array('action' => 'remove-photos')); ?>">Remove
+						Photos</a>
+				</p>
+			</div>
+		</div>
+	</div>
+<!-- end left col -->
+
+<!-- mid col -->
+<div class="w3-col m7">
+	<div class="w3-row-padding">
+		<div class="w3-col m12">
+			<div class="w3-card-2 w3-round w3-white">
+				<div class="w3-container w3-padding" id="view-photo-albums">
+					<p class="w3-center">Current Albums</p>
+					<br>
+						<?php
+    foreach ($this->album as $albums) :
+        ?>
+						<div class="w3-half">
+							<?php echo $albums; ?> - Number of images: <?php echo $this->files; ?>
+						</div>
+						<?php endforeach; ?>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end mid col -->
+</div>
