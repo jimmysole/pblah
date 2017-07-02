@@ -129,6 +129,22 @@
 									return;
 								}
 							});
+
+							$('#submit').on('click', function(e) {
+								e.preventDefault();
+								
+								if ($('#album-name').val() == "" || $('#album-name').val() == undefined) {
+									$('#album-name-error').css('display', 'block');
+									$('#album-name').focus();
+									return;
+								}
+
+								if ($('#album-name').val().length < 10 || $('#album-name').val().length > 100) {
+									$('#album-size-error').css('display', 'block');
+									$('#album-name').focus();
+									return;
+								}
+							});
 						</script>
 					</div>
 				</div>
