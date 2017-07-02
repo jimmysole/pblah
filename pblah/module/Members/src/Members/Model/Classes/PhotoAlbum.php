@@ -326,7 +326,7 @@ class PhotoAlbum extends Profile
             // remove the files inside the directory
             // since PHP won't allow rmdir() to remove a directory unless it is empty
             foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..')) as $values) {
-                unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, $values);
+                unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '/' . $values);
             }
             
             // now remove the directory
