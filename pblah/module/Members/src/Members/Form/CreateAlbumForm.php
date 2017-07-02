@@ -44,7 +44,7 @@ class CreateAlbumForm extends Form
             'name' => 'photos',
             'type' => File::class,
             'options' => array(
-                'label' => 'Add photos',
+                'label' => 'Album photos',
                 'label_attributes' => array(
                     'class' => 'w3-label w3-left',
                 ),
