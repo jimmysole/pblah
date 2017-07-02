@@ -131,15 +131,15 @@
 							});
 
 							$('#submit').on('click', function(e) {
-								e.preventDefault();
-								
 								if ($('#album-name').val() == "" || $('#album-name').val() == undefined) {
+									e.preventDefault();
 									$('#album-name-error').css('display', 'block');
 									$('#album-name').focus();
 									return;
 								}
 
 								if ($('#album-name').val().length < 10 || $('#album-name').val().length > 100) {
+									e.preventDefault();
 									$('#album-size-error').css('display', 'block');
 									$('#album-name').focus();
 									return;
