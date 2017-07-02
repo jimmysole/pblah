@@ -5,6 +5,7 @@ namespace Members\Model;
 use Zend\Db\TableGateway\TableGateway;
 
 use Members\Model\Classes\Profile;
+use Members\Model\Classes\PhotoAlbum;
 
 
 
@@ -130,5 +131,20 @@ class ProfileModel extends Profile
         }
 
         return false;
+    }
+    
+    
+    /**
+     * Makes a photo album
+     * @param mixed $album_name
+     * @param array $album_photos
+     * @param string $location
+     * @return boolean
+     */
+    public function makePhotoAlbum($album_name, array $album_photos, $location = "")
+    {
+        $photo_album = new PhotoAlbum($album_name, $album_photos, $location);
+        
+        return $photo_album->createAlbum();
     }
 }

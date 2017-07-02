@@ -38,7 +38,7 @@ class PhotoAlbum extends Profile
     
     
     /**
-     * @var Closure
+     * @var array
      */
     protected $album_photo_holder;
     
@@ -63,32 +63,26 @@ class PhotoAlbum extends Profile
         
         $this->location = !empty($location) ? $location : null;
         
-        // this closure will bind to $_FILES
-        $this->album_photo_holder = function() use ($album_photos) {
-            if (count($album_photos) > 0) {
-                foreach ($album_photos as $key => $value) {
-                    $this->album_photos[$key] = $value;
-                }
-                
-                return $this->album_photos;
-            } else {
-                return false;
-            }
-        };
+        foreach ($album_photos as $key => $values) {
+            $this->album_photo_holder[$key] = $values;
+        }
+        
+       
     }
     
     
     /**
      * Creates a photo album 
      * @throws PhotoAlbumException
-     * @return string
+     * @return boolean
      */
-    protected function createAlbum()
+    public function createAlbum()
     {
+        //var_dump($this->album_photo_holder['photos']); exit;
         // first check if a location was provided
         $write_location = function() {
             if (null !== $this->location) {
-                file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . 'location.txt', $this->location);
+                file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/location.txt', $this->location);
                 
                 return true;
             } else {
@@ -106,7 +100,7 @@ class PhotoAlbum extends Profile
         // and then create a directory with the album name
         // and upload the photos
         if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser())) {
-            mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date, 0777);
+            @mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date, 0777);
             
             // write the htaccess file
             $server_name = str_replace(array('https', 'http', 'www'), '', $_SERVER['SERVER_NAME']); // only need the actual server name, not the protocols or www
@@ -122,38 +116,35 @@ class PhotoAlbum extends Profile
             
             
             // handle the photos now
-            if (count($this->album_photo_holder(), 1) > 1) {
-                // call $write_location() for location tagging of album (if provided)
+            if (count($this->album_photo_holder, 1) > 1) {
+                // location tagging of album (if provided)
                 $write_location();
                 
                 // multiple photos
-                $this->album_photo_count = count($this->album_photo_holder());
-                
-                for ($i=0; $i<count($this->album_photo_count); $i++) {
-                    $file = $this->album_photo_holder()['photos']['name'][$i];
+                foreach ($this->album_photo_holder['photos'] as $key => $value) {
+                    $file = $value['name']; 
+                    $temp = $value['tmp_name']; 
                     
                     $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file;
                     
-                    move_uploaded_file($this->album_photo_holder()['photos']['tmp_name'], 
-                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name .  '_' . $this->album_created_date . '/' . $this->album_photo_holder()['photos']['name']);
+                    move_uploaded_file($temp, 
+                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name .  '_' . $this->album_created_date . '/' . $file);
                 }
                 
-                // return the file information in json format
-                return json_encode($file_info);
-            } else if (count($this->album_photo_holder(), 1) == 1) {
-                // call $write_location() for location tagging of album (if provided)
+                return true;
+            } else if (count($this->album_photo_holder, 1) == 1) {
+                // location tagging of album (if provided)
                 $write_location();
                 
                 // single photo
-                $file_name = $this->album_photo_holder()['photos']['name'];
+                $file_name = $this->album_photo_holder['photos'][0]['name'];
                 
                 $file_info[$file_name] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file_name;
                 
-                move_uploaded_file($this->album_photo_holder()['photos']['tmp_name'],
-                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['photos']['name']);
+                move_uploaded_file($this->album_photo_holder['photos'][0]['tmp_name'],
+                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $file_name);
                 
-                // return the file information in json format
-                return json_encode($file_info);
+                return true;
             } else {
                 throw new PhotoAlbumException("Error processing uploaded photos, please make sure you chose one or more to be uploaded.");
             }
@@ -175,36 +166,33 @@ class PhotoAlbum extends Profile
             
             
             // handle the photos now
-            if (count($this->album_photo_holder(), 1) > 1) {
-                // call $write_location() for location tagging of album (if provided)
+            if (count($this->album_photo_holder, 1) > 1) {
+                // location tagging of album (if provided)
                 $write_location();
                 
                 // multiple photos
-                $this->album_photo_count = count($this->album_photo_holder());
-                
-                for ($i=0; $i<count($this->album_photo_count); $i++) {
-                    $file = $this->album_photo_holder()['photos']['name'][$i];
+                foreach ($this->album_photo_holder['photos'] as $key => $value) {
+                    $file = $value['name'];
+                    $temp = $value['tmp_name'];
                     
                     $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file;
                     
-                    move_uploaded_file($this->album_photo_holder()['tmp_name'],
-                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['photos']['name']);
+                    move_uploaded_file($temp,
+                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name .  '_' . $this->album_created_date . '/' . $file);
                 }
                 
-                // return the file information in json format
-                return json_encode($file_info);
-            } else if (count($this->album_photo_holder(), 1) == 1) {
-                // call $write_location() for location tagging of album (if provided)
+                return true;
+            } else if (count($this->album_photo_holder, 1) == 1) {
+                // location tagging of album (if provided)
                 $write_location();
                 
                 // single photo
-                $file_name = $this->album_photo_holder()['photos']['name'];
+                $file_name = $this->album_photo_holder['photos'][0]['name'];
                 
-                move_uploaded_file($this->album_photo_holder()['tmp_name'],
-                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $this->album_photo_holder()['photos']['name']);
+                move_uploaded_file($this->album_photo_holder['photos'][0]['tmp_name'],
+                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $file_name);
                 
-                // return the file information in json format
-                return json_encode($file_info);
+                return true;
             } else {
                 throw new PhotoAlbumException("Error processing uploaded photos, please make sure you chose one or more to be uploaded.");
             }

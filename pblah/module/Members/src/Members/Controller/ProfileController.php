@@ -136,30 +136,24 @@ class ProfileController extends AbstractActionController
     
     public function mphotoalbumAction()
     {
-        $form = new CreateAlbumForm();
-        
         $request = $this->getRequest();
         
         if ($request->isPost()) {
-            $files = array_merge_recursive(
-                $request->getPost()->toArray(),
-                $request->getFiles()->toArray()
-                );
-            
-            $form->setData($files);
-            
-            if ($form->isValid()) {
-                $data = $form->getData();
-                try {
+            try {
+               $params = $this->params()->fromPost();
+               $files = $this->params()->fromFiles();
+               
+               // var_dump($files); exit;
+               
+               if ($this->getProfileService()->makePhotoAlbum($params['album-name'], $files, $params['location'])) {
+                   $this->flashMessenger()->addSuccessMessage("Photo album was created successfully!");
+                   
+                   return $this->redirect()->toUrl('photo-album-created-success');
+               } 
+            } catch (PhotoAlbumException $e) {
+                $this->flashMessenger()->addErrorMessage((string)$e->getMessage());
                     
-                    $this->flashMessenger()->addSuccessMessage("Photo album was created successfully!");
-                    
-                    return $this->redirect()->toUrl('photo-album-created-success');
-                } catch (PhotoAlbumException $e) {
-                    $this->flashMessenger()->addErrorMessage((string)$e->getMessage());
-                    
-                    return $this->redirect()->toUrl('photo-album-created-failure');
-                }
+                return $this->redirect()->toUrl('photo-album-created-failure');
             }
         }
     }

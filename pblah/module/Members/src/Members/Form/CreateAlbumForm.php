@@ -58,6 +58,25 @@ class CreateAlbumForm extends Form
         ));
         
         
+        $this->add(array(
+            'name' => 'location',
+            'type' => Text::class,
+            'options' => array(
+                'label' => 'Location',
+                'label_attributes' => array(
+                    'class' => 'w3-label w3-left',
+                ),
+            ),
+            
+            'attributes' => array(
+                'placeholder'  => 'Location',
+                'id'           => 'location',
+                'class'        => 'w3-input w3-border w3-round',
+                'autocomplete' => 'new-location', // google chrome hack
+            ),
+        ));
+        
+        
         $this->add(new Csrf('csrf_security'));
         
         
