@@ -82,7 +82,7 @@ class PhotoAlbum extends Profile
         // first check if a location was provided
         $write_location = function() {
             if (null !== $this->location) {
-                file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/location.txt', $this->location);
+                file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '_' . $this->album_created_date . '/location.txt', $this->location);
                 
                 return true;
             } else {
@@ -100,7 +100,7 @@ class PhotoAlbum extends Profile
         // and then create a directory with the album name
         // and upload the photos
         if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser())) {
-            @mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date, 0777);
+            @mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '_' . $this->album_created_date, 0777);
             
             // write the htaccess file
             $server_name = str_replace(array('https', 'http', 'www'), '', $_SERVER['SERVER_NAME']); // only need the actual server name, not the protocols or www
@@ -112,7 +112,7 @@ class PhotoAlbum extends Profile
                 RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$server_name [NC]
                 RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]";
             
-            file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/.htaccess', $data);
+            file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '_' . $this->album_created_date . '/.htaccess', $data);
             
             
             // handle the photos now
@@ -125,10 +125,10 @@ class PhotoAlbum extends Profile
                     $file = $value['name']; 
                     $temp = $value['tmp_name']; 
                     
-                    $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file;
+                    $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/albums' . $this->album_name . '_' . $this->album_created_date . $file;
                     
                     move_uploaded_file($temp, 
-                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name .  '_' . $this->album_created_date . '/' . $file);
+                        getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name .  '_' . $this->album_created_date . '/' . $file);
                 }
                 
                 return true;
@@ -139,10 +139,10 @@ class PhotoAlbum extends Profile
                 // single photo
                 $file_name = $this->album_photo_holder['photos'][0]['name'];
                 
-                $file_info[$file_name] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file_name;
+                $file_info[$file_name] = getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '_' . $this->album_created_date . $file_name;
                 
                 move_uploaded_file($this->album_photo_holder['photos'][0]['tmp_name'],
-                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $file_name);
+                    getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '_' . $this->album_created_date . '/' . $file_name);
                 
                 return true;
             } else {
@@ -150,7 +150,7 @@ class PhotoAlbum extends Profile
             }
         } else {
             mkdir(getcwd() . '/public/images/profile/' . parent::getUser(), 0777);
-            mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date, 0777);
+            mkdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '_' . $this->album_created_date, 0777);
             
             // write the htaccess file
             $server_name = str_replace(array('https', 'http', 'www'), '', $_SERVER['SERVER_NAME']); // only need the actual server name, not the protocols or www
@@ -162,7 +162,7 @@ class PhotoAlbum extends Profile
             RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$server_name [NC]
             RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]";
             
-            file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/.htaccess', $data);
+            file_put_contents(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '_' . $this->album_created_date . '/.htaccess', $data);
             
             
             // handle the photos now
@@ -175,10 +175,10 @@ class PhotoAlbum extends Profile
                     $file = $value['name'];
                     $temp = $value['tmp_name'];
                     
-                    $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . $file;
+                    $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '_' . $this->album_created_date . $file;
                     
                     move_uploaded_file($temp,
-                        getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name .  '_' . $this->album_created_date . '/' . $file);
+                        getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name .  '_' . $this->album_created_date . '/' . $file);
                 }
                 
                 return true;
@@ -190,7 +190,7 @@ class PhotoAlbum extends Profile
                 $file_name = $this->album_photo_holder['photos'][0]['name'];
                 
                 move_uploaded_file($this->album_photo_holder['photos'][0]['tmp_name'],
-                    getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name . '_' . $this->album_created_date . '/' . $file_name);
+                    getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '_' . $this->album_created_date . '/' . $file_name);
                 
                 return true;
             } else {
@@ -322,15 +322,15 @@ class PhotoAlbum extends Profile
      */
     public function deleteAlbum()
     {
-        if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name)) {
+        if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name)) {
             // remove the files inside the directory
             // since PHP won't allow rmdir() to remove a directory unless it is empty
-            foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name, 1), array('.', '..')) as $values) {
-                unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name, $values);
+            foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..')) as $values) {
+                unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, $values);
             }
             
             // now remove the directory
-            if (rmdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/' . $this->album_name)) {
+            if (rmdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name)) {
                 // directory removed
                 return true;
             } else {
@@ -339,5 +339,18 @@ class PhotoAlbum extends Profile
         } else {
             throw new PhotoAlbumException("Photo album does not exist.");
         }
+    }
+    
+    
+    public function viewPhotoAlbums()
+    {
+        if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums')) {
+            // show all the photo album directories
+            foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums', 1), array('.', '..')) as $values) {
+                
+            }
+        }
+        
+        return false;
     }
 }

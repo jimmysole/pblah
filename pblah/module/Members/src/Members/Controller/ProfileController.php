@@ -143,8 +143,6 @@ class ProfileController extends AbstractActionController
                $params = $this->params()->fromPost();
                $files = $this->params()->fromFiles();
                
-               // var_dump($files); exit;
-               
                if ($this->getProfileService()->makePhotoAlbum($params['album-name'], $files, $params['location'])) {
                    $this->flashMessenger()->addSuccessMessage("Photo album was created successfully!");
                    
@@ -167,6 +165,25 @@ class ProfileController extends AbstractActionController
     public function photoalbumcreatedfailureAction()
     {
         return;
+    }
+    
+    
+    public function viewphotoalbumsAction()
+    {
+        $identity = $this->identity();
+        
+        foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
+            $dirname[] = basename($dir);
+            
+            $files = count(glob($dir . '/*.jpg'));
+        }
+        
+        $data = array(
+            'albums' => array_values($dirname),
+            'files'  => $files,
+        );
+        
+        return new ViewModel(array('album' => $data['albums'], 'files' => $data['files']));
     }
 
 
