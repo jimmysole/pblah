@@ -67,11 +67,12 @@
 					<p class="w3-center">Current Albums</p>
 					<br>
 						<?php
-    foreach ($this->album as $albums) :
-        ?>
-						<div class="w3-half">
-							<?php echo $albums; ?> - Number of images: <?php echo $this->files; ?>
-						</div>
+						foreach ($this->files as $album_name => $list_files):
+						?>
+						<p>
+						
+							<?php echo $album_name; ?> - Number of images: <?php echo count($list_files); ?>
+						</p>
 						<?php endforeach; ?>
 					</div>
 			</div>

@@ -31,7 +31,7 @@ class ProfileController extends AbstractActionController
 
         $params = $this->identity();
 
-        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess'));
+        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums'));
 
         if (count($dir) > 0) {
             $images = array();
@@ -156,6 +156,7 @@ class ProfileController extends AbstractActionController
         }
     }
     
+    
     public function photoalbumcreatedsuccessAction()
     {
         return;
@@ -171,19 +172,15 @@ class ProfileController extends AbstractActionController
     public function viewphotoalbumsAction()
     {
         $identity = $this->identity();
+        $files = array();
         
         foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
-            $dirname[] = basename($dir);
+            $album_name = basename($dir);
             
-            $files = count(glob($dir . '/*.jpg'));
+            $files[$album_name] = glob($dir . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE);
         }
         
-        $data = array(
-            'albums' => array_values($dirname),
-            'files'  => $files,
-        );
-        
-        return new ViewModel(array('album' => $data['albums'], 'files' => $data['files']));
+        return new ViewModel(array('files' => $files));
     }
 
 
