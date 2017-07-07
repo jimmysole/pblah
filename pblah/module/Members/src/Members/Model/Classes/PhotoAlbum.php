@@ -306,7 +306,7 @@ class PhotoAlbum extends Profile
                 }
             } else if ($this->album_edits['add_photos']) {
                 
-            } else if ($this->album_Edits['remove_photos']) {
+            } else if ($this->album_edits['remove_photos']) {
                 
             }
         } else {

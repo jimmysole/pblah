@@ -55,12 +55,12 @@ class AddPhotosPhotoAlbum
      */
     public function addPhotos()
     {
-        if (is_uploaded_file($this->photos['files'])) {
+        if (is_uploaded_file($this->photos['file']['tmp_name'])) {
             foreach ($this->photos['file']['error'] as $key => $error) {
                 if ($error == UPLOAD_ERR_OK) {
                     $file_name = basename($this->photos['file']['name'][$key]);
                     
-                    if (move_uploaded_file($this->photos['file']['tmp_name'], getcwd() . '/public/images/profile/' . Profile::getUser() . '/' . $this->album_name . '/' . $file_name)) {
+                    if (move_uploaded_file($this->photos['file']['tmp_name'], getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/' . $this->album_name . '/' . $file_name)) {
                         return self::ADD_PHOTO_ALBUM_SUCCESS;
                     } else {
                         throw new PhotoAlbumException(self::ADD_PHOTO_ALBUM_FAILURE);
