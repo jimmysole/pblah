@@ -47,60 +47,82 @@
 				<p class="w3-left">
 					<a
 						href="<?php echo $this->url('members/profile', array('action' => 'add-photos')); ?>">Add
-						Photos</a> <br> 
-					<a
+						Photos</a> <br> <a
 						href="<?php echo $this->url('members/profile', array('action' => 'edit-photos')); ?>">Edit
-						Photos</a> <br> 
-					<a
-						href="<?php echo $this->url('members/profile', array('action' => 'remove-photos')); ?>">Remove
-						Photos</a> <br>
-						
-					<a 
-						href="<?php echo $this->url('members/profile', array('action' => 'remove-photo-album')); ?>">Remove 
-						Photo Album</a> <br>
-						
-					<a
+						Photos</a> <br> <a
+						href="<?php echo $this->url('members/profile', array('action' => 'view-photo-albums')); ?>">View
+						Photos</a> <br> <a
 						href="<?php echo $this->url('members/profile', array('action' => 'make-photo-album')); ?>">Create
 						a Photo Album</a> <br>
 				</p>
 			</div>
 		</div>
 	</div>
-<!-- end left col -->
+	<!-- end left col -->
 
-<!-- mid col -->
-<div class="w3-col m7">
-	<div class="w3-row-padding">
-		<div class="w3-col m12">
-			<div class="w3-card-2 w3-round w3-white">
-				<div class="w3-container w3-padding" id="view-photo-albums">
-					<p class="w3-center">Current Albums</p>
-					<br>
-						<div class="w3-responsive w3-padding">
+	<!-- mid col -->
+	<div class="w3-col m7">
+		<div class="w3-row-padding">
+			<div class="w3-col m12">
+				<div class="w3-card-2 w3-round w3-white">
+					<div class="w3-container w3-padding" id="view-photo-albums">
+						<p class="w3-center">Current Albums (click to remove)</p>
+						<br>
+						<div class="w3-responsive w3-padding" id="albums">
+							<form>
 								<table class="w3-table-all">
 									<tr>
 										<th>Album Name</th>
 										<th># of Photos</th>
+										<th></th>
 									</tr>
 								
 								<?php
         $i = 1;
-        foreach ($this->files as $album_name => $list_files) :
+        foreach ($this->photo_albums as $album_name => $list_files) :
             ?>
 							
 								<tr>
 									<td id="aid_<?php echo $i++; ?>"><?php echo $album_name; ?></td>
 									<td><?php echo count($list_files);?></td>
+									<td><input class="w3-check" type="checkbox" name="remove"
+										id="remove_<?php echo $album_name; ?>" onclick="removeAlbum(this);"
+										style="position: relative; top: -2px;"></td>
 
 								</tr>
 								
 								<?php endforeach; ?>
 							</table>
+							
+							<script type="text/javascript">
+								function removeAlbum(element) {
+									if (confirm("Are you sure you want to delete this album?")) {
+										$.ajax({
+											method: "POST",
+											url: "/members/profile/remove-album",
+											data: {
+												album : element.id
+											}
+										}).done(function() {
+											// album removed
+											// reload the albums
+											alert("Album deleted");
+											location.reload();
+										}).fail(function() {
+											alert("Error removing photo album, please try again.")
+										});
+									} else {
+										return;
+									}
+								}
+							</script>
+							</form>
 						</div>
+
 					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<!-- end mid col -->
+	<!-- end mid col -->
 </div>
