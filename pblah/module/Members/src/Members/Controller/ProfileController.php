@@ -173,6 +173,7 @@ class ProfileController extends AbstractActionController
     {
         $identity = $this->identity();
         $files = array();
+        $album_name = array();
         
         foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
             $album_name = basename($dir);
@@ -182,9 +183,46 @@ class ProfileController extends AbstractActionController
         
         return new ViewModel(array('files' => $files));
     }
+    
+    
+    public function removephotoalbumAction()
+    {
+        $identity = $this->identity();
+        $files = array();
+        $album_name = array();
+        
+        foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
+            $album_name = basename($dir);
+            
+            $files[$album_name] = glob($dir . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE);
+        }
+        
+        return new ViewModel(array('photo_albums' => $files));
+    }
 
-
-
+    
+    public function removealbumAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        if ($this->request->isPost()) {
+            try {
+                $params = $this->params()->fromPost();
+                
+                $this->getProfileService()->deletePhotoAlbum(str_replace('remove_', '', $params['album']));
+            } catch (PhotoAlbumException $e) {
+                echo $e->getMessage();
+            }
+        }
+        
+        return $view_model;
+    }
+    
+    
     public function editprofileAction()
     {
         if (!$this->getProfileService()->checkIfProfileSet()) {

@@ -53,7 +53,7 @@ class RemovePhotosPhotoAlbum
      */
     public function removePhotos()
     {
-        foreach ($this->photos as $key => $value) {
+        foreach ($this->photos as $value) {
             unlink(getcwd() . '/public/images/profile/' . Profile::getUser() . '/album/' . $this->album_name . '/' . $value);
         }
     }

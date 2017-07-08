@@ -147,4 +147,25 @@ class ProfileModel extends Profile
         
         return $photo_album->createAlbum();
     }
+    
+    
+    /**
+     * Deletes a photo album 
+     * @param mixed $album_name
+     * @return boolean
+     */
+    public function deletePhotoAlbum($album_name)
+    {
+        $photo_album = new PhotoAlbum($album_name, array());
+        
+        return $photo_album->deleteAlbum();
+    }
+    
+    
+    public function getPhotoAlbums($album_name)
+    {
+        $photo_album = new PhotoAlbum($album_name, array());
+        
+        return $photo_album->getAlbums();
+    }
 }

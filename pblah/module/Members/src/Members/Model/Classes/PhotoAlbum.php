@@ -340,4 +340,36 @@ class PhotoAlbum extends Profile
             throw new PhotoAlbumException("Photo album does not exist.");
         }
     }
+    
+    
+    /**
+     * Gets a list of all albums
+     * @throws PhotoAlbumException
+     * @return array
+     */
+    public function getAlbums()
+    {
+        if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/')) {
+            // scan the albums directory
+            $files = array();
+            $album_name = array();
+            
+            foreach (glob(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/*', GLOB_ONLYDIR) as $dir) {
+                $album_name = basename($dir);
+                
+                $files[$album_name] = glob($dir . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE);
+            }
+            
+            // make sure there are values returned
+            if (count($dir) > 0) {
+                // directories found
+                // return them
+                return $files[$album_name];
+            } else {
+                throw new PhotoAlbumException("Error locating your photo album, please try again.");
+            }
+        } else {
+            throw new PhotoAlbumException("Photo album does not exist.");
+        }
+    }
 }
