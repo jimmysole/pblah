@@ -5,7 +5,7 @@ namespace Members\Model\Classes;
 use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
 
-class RemovePhotosPhotoAlbum
+class RemovePhotos
 {
     const REMOVE_PHOTO_ALBUM_SUCCESS = 'Photos successfully removed from your photo album.';
     

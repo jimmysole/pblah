@@ -5,7 +5,7 @@ namespace Members\Model\Classes;
 use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
 
-class AddPhotosPhotoAlbum
+class AddPhotos
 {
     const ADD_PHOTO_ALBUM_SUCCESS = 'Your photo album was successfully added to.';
     
