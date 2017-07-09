@@ -57,7 +57,7 @@ class PhotoAlbum extends Profile
      */
     public function __construct($album_name, array $album_photos, $location = "")
     {
-        $this->album_name = !empty($album_name) ? $album_name : null;
+        $this->album_name = !empty($album_name) ? str_replace("_", " ", $album_name) : null;
         
         $this->album_created_date =  date('Y-m-d', strtotime('now'));
         
