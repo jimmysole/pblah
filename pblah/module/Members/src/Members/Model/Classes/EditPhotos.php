@@ -3,7 +3,7 @@ namespace Members\Model\Classes;
 
 use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
-class EditPhotoAlbumPhotos
+class EditPhotos
 {
 
     const EDIT_PHOTO_ALBUM_SUCCESS = 'Your photo album was successfully edited.';
