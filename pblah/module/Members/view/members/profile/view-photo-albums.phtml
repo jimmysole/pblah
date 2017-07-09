@@ -80,16 +80,19 @@
 								<table class="w3-table-all">
 									<tr>
 										<th>Album Name</th>
+										<th>Created Date</th>
 										<th># of Photos</th>
 									</tr>
 								
 								<?php
         $i = 1;
-        foreach ($this->files as $album_name => $list_files) :
+        foreach ($this->files as $album_name => $list_files):
+            
             ?>
 							
 								<tr>
-									<td id="aid_<?php echo $i++; ?>"><?php echo $album_name; ?></td>
+									<td id="aid_<?php echo $i++; ?>"><?php echo strstr($album_name, '_', true); ?></td>
+									<td><?php echo substr(strrchr($album_name, "_"), 1); ?></td>
 									<td><?php echo count($list_files);?></td>
 
 								</tr>

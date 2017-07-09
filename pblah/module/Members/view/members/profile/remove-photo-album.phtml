@@ -81,6 +81,7 @@
 								<table class="w3-table-all">
 									<tr>
 										<th>Album Name</th>
+										<th>Created Date</th>
 										<th># of Photos</th>
 										<th>Delete</th>
 									</tr>
@@ -91,7 +92,8 @@
             ?>
 							
 								<tr>
-									<td id="aid_<?php echo $i++; ?>"><?php echo $album_name; ?></td>
+									<td id="aid_<?php echo $i++; ?>"><?php echo strstr($album_name, '_', true); ?></td>
+									<td><?php echo substr(strrchr($album_name, "_"), 1); ?>
 									<td><?php echo count($list_files);?></td>
 									<td><input class="w3-check" type="checkbox" name="remove"
 										id="remove_<?php echo $album_name; ?>" onclick="removeAlbum(this);"
