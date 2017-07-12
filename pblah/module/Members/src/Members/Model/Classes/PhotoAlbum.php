@@ -337,7 +337,7 @@ class PhotoAlbum extends Profile
     {
         $album_as_array = array_key_exists('album', $this->album_name) ? true : false;
         
-        // check if the album is an array
+        // delete albums
         if (false !== $album_as_array) {
             foreach ($this->album_name['album'] as $key => $values) {
                 if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . str_replace('remove_', '', $values) . '/')) {
@@ -358,28 +358,9 @@ class PhotoAlbum extends Profile
                     throw new PhotoAlbumException("Photo album does not exist.");
                 }
             }
-        } else {
-            // album is not array, just string
-            if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name)) {
-                // remove the files inside the directory
-                // since PHP won't allow rmdir() to remove a directory unless it is empty
-                foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..')) as $values) {
-                    unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '/' . $values);
-                }
             
-                // now remove the directory
-                if (rmdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name)) {
-                    // directory removed
-                    return true;
-                } else {
-                    throw new PhotoAlbumException("Error deleting your photo album, please try again.");
-                }
-            } else {
-                throw new PhotoAlbumException("Photo album does not exist.");
-            }
+            return true;
         }
-        
-        return true;
     }
     
     
