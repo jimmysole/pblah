@@ -63,7 +63,14 @@ class PhotoAlbum extends Profile
      */
     public function __construct($album_name, array $album_photos, $location = "")
     {
-        $this->album_name = !empty($album_name) ? $album_name : null;
+        if (is_array($album_name) && count($album_name, 1) > 0) {
+            foreach ($album_name as $key => $value) {
+                $this->album_name[$key] = $value;
+            }
+        } else {
+            // assume string
+            $this->album_name = $album_name;
+        }
         
         $this->album_created_date =  date('Y-m-d', strtotime('now'));
         
@@ -250,7 +257,7 @@ class PhotoAlbum extends Profile
                 if ($this->album_edits['edit_photo_album']['crop']) {
                     // crop the image, then save it
                     try {
-                        $crop_image = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date,
+                        $crop_image = (new EditPhotos($this->album_name . '_' . $this->album_created_date,
                             array('files' => $this->album_photo_holder()['name']), $this->album_edits['crop_image']))
                         ->cropImage()
                         ->saveImage();
@@ -266,7 +273,7 @@ class PhotoAlbum extends Profile
                 if ($this->album_edits['edit_photo_album']['blur']) {
                     // blur the image, then save it
                     try {
-                        $blur_image = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date,
+                        $blur_image = (new EditPhotos($this->album_name . '_' . $this->album_created_date,
                             array('files' => $this->album_photo_holder()['name']), $this->album_edits['blur_image']))
                         ->blurImage()
                         ->saveImage();
@@ -282,7 +289,7 @@ class PhotoAlbum extends Profile
                 if ($this->album_edits['edit_photo_album']['enhance_image']) {
                     // enhance the image, then save it
                     try {
-                        $enhance_image = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date,
+                        $enhance_image = (new EditPhotos($this->album_name . '_' . $this->album_created_date,
                             array('files' => $this->album_photo_holder()['name']), $this->album_edits['enhance_image']))
                         ->enhanceImage()
                         ->saveImage();
@@ -298,7 +305,7 @@ class PhotoAlbum extends Profile
                 if ($this->album_edits['edit_photo_album']['make_thumbnail']) {
                     // scale the image to thumbnail size, then save it
                     try {
-                        $make_thumbnail = (new EditPhotoAlbumPhotos($this->album_name . '_' . $this->album_created_date, 
+                        $make_thumbnail = (new EditPhotos($this->album_name . '_' . $this->album_created_date, 
                             array('files' => $this->album_photo_holder()['name']), $this->album_edits['crop']))
                         ->makeThumbnail()
                         ->saveImage();
@@ -328,23 +335,51 @@ class PhotoAlbum extends Profile
      */
     public function deleteAlbum()
     {
-        if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name)) {
-            // remove the files inside the directory
-            // since PHP won't allow rmdir() to remove a directory unless it is empty
-            foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..')) as $values) {
-                unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '/' . $values);
-            }
-            
-            // now remove the directory
-            if (rmdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name)) {
-                // directory removed
-                return true;
-            } else {
-                throw new PhotoAlbumException("Error deleting your photo album, please try again.");
+        $album_as_array = array_key_exists('album', $this->album_name) ? true : false;
+        
+        // check if the album is an array
+        if (false !== $album_as_array) {
+            foreach ($this->album_name['album'] as $key => $values) {
+                if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . str_replace('remove_', '', $values) . '/')) {
+                    // remove the files inside the directory
+                    // since PHP won't allow rmdir() to remove a directory unless it is empty
+                    foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . str_replace('remove_', '', $values) . '/', 1), array('.', '..')) as $files) {
+                        unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . str_replace('remove_', '', $values) . '/' . $files);
+                    }
+                    
+                    // now remove the directory
+                    if (rmdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . str_replace('remove_', '', $values) . '/')) {
+                        // directory removed
+                        continue;
+                    } else {
+                        throw new PhotoAlbumException("Error deleting your photo album, please try again.");
+                    }
+                } else {
+                    throw new PhotoAlbumException("Photo album does not exist.");
+                }
             }
         } else {
-            throw new PhotoAlbumException("Photo album does not exist.");
+            // album is not array, just string
+            if (is_dir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name)) {
+                // remove the files inside the directory
+                // since PHP won't allow rmdir() to remove a directory unless it is empty
+                foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..')) as $values) {
+                    unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '/' . $values);
+                }
+            
+                // now remove the directory
+                if (rmdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name)) {
+                    // directory removed
+                    return true;
+                } else {
+                    throw new PhotoAlbumException("Error deleting your photo album, please try again.");
+                }
+            } else {
+                throw new PhotoAlbumException("Photo album does not exist.");
+            }
         }
+        
+        return true;
     }
     
     

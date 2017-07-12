@@ -210,9 +210,9 @@ class ProfileController extends AbstractActionController
         
         if ($this->request->isPost()) {
             try {
-                $params = $this->params()->fromPost();
+                $params = $this->getRequest()->getPost()->toArray();
                 
-                $this->getProfileService()->deletePhotoAlbum(str_replace('remove_', '', $params['album']));
+                $this->getProfileService()->deletePhotoAlbum($params);
             } catch (PhotoAlbumException $e) {
                 echo $e->getMessage();
             }

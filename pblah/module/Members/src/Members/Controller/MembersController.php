@@ -21,7 +21,7 @@ class MembersController extends AbstractActionController
         
         $params = $this->identity();
 
-        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess'));
+        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums'));
 
         if (count($dir) > 0) {
             $images = array();

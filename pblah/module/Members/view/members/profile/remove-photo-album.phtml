@@ -74,10 +74,13 @@
 			<div class="w3-col m12">
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding" id="view-photo-albums">
+					   <?php if (count($this->photo_albums, 1) < 1): ?>
+					   	   <p class="w3-center">You currently have no albums.</p>
+					   <?php else: ?>
 						<p class="w3-center">Current Albums</p>
 						<br>
 						<div class="w3-responsive w3-padding" id="albums">
-							<form>
+							<form id="album-remove">
 								<table class="w3-table-all">
 									<tr>
 										<th>Album Name</th>
@@ -96,7 +99,7 @@
 									<td><?php echo substr(strrchr($album_name, "_"), 1); ?>
 									<td><?php echo count($list_files);?></td>
 									<td><input class="w3-check" type="checkbox" name="remove"
-										id="remove_<?php echo $album_name; ?>" onclick="removeAlbum(this);"
+										id="remove_<?php echo $album_name; ?>" 
 										style="position: relative; top: -2px;"></td>
 
 								</tr>
@@ -104,31 +107,45 @@
 								<?php endforeach; ?>
 							</table>
 							
+							<br>
+							
+							<div class="w3-right">
+								<button class="w3-button w3-round w3-theme-d2" id="remove-album" type="button">Remove Albums</button>
+							</div>
+							
+							
 							<script type="text/javascript">
-								function removeAlbum(element) {
-									if (confirm("Are you sure you want to delete this album?")) {
+							    $('#remove-album').on('click', function() {
+								    if (confirm("Are you sure you want to delete these albums?")) {
+									    var checked_values = [];
+									    
+								    	$('#album-remove :checked').each(function() {
+									    	checked_values.push($(this).attr('id'));
+										});
+
+										// console.log(checked_values);
+
+										
 										$.ajax({
 											method: "POST",
 											url: "/members/profile/remove-album",
 											data: {
-												album : element.id
+												album: checked_values
 											}
-										}).done(function() {
-											// album removed
-											// reload the albums
-											alert("Album deleted");
+										}).done(function(msg) {
+											alert("Album(s) deleted");
 											location.reload();
-										}).fail(function() {
-											alert("Error removing photo album, please try again.")
-										});
-									} else {
-										return;
-									}
-								}
+										}).fail(function(msg) {
+											alert(msg);
+										}); 
+								    } else {
+									    return;
+								    }
+							    });
 							</script>
 							</form>
 						</div>
-
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>
