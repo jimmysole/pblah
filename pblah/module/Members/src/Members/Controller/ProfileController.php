@@ -184,6 +184,12 @@ class ProfileController extends AbstractActionController
     }
     
     
+    public function addphotosAction()
+    {
+        
+    }
+    
+    
     public function removephotoalbumAction()
     {
         $identity = $this->identity();

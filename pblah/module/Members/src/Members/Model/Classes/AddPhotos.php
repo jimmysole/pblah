@@ -13,9 +13,16 @@ class AddPhotos
     
     
     /**
-     * @var mixed
+     * @var string
      */
     public $album_name;
+    
+    
+    /**
+     * 
+     * @var string
+     */
+    public $other_album;
     
     
     /**
@@ -30,7 +37,7 @@ class AddPhotos
      * @param array $photos
      * @throws PhotoAlbumException
      */
-    public function __construct($album_name, array $photos)
+    public function __construct($album_name, array $photos, $other_album = "")
     {
         try {
             if (!empty($album_name) && count($photos, 1) > 0) {
@@ -38,6 +45,10 @@ class AddPhotos
                 
                 foreach ($photos as $key => $value) {
                     $this->photos[$key] = $value;
+                }
+                
+                if ($other_album != "") {
+                    $this->other_album = $other_album;
                 }
             } else {
                 throw new PhotoAlbumException("Invalid photo album and/or photos provided, please fix this and try again.");
@@ -55,22 +66,34 @@ class AddPhotos
      */
     public function addPhotos()
     {
-        if (is_uploaded_file($this->photos['file']['tmp_name'])) {
-            foreach ($this->photos['file']['error'] as $key => $error) {
-                if ($error == UPLOAD_ERR_OK) {
-                    $file_name = basename($this->photos['file']['name'][$key]);
-                    
-                    if (move_uploaded_file($this->photos['file']['tmp_name'], getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/' . $this->album_name . '/' . $file_name)) {
-                        return self::ADD_PHOTO_ALBUM_SUCCESS;
-                    } else {
-                        throw new PhotoAlbumException(self::ADD_PHOTO_ALBUM_FAILURE);
-                    }
+        // first check to see if the album selected to add photos to is another album
+        // for example, a user wants to add photos from album 1 to album 2
+        if (@is_dir(getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/' . $this->other_album)) {
+            // copy the selected files to the other directory
+            $files = explode(" ", implode(" ", $this->photos));
+            
+            foreach ($files as $copy) {
+                if (!copy(getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/' . $this->album_name . '/' . $copy, 
+                    getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/' . $this->other_album . '/' . $copy)) {
+                    // error. move on to next element
+                    continue;
+                } 
+            }
+            
+            return self::ADD_PHOTO_ALBUM_SUCCESS;
+        } else {
+            // no other album was selected
+            // continue with adding photos to the selected album only
+            foreach ($this->photos as $value) {
+                if (is_uploaded_file($value[Profile::getUser()]['tmp_name'])) {
+                    move_uploaded_file($value[Profile::getUser()]['tmp_name'],
+                        getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/' . $this->album_name . '/' . $value[Profile::getUser()]['name']);
                 } else {
-                    throw new PhotoAlbumException($this->photos['file']['error']);
+                    throw new PhotoAlbumException(self::ADD_PHOTO_ALBUM_FAILURE);
                 }
             }
-        } else {
-            throw new PhotoAlbumException(self::ADD_PHOTO_ALBUM_FAILURE);
+            
+            return self::ADD_PHOTO_ALBUM_SUCCESS;
         }
     }
 }

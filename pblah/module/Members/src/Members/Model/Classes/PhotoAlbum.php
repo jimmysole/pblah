@@ -213,6 +213,17 @@ class PhotoAlbum extends Profile
     }
     
     
+    public function addPhotosToAlbum(array $photos)
+    {
+        foreach ($photos as $key => $value) {
+            $this->album_photos[$key] = $value;
+        }
+        
+        $add_photos = (new AddPhotos($this->filtered_album_name, $this->album_photos))->addPhotos();
+    }
+       
+    
+    
     /**
      * Allows various edits of the Photo Album
      * @param array $edits
@@ -350,6 +361,7 @@ class PhotoAlbum extends Profile
                     // now remove the directory
                     if (rmdir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . str_replace('remove_', '', $values) . '/')) {
                         // directory removed
+                        // continue until all albums are gone
                         continue;
                     } else {
                         throw new PhotoAlbumException("Error deleting your photo album, please try again.");
