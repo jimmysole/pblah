@@ -3,7 +3,6 @@
 namespace Members\Model\Classes;
 
 use Members\Model\Classes\Exceptions\PhotoAlbumException;
-use Members\Model\Classes\Exceptions\ProfileException;
 
 
 class PhotoAlbum extends Profile
@@ -226,11 +225,6 @@ class PhotoAlbum extends Profile
             foreach (glob(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/*', GLOB_ONLYDIR) as $dir) {
                 $replace[] = basename($dir);
             }
-            
-            // var_dump($other_album); return false;
-            
-            // var_dump($replace); return false;
-            
             
             if (in_array($other_album, $replace)) {
                 foreach (glob(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $other_album. '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE) as $files) {
