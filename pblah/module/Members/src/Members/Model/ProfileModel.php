@@ -162,10 +162,31 @@ class ProfileModel extends Profile
     }
     
     
+    
+    /**
+     * Gets all the photo album for the user
+     * @param sting $album_name
+     * @return array
+     */
     public function getPhotoAlbums($album_name)
     {
         $photo_album = new PhotoAlbum($album_name, array());
         
         return $photo_album->getAlbums();
+    }
+    
+    
+    /**
+     * Adds photos to albums
+     * @param string $album_name
+     * @param array $album_photos
+     * @param bool $other_album
+     * @return bool
+     */
+    public function addPhotosToAlbum($album_name, array $album_photos, $other_album = false)
+    {
+        $add_photos = new PhotoAlbum($album_name, $album_photos);
+        
+        return $add_photos->addPhotosToAlbum($album_name, $other_album);
     }
 }

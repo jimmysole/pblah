@@ -3,6 +3,7 @@
 namespace Members\Model\Classes;
 
 use Members\Model\Classes\Exceptions\PhotoAlbumException;
+use Members\Model\Classes\Exceptions\ProfileException;
 
 
 class PhotoAlbum extends Profile
@@ -52,7 +53,7 @@ class PhotoAlbum extends Profile
     /**
      * @var string
      */
-    private $filtered_album_name;
+    protected $filtered_album_name;
     
     
     /**
@@ -213,13 +214,46 @@ class PhotoAlbum extends Profile
     }
     
     
-    public function addPhotosToAlbum(array $photos)
+    public function addPhotosToAlbum($first_album, $other_album = false)
     {
-        foreach ($photos as $key => $value) {
-            $this->album_photos[$key] = $value;
-        }
+        $file_info = array();
         
-        $add_photos = (new AddPhotos($this->filtered_album_name, $this->album_photos))->addPhotos();
+        if ($other_album !== false) {
+            $replace = array();
+            
+            // check whether the other album exists
+            // if it does, copy the files from one album to the other album
+            foreach (glob(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/*', GLOB_ONLYDIR) as $dir) {
+                $replace[] = basename($dir);
+            }
+            
+            // var_dump($other_album); return false;
+            
+            // var_dump($replace); return false;
+            
+            
+            if (in_array($other_album, $replace)) {
+                foreach (glob(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $other_album. '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE) as $files) {
+                    copy($files, getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $first_album . '/' . substr(strrchr($files, '/'), 1));
+                }
+                
+                return true;
+            } else {
+                throw new PhotoAlbumException("Photo album was not found, please make sure it exists.");
+            }
+        } else {
+            // just copy to the one album
+            foreach ($this->album_photo_holder['photos'] as $key => $value) {
+                $file = $value['name'];
+                $temp = $value['tmp_name'];
+                
+                $file_info[$file] = getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $first_album . '/' . $file;
+            
+                move_uploaded_file($temp, $file_info[$file]);
+            }
+            
+            return true;
+        }
     }
        
     

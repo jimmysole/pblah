@@ -8,6 +8,7 @@ use Members\Model\Classes\Exceptions\ProfileException;
 use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
 use Members\Form\CreateAlbumForm;
+use Members\Form\AddPhotosForm;
 
 
 
@@ -186,7 +187,79 @@ class ProfileController extends AbstractActionController
     
     public function addphotosAction()
     {
+        $identity = $this->identity();
+        $files = array();
+        $album_name = array();
+        $album_list = array();
+       
+        foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
+            $album_name = basename($dir);
+            
+            $files[$album_name] = glob($dir . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE);
+        }
         
+        $form = new AddPhotosForm();
+        
+        $options = array();
+        
+        foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
+            $options[] = array(
+                'value' => basename($dir), 'label' => strstr(basename($dir), '_', true),
+            );
+        }
+        
+        $form->get('album-name')->setValueOptions($options);
+        $form->get('copy-from-album')->setValueOptions($options); 
+        
+        return new ViewModel(array('form' => $form, 'files' => $files));
+    }
+    
+    
+    public function photostoalbumAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        
+        if ($this->request->isPost()) {
+            try {
+                $params = $this->params()->fromPost();
+                $files = $this->params()->fromFiles();
+                
+                if ($params['copy-from-album'] != "") {
+                    $from_album = $params['copy-from-album'];
+                } else {
+                    $from_album = false;
+                }
+                
+                if (false !== $this->getProfileService()->addPhotosToAlbum($params['album-name'], $files, $from_album)) {
+                    $this->flashMessenger()->addSuccessMessage("Photos added to album successfully!");
+                    
+                    return $this->redirect()->toUrl('add-photos-to-album-success');
+                } 
+            } catch (PhotoAlbumException $e) {
+                $this->flashMessenger()->addErrorMessage((string)$e->getMessage());
+                
+                return $this->redirect()->toUrl('add-photos-to-album-failure');
+            }
+        }
+        
+        return $view_model;
+    }
+    
+    
+    public function addphotostoalbumsuccessAction()
+    {
+        return;
+    }
+    
+    
+    public function addphotostoalbumfailureAction()
+    {
+        return;
     }
     
     
