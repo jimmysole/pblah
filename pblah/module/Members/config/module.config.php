@@ -1,4 +1,7 @@
 <?php
+use Members\Form\AddPhotosForm;
+use Members\Form\Factory\AddPhotosFormFactory;
+
 return array(
     'controllers' => array(
         'invokables' => array(
@@ -147,6 +150,12 @@ return array(
                     'action'     => 'view-more',
                 ),
             ), 
+        ),
+    ),
+    
+    'form_elements' => array(
+        'factories' => array(
+            AddPhotosForm::class => AddPhotosFormFactory::class,
         ),
     ),
     

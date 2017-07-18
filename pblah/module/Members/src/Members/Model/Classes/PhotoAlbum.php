@@ -213,6 +213,13 @@ class PhotoAlbum extends Profile
     }
     
     
+    /**
+     * Adds photos to an album
+     * @param string $first_album
+     * @param string $other_album
+     * @throws PhotoAlbumException
+     * @return boolean
+     */
     public function addPhotosToAlbum($first_album, $other_album = false)
     {
         $file_info = array();
@@ -250,6 +257,19 @@ class PhotoAlbum extends Profile
         }
     }
        
+    
+    public function deletePhotosFromAlbum(array $images)
+    {
+        foreach (array_diff(scandir($this->album_name['album'], 1), array('.', '..')) as $value) {
+            // retrieve the files selected from the album
+            if (in_array($value, $images)) {
+                // remove the file(s) from the album
+                unlink($value);
+            } else {
+                throw new PhotoAlbumException("No images were found for the album " . $this->album_name['album']);
+            }
+        }
+    }
     
     
     /**
