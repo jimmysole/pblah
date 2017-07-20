@@ -126,6 +126,9 @@ class ProfileController extends AbstractActionController
     }
     
     
+    
+    
+    
     public function makephotoalbumAction()
     {
         $form = new CreateAlbumForm();
@@ -279,6 +282,9 @@ class ProfileController extends AbstractActionController
         
         return $view_model;
     }
+    
+    
+    
     
     
     public function editprofileAction()
