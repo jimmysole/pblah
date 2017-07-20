@@ -214,7 +214,7 @@ class ProfileController extends AbstractActionController
                 } else {
                     $from_album = false;
                 }
-                // option in key is indexes of array.
+                
                 if (false !== $this->getProfileService()->addPhotosToAlbum($params['album-name'], $files, $from_album)) {
                     $this->flashMessenger()->addSuccessMessage("Photos added to album successfully!");
                     
