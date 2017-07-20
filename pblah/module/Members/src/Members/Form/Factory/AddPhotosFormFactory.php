@@ -24,7 +24,7 @@ class AddPhotosFormFactory implements FactoryInterface
         // get all directories in the path
         foreach ($dir_iterator as $file_info) {
             if ($file_info->isDir() && !$file_info->isDot()) {
-                $directories[$file_info->key()] = $file_info->getFilename();
+                $directories[$file_info->getFilename()] = $file_info->getFilename();
             }
         }
         
