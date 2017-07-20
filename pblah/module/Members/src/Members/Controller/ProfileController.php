@@ -187,13 +187,31 @@ class ProfileController extends AbstractActionController
     
     public function addphotosAction()
     {
-        $form = $this->getServiceLocator()
-        ->get('FormElementManager')
-        ->get(AddPhotosForm::class);
+        $identity = $this->identity();
+        $files = array();
+        $album_name = array();
+        $album_list = array();
+       
+        foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
+            $album_name = basename($dir);
+            
+            $files[$album_name] = glob($dir . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE);
+        }
         
-        return array(
-            'form' => $form,
-        );
+        $form = new AddPhotosForm();
+        
+        $options = array();
+        
+        foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
+            $options[] = array(
+                'value' => basename($dir), 'label' => strstr(basename($dir), '_', true),
+            );
+        }
+        
+        $form->get('album-name')->setValueOptions($options);
+        $form->get('copy-from-album')->setValueOptions($options); 
+        
+        return new ViewModel(array('form' => $form, 'files' => $files));
     }
     
     

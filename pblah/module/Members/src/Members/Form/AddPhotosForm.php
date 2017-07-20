@@ -19,8 +19,7 @@ class AddPhotosForm extends Form
         
         // set the form attributes
         $this->setAttribute('method', 'post')
-        ->setAttribute('data-role', 'form')
-        ->setAttribute('autocomplete', false);
+        ->setAttribute('data-role', 'form');
         
         // create the form elements
         $this->add(array(
