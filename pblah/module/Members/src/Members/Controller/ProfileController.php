@@ -187,6 +187,7 @@ class ProfileController extends AbstractActionController
     
     public function addphotosAction()
     {
+       
         $identity = $this->identity();
         $files = array();
         $album_name = array();
@@ -212,6 +213,13 @@ class ProfileController extends AbstractActionController
         $form->get('copy-from-album')->setValueOptions($options); 
         
         return new ViewModel(array('form' => $form, 'files' => $files));
+        
+        
+       /* $form = $this->getServiceLocator()
+        ->get('FormElementManager')
+        ->get(AddPhotosForm::class);
+        
+        return new ViewModel(array('form' => $form,)); */
     }
     
     
@@ -234,7 +242,7 @@ class ProfileController extends AbstractActionController
                 } else {
                     $from_album = false;
                 }
-                
+                // option in key is indexes of array.
                 if (false !== $this->getProfileService()->addPhotosToAlbum($params['album-name'], $files, $from_album)) {
                     $this->flashMessenger()->addSuccessMessage("Photos added to album successfully!");
                     

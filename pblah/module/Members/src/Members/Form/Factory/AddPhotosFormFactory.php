@@ -19,7 +19,7 @@ class AddPhotosFormFactory implements FactoryInterface
         
         $directories = array();
         
-        $dir_iterator = new \DirectoryIterator(getcwd() . '/public/images/profile/' . $locator->get('pblah-auth')->getIdentity() . '/albums');
+        $dir_iterator = new \DirectoryIterator(getcwd() . '/public/images/profile/' . $locator->get('pblah-auth')->getIdentity() . '/albums/');
 
         // get all directories in the path
         foreach ($dir_iterator as $file_info) {
