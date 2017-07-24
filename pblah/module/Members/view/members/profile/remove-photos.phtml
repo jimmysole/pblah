@@ -112,13 +112,13 @@
 									type: "POST",
 									url: "/members/profile/get-photos-from-album",
 									dataType: "json",
-									data:  { 
+									data: { 
 										album_name: $('#album-name option:selected').val()
 									}
 								}).done(function(msg) {
 									if (msg.photos == undefined) {
 										$('#no-album-photos .w3-col m12').attr('style', 'display: initial;');
-										$('#no-album-photos .w3-col m12 ').html("<p>No photos were found in the album</p>");
+										$('#no-album-photos .w3-col m12').html("<p>No photos were found in the album</p>");
 
 										return false;
 									} else {
@@ -126,6 +126,7 @@
 											// remove previous images
 											$('.w3-row-padding .w3-margin-top').empty();
 										}
+										
 										$('#album-header').attr('style', 'display: initial;');
 
 										$('#album-header h4').html("Photos in " + $('#album-name option:selected').text().split("_")[0] + ":");
