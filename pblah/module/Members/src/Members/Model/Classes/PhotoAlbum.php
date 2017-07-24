@@ -256,8 +256,31 @@ class PhotoAlbum extends Profile
             return true;
         }
     }
+    
+    
+    /**
+     * Grabs all the photos from a specified album
+     * @return string
+     */
+    public function photosFromAlbum()
+    {
+        $photos_holder = array();
+        
+        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..' , '.htaccess', 'location.txt')) as $photos) {
+            
+            $photos_holder[] = $photos;
+        }
+        
+        return json_encode(array('photos' => $photos_holder));
+    }
        
     
+    /**
+     * Deletes photo(s) from an album
+     * @param array $images
+     * @throws PhotoAlbumException
+     * @return boolean
+     */
     public function deletePhotosFromAlbum(array $images)
     {
         foreach (array_diff(scandir($this->album_name['album'], 1), array('.', '..')) as $value) {
@@ -269,6 +292,8 @@ class PhotoAlbum extends Profile
                 throw new PhotoAlbumException("No images were found for the album " . $this->album_name['album']);
             }
         }
+        
+        return true;
     }
     
     
@@ -454,4 +479,5 @@ class PhotoAlbum extends Profile
             throw new PhotoAlbumException("Photo album does not exist.");
         }
     }
+
 }

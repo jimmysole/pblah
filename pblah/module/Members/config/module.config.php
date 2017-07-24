@@ -1,6 +1,8 @@
 <?php
 use Members\Form\AddPhotosForm;
 use Members\Form\Factory\AddPhotosFormFactory;
+use Members\Form\RemovePhotosForm;
+use Members\Form\Factory\RemovePhotosFormFactory;
 
 return array(
     'controllers' => array(
@@ -155,7 +157,8 @@ return array(
     
     'form_elements' => array(
         'factories' => array(
-            AddPhotosForm::class => AddPhotosFormFactory::class,
+            AddPhotosForm::class     => AddPhotosFormFactory::class,
+            RemovePhotosForm::class  => RemovePhotosFormFactory::class,
         ),
     ),
     

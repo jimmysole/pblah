@@ -9,6 +9,7 @@ use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
 use Members\Form\CreateAlbumForm;
 use Members\Form\AddPhotosForm;
+use Members\Form\RemovePhotosForm;
 
 
 
@@ -244,7 +245,7 @@ class ProfileController extends AbstractActionController
     {
         return;
     }
-    
+  
     
     public function removephotoalbumAction()
     {
@@ -284,7 +285,44 @@ class ProfileController extends AbstractActionController
     }
     
     
+    public function removephotosAction()
+    {
+        $form = $this->getServiceLocator()
+        ->get('FormElementManager')
+        ->get(RemovePhotosForm::class);
+        
+        return new ViewModel(array('form' => $form));
+    }
     
+    
+    public function removephotosfromalbumfailureAction()
+    {
+        return;
+    }
+    
+    
+    public function removephotosfromalbumsuccessAction()
+    {
+        return;
+    }
+    
+   
+    public function getphotosfromalbumAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        if ($this->request->isPost()) {
+            $params = $this->params()->fromPost();
+            
+            echo $this->getProfileService()->getPhotosFromAlbum($params['album_name']);
+        }
+        
+        return $view_model;
+    }
     
     
     public function editprofileAction()

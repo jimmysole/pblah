@@ -189,4 +189,32 @@ class ProfileModel extends Profile
         
         return $add_photos->addPhotosToAlbum($album_name, $other_album);
     }
+    
+    
+    
+    /**
+     * Removes photo(s) from albums
+     * @param string $album_name
+     * @param array $album_photos
+     * @return bool
+     */
+    public function removePhotosFromAlbum($album_name, array $album_photos)
+    {
+        $remove_photos = new PhotoAlbum($album_name, $album_photos);
+        
+        return $remove_photos->deletePhotosFromAlbum($album_photos);
+    }
+    
+    
+    /**
+     * Gets photos from the specified album
+     * @param string $album_name
+     * @return string
+     */
+    public function getPhotosFromAlbum($album_name)
+    {
+        $get_photos = new PhotoAlbum($album_name, array());
+        
+        return $get_photos->photosFromAlbum();
+    }
 }

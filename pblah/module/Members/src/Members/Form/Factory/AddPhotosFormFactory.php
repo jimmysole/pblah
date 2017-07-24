@@ -6,8 +6,6 @@ namespace Members\Form\Factory;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-use Members\Model\Classes\Profile;
-
 use Members\Form\AddPhotosForm;
 
 
