@@ -69,7 +69,7 @@ class RemovePhotosForm extends Form
             'attributes' => array(
                 'id'    => 'submit',
                 'class' => 'w3-btn w3-white w3-border w3-border-blue w3-round w3-right',
-                'value' => 'Submit',
+                'value' => 'Remove Photos',
             )
         ));
     }

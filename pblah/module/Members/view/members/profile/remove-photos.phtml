@@ -135,8 +135,23 @@
 
 										
 										$.each(msg.photos, function(i, item) {
-											$('.w3-row-padding .w3-margin-top').append('<div class="w3-third" style="width: 32.5%; max-height: 200px;"><div class="w3-card-2 w3-margin"><img src="<?php echo $this->basePath() . '/images/profile/' . $this->identity() . '/albums/'; ?>' + $('#album-name option:selected').val() + '/' + msg.photos[i] + '" style="width:100%; max-height: 150px; padding-bottom: 5px;"></div><br></div>');
-										});
+											$('.w3-row-padding .w3-margin-top').append('<div class="w3-third" style="width: 32.5%; max-height: 200px;"><div class="w3-card-2 w3-margin"><img src="<?php echo $this->basePath() . '/images/profile/' . $this->identity() . '/albums/'; ?>' 
+											+ $('#album-name option:selected').val() + '/' + msg.photos[i] + '" style="width: 100%; max-height: 150px; padding-bottom: 5px;">' +
+											'<input class="w3-check" type="checkbox" name="delete_' + msg.photos[i] + '" id="delete_' + msg.photos[i] + '">' +
+											'<label for="delete_' + msg.photos[i] + '">&nbsp;Check to Delete</label></div><br></div>');
+									    });
+
+										$('.w3-check').on('change', function() {
+											if ($(this).is(":checked")) {
+												var labels = $("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Selected to delete");
+											} else {
+												var labels = $("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Check to delete");
+											}  
+										});  
+
+									    $('.w3-check:checked').each(function() {
+											// pass on submit
+									    });
 									}
 								}).fail(function(msg) {
 									alert(msg);
