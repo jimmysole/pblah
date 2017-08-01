@@ -126,6 +126,9 @@
 											// remove previous images
 											$('.w3-row-padding .w3-margin-top').empty();
 										}
+
+										$('#check-all').attr('style', 'display: initial;');
+										$('#uncheck-all').attr('style', 'display: initial;');
 										
 										$('#album-header').attr('style', 'display: initial;');
 
@@ -141,14 +144,46 @@
 											'<label for="delete_' + msg.photos[i] + '">&nbsp;Check to Delete</label></div><br></div>');
 									    });
 
-										$('.w3-check').on('change', function() {
-											if ($(this).is(":checked")) {
-												var labels = $("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Selected to delete");
-											} else {
-												var labels = $("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Check to delete");
-											}  
-										});  
+									
+										/*$('.w3-check').on('change', function() {
+											if ($(this).is(':checked')) {
+												$(this).attr('checked', 'checked');
+												$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Selected to delete");
+											} else if ($(this).is(':not(:checked)')) {
+												$(this).removeAttr('checked');
+												$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Check to delete");
+											}
+										}); */  
+										
 
+										$('#check_all').on('click', function() {
+											$('.w3-check').each(function() {
+												if ($(this).is(':not(:checked)')) {
+													$(this).attr('checked', 'checked');
+													$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Selected to delete");
+													$('#uncheck_all').attr('disabled', false);
+												} else {
+													alert("All items are already checked.");
+													$('#check_all').attr('disabled', true);
+													return false;
+												}
+											});
+										});
+
+										$('#uncheck_all').on('click', function() {
+											$('.w3-check').each(function() {
+												if ($(this).is(':checked')) {
+													$(this).attr('checked', false);
+													$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Check to delete");
+													$('#check_all').attr('disabled', false);
+												} else {
+													alert("No items are checked");
+													$('#uncheck_all').attr('disabled', true);
+													return false;
+												}
+											});
+										});
+										
 									    $('.w3-check:checked').each(function() {
 											// pass on submit
 									    });
@@ -159,6 +194,9 @@
 							});
 						</script>
 						<br><br>
+						<div class="w3-left" style="display: none;" id="check-all"><button class="w3-btn w3-white w3-border w3-border-blue w3-round" id="check_all" type="button">Check All</button></div>
+						&nbsp;&nbsp;
+						<div class="w3-center" style="display: none;" id="uncheck-all"><button class="w3-btn w3-white w3-border w3-border-blue w3-round" id="uncheck_all" type="button">Uncheck All</button></div>
 		<?php
 		    echo $this->formElement($this->form->get('submit'));
         
