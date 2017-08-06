@@ -162,6 +162,8 @@
 													$(this).attr('checked', 'checked');
 													$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Selected to delete");
 													$('#uncheck_all').attr('disabled', false);
+
+													return true;
 												} else {
 													alert("All items are already checked.");
 													$('#check_all').attr('disabled', true);
@@ -176,6 +178,8 @@
 													$(this).attr('checked', false);
 													$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Check to delete");
 													$('#check_all').attr('disabled', false);
+
+													return true;
 												} else {
 													alert("No items are checked");
 													$('#uncheck_all').attr('disabled', true);
