@@ -6,6 +6,7 @@ use Zend\Form\Form;
 use Zend\Form\Element\Csrf;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Select;
+use Zend\Form\Element\Button;
 
 
 class RemovePhotosForm extends Form
@@ -64,7 +65,10 @@ class RemovePhotosForm extends Form
         
         $this->add(array(
             'name' => 'submit',
-            'type' => Submit::class,
+            'type' => Button::class,
+            'options' => array(
+                'label' => 'Delete',
+            ),
             
             'attributes' => array(
                 'id'    => 'submit',

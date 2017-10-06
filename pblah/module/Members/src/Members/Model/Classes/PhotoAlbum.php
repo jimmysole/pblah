@@ -267,8 +267,11 @@ class PhotoAlbum extends Profile
         $photos_holder = array();
         
         foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..' , '.htaccess', 'location.txt')) as $photos) {
-            
-            $photos_holder[] = $photos;
+             if (count($photos, 1) > 0) {
+                 $photos_holder[] = $photos;
+             } else {
+                 $photos_holder[] = null;
+             }
         }
         
         return json_encode(array('photos' => $photos_holder));
@@ -283,15 +286,17 @@ class PhotoAlbum extends Profile
      */
     public function deletePhotosFromAlbum(array $images)
     {
-        foreach (array_diff(scandir($this->album_name['album'], 1), array('.', '..')) as $value) {
-            // retrieve the files selected from the album
-            if (in_array($value, $images)) {
-                // remove the file(s) from the album
-                unlink($value);
-            } else {
-                throw new PhotoAlbumException("No images were found for the album " . $this->album_name['album']);
-            }
+        //var_dump($images); return;
+        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..', '.htaccess', 'location.txt')) as $value) {
+             // retrieve the files selected from the album
+             if (in_array($value, $images)) {
+                 foreach ($images as $v) {
+                     unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '/' . $v);
+                 }
+             } 
         }
+        
+      
         
         return true;
     }

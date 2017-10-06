@@ -10,6 +10,7 @@ use Members\Model\Classes\Exceptions\PhotoAlbumException;
 use Members\Form\CreateAlbumForm;
 use Members\Form\AddPhotosForm;
 use Members\Form\RemovePhotosForm;
+use Members\Model\Filters\RemovePhotos;
 
 
 
@@ -295,18 +296,33 @@ class ProfileController extends AbstractActionController
     }
     
     
-    public function removephotosfromalbumfailureAction()
+    public function handlephotodeleteAction()
     {
-        return;
+        $form = new RemovePhotosForm();
+        
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        if ($this->request->isPost()) { 
+            try {
+                $params = $this->getRequest()->getPost()->toArray();
+                
+                // var_dump($params['images']); exit;
+                if ($this->getProfileService()->removePhotosFromAlbum($params['album'], $params['images'])) {
+                    echo "Image(s) deleted from " . $params['album'];
+                }
+            } catch (PhotoAlbumException $e) {
+                echo $e->getMessage();
+            }
+        }
+        
+        return $view_model;
     }
     
-    
-    public function removephotosfromalbumsuccessAction()
-    {
-        return;
-    }
-    
-   
+  
     public function getphotosfromalbumAction()
     {
         $layout = $this->layout();

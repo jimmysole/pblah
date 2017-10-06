@@ -63,7 +63,7 @@
 	<!-- end left col -->
 
 	<!-- mid col -->
-	<div class="w3-col m7">
+	<div class="w3-col m7" id="refresh-div">
 		<div class="w3-row-padding">
 			<div class="w3-col m12">
 				<div class="w3-card-2 w3-round w3-white">
@@ -76,7 +76,7 @@
 						<p>
 							<?php
         $this->form->setAttribute('action', $this->url('members/profile', array(
-            'action' => 'photos-gone-album'
+            'action' => 'handle-photo-delete'
         )));
         
         $this->form->prepare();
@@ -106,8 +106,15 @@
 						</div>
 						
 						<script type="text/javascript">
+							var post_params;
+						
 							$('#album-name').on('change', function() {
 								// retrieve the images from the photo album selected
+								if ($('#album-name option:selected').val() == "") {
+									alert("Please choose a valid album.");
+									return false;
+								}
+								
 								$.ajax({
 									type: "POST",
 									url: "/members/profile/get-photos-from-album",
@@ -116,9 +123,9 @@
 										album_name: $('#album-name option:selected').val()
 									}
 								}).done(function(msg) {
-									if (msg.photos == undefined) {
-										$('#no-album-photos .w3-col m12').attr('style', 'display: initial;');
-										$('#no-album-photos .w3-col m12').html("<p>No photos were found in the album</p>");
+									if (msg.photos == undefined || msg.photos == null || msg.photos == "") {
+										$('#no-album-photos, .w3-col m12').attr('style', 'display: initial;');
+										$('#no-album-photos, .w3-col m12').html("<p>No photos were found in the album " +  $('#album-name option:selected').val() + "</p>");
 
 										return false;
 									} else {
@@ -138,22 +145,28 @@
 
 										
 										$.each(msg.photos, function(i, item) {
-											$('.w3-row-padding .w3-margin-top').append('<div class="w3-third" style="width: 32.5%; max-height: 200px;"><div class="w3-card-2 w3-margin"><img src="<?php echo $this->basePath() . '/images/profile/' . $this->identity() . '/albums/'; ?>' 
+											$('.w3-row-padding .w3-margin-top').append('<div class="w3-third" style="width: 32.5%; max-height: 200px;"><div class="w3-card-2 w3-margin"><img class="photo" src="<?php echo $this->basePath() . '/images/profile/' . $this->identity() . '/albums/'; ?>' 
 											+ $('#album-name option:selected').val() + '/' + msg.photos[i] + '" style="width: 100%; max-height: 150px; padding-bottom: 5px;">' +
 											'<input class="w3-check" type="checkbox" name="delete_' + msg.photos[i] + '" id="delete_' + msg.photos[i] + '">' +
 											'<label for="delete_' + msg.photos[i] + '">&nbsp;Check to Delete</label></div><br></div>');
 									    });
 
-									
-										/*$('.w3-check').on('change', function() {
-											if ($(this).is(':checked')) {
-												$(this).attr('checked', 'checked');
-												$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Selected to delete");
-											} else if ($(this).is(':not(:checked)')) {
-												$(this).removeAttr('checked');
-												$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Check to delete");
-											}
-										}); */  
+									    
+										$('.w3-check').on('change', function() {
+											var array = [];
+
+											$('.w3-card-2.w3-margin input.w3-check:checked').each(function(index, checkbox) {
+												var $checkbox = $(checkbox);
+
+												var $card = $checkbox.closest('.w3-card-2.w3-margin');
+
+												var $img = $card.find('img.photo');
+
+												array[array.length] = /[^/]*$/.exec($img.attr('src'))[0];
+											});
+
+											post_params = array;
+										});  
 										
 
 										$('#check_all').on('click', function() {
@@ -163,7 +176,13 @@
 													$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Selected to delete");
 													$('#uncheck_all').attr('disabled', false);
 
-													return true;
+													var values = $('img.photo');
+
+													var map = values.map(function() {
+														return /[^/]*$/.exec($(this).attr('src'))[0];
+													}).get();
+													
+													post_params = map;
 												} else {
 													alert("All items are already checked.");
 													$('#check_all').attr('disabled', true);
@@ -178,8 +197,6 @@
 													$(this).attr('checked', false);
 													$("label[for='" + $(this).attr("name")  + "']").html("&nbsp;Check to delete");
 													$('#check_all').attr('disabled', false);
-
-													return true;
 												} else {
 													alert("No items are checked");
 													$('#uncheck_all').attr('disabled', true);
@@ -187,10 +204,6 @@
 												}
 											});
 										});
-										
-									    $('.w3-check:checked').each(function() {
-											// pass on submit
-									    });
 									}
 								}).fail(function(msg) {
 									alert(msg);
@@ -206,6 +219,19 @@
         
 		    echo $this->form()->closeTag();
         ?>
+        			<script type="text/javascript">
+						$('#submit').on('click', function(e) {
+							e.preventDefault();
+
+							$.post('/members/profile/handle-photo-delete', { album: $('#album-name').val(), images: post_params })
+								.done(function(msg) {
+									alert(msg);
+									location.reload(true);
+								}).fail(function(msg) {
+									alert(msg);
+								});
+						});
+        			</script>
 					<?php endif; ?>
 				</div>
 				</div>

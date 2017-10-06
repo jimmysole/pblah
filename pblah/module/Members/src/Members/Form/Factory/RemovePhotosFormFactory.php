@@ -23,6 +23,11 @@ class RemovePhotosFormFactory implements FactoryInterface
         // get the albums
         foreach ($directory_iterator as $dirs) {
             if ($dirs->isDir() && !$dirs->isDot()) {
+                if (empty($dirs->getFilename())) {
+                    echo "No photos exist.";
+                    break;
+                }
+                
                 $directories[$dirs->getFilename()] = $dirs->getFilename();
             }
         }
