@@ -406,11 +406,7 @@ class PhotoAlbum extends Profile
                         return false;
                     }
                 }
-            } else if ($this->album_edits['add_photos']) {
-                
-            } else if ($this->album_edits['remove_photos']) {
-                
-            }
+            } 
         } else {
             throw new PhotoAlbumException("Please provide a edit option for your photo album.");
         }
