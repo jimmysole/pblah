@@ -223,13 +223,15 @@
 						$('#submit').on('click', function(e) {
 							e.preventDefault();
 
-							$.post('/members/profile/handle-photo-delete', { album: $('#album-name').val(), images: post_params })
-								.done(function(msg) {
-									alert(msg);
-									location.reload(true);
-								}).fail(function(msg) {
-									alert(msg);
-								});
+							if (confirm("Are you sure you want to delete these photos?")) {
+								$.post('/members/profile/handle-photo-delete', { album: $('#album-name').val(), images: post_params })
+									.done(function(msg) {
+										alert(msg);
+									    location.reload(true);
+									}).fail(function(msg) {
+										alert(msg);
+									});
+							}
 						});
         			</script>
 					<?php endif; ?>
