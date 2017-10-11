@@ -555,6 +555,8 @@ class ProfileController extends AbstractActionController
                 }
             } catch (\ImagickException $e) {
                 echo json_encode(array('fail' => $e->getMessage()));
+            } catch (PhotoAlbumException $e) {
+                echo json_encode(array('fail' => $e->getMessage()));
             }
         } 
         
@@ -567,6 +569,33 @@ class ProfileController extends AbstractActionController
                 }
             } catch (\ImagickException $e) {
                 echo json_encode(array('fail_blur' => $e->getMessage()));
+            } catch (PhotoAlbumException $e) {
+                echo json_encode(array('fail_blur' => $e->getMessage()));
+            }
+        }
+        
+        if (@(int)$params['enhance_image'] == 1) {
+            try {
+                if ($this->getProfileService()->editPhoto($params['album_name'], $params['photo'], array('enhance_image' => $params['enhance_image']))) {
+                    echo json_encode(array('success_enhance' => 'Photo was enhanced successfully.'));
+                }
+            } catch (\ImagickException $e) {
+                echo json_encode(array('fail_enhance' => $e->getMessage()));
+            } catch (PhotoAlbumException $e) {
+                echo json_encode(array('fail_enhance' => $e->getMessage()));
+            }
+        }
+        
+        if (@(int)$params['thumbnail_image'] == 1) {
+            try {
+                if ($this->getProfileService()->editPhoto($params['album_name'], $params['photo'], array('make_thumbnail' => $params['thumbnail_image'],
+                    't_width' => $params['tx'], 't_height' => $params['ty']))) {
+                    echo json_encode(array('success_thumbnail' => 'Thumbnail applied to photo successfully.'));
+                }
+            } catch (\ImagickException $e) {
+                echo json_encode(array('fail_thumbnail' => $e->getMessage()));
+            } catch (PhotoAlbumException $e) {
+                echo json_encode(array('fail_thumbnail' => $e->getMessage()));
             }
         }
         

@@ -258,7 +258,7 @@ class ProfileModel extends Profile
             
             return true;
         } else if (@$edits['enhance_image'] == 1) {
-            $photo = new EditPhotos($album_name, $photo, array());
+            $photo = new EditPhotos($album_name, $photo, array('enhance' => true));
                 
             $photo->enhanceImage()->saveImage();  
             

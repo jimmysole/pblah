@@ -272,34 +272,48 @@
 					<!-- enhance image -->
 					<div class="w3-row" id="enhance" style="display: none;">
 						<div class="w3-third w3-right">
-							<button type="button" name="save-photo" id="save-photo" style="height: 40px;" class="w3-btn w3-white w3-border w3-border-blue w3-round w3-right">Save Photo</button>
+							<button type="button" name="save-photo" id="save-enhanced-photo" style="height: 40px;" class="w3-btn w3-white w3-border w3-border-blue w3-round w3-right">Save Photo</button>
 						</div>
 					</div>
+					
+					<div class="w3-row" style="display: none;" id="enhance-message">
+						<p class="w3-twothird w3-text-white" id="enhance-msg"></p>
+					</div>
+					<!-- end enhance -->
 					
 					
 					<!-- make thumbnail -->
 					<div class="w3-row" id="thumbnail" style="display: none;">
 						<div class="w3-third w3-padding-right">
-							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - X value" name="crop-tx">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - X value" name="crop-tx" id="crop-tx">
 						</div>
 					
 						<div class="w3-third w3-padding-right">
-							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - Y value" name="crop-ty">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - Y value" name="crop-ty" id="crop-ty">
 						</div>
 						
 						<div class="w3-third">
-							<button type="button" name="save-photo" id="save-photo" style="height: 40px;" class="w3-btn w3-white w3-border w3-border-blue w3-round w3-right">Save Photo</button>
+							<button type="button" name="save-photo" id="save-thumbnail-photo" style="height: 40px;" class="w3-btn w3-white w3-border w3-border-blue w3-round w3-right">Save Photo</button>
 						</div>
 					</div>
+					
+					<div class="w3-row" style="display: none;" id="thumbnail-message">
+						<p class="w3-twothird w3-text-white" id="thumbnail-msg"></p>
+					</div>
+					<!-- end thumbnail -->
 				</form>
 				
 				<script type="text/javascript">
 					$('#edit-select').on('change', function() {
 						if ($(this).val() == 1) {
 							// hide any other selected options
+							// crop
 							$('#blur').attr('style', 'display: none;');
 							$('#enhance').attr('style', 'display: none');
 							$('#thumbnail').attr('style', 'display: none;');
+							$('#thumbnail-message').attr('style', 'display: none;');
+							$('#enhance-message').attr('style', 'display: none;');
+							$('#blur-message').attr('style', 'display: none;');
 							
 							$('#crop').attr('style', 'display: initial;');
 							$('#crop-2').attr('style', 'display: initial;');
@@ -330,11 +344,15 @@
 								});
 							});
 						} else if ($(this).val() == 2) {
+							// blur
 							$('#enhance').attr('style', 'display: none;');
 							$('#thumbnail').attr('style', 'display: none;')
+							$('#thumbnail-message').attr('style', 'display: none;');
 							$('#crop').attr('style', 'display: none;');
 							$('#crop-2').attr('style', 'display: none');
 							$('#button-holder').attr('style', 'display: none;');
+							$('#enhance-message').attr('style', 'display: none;');
+							$('#crop-message').attr('style', 'display: none;');
 							
 							$('#blur').attr('style', 'display: initial;');
 
@@ -363,23 +381,87 @@
 								});
 							});
 						} else if ($(this).val() == 3) {
+							// enhance
 							$('#blur').attr('style', 'display: none;');
-							$('#thumbnail').attr('style', 'display: none;')
+							$('#thumbnail').attr('style', 'display: none;');
+							$('#thumbnail-message').attr('style', 'display: none;');
 							$('#crop').attr('style', 'display: none;');
+							$('#crop-2').attr('style', 'display: none');
+							$('#button-holder').attr('style', 'display: none;');
+							$('#blur-message').attr('style', 'display: none;');
+							$('#crop-message').attr('style', 'display: none;');
 							
 							$('#enhance').attr('style', 'display: initial;');
+
+							$('#save-enhanced-photo').on('click', function(e) {
+								e.preventDefault();
+
+								$.ajax({
+									url: "/members/profile/handle-photo-edit",
+									type: "POST",
+									dataType: "json",
+									data: {
+										enhance_image: 1,
+										album_name: $('#album-name option:selected').val(),
+										photo: /[^/]*$/.exec($('#selected-photo img').attr('src'))[0]
+									}
+								}).done(function(msg) {
+									$('#enhance-message').attr('style', 'display: initial;');
+									$('#enhance-msg').html(msg.success_enhance);
+								}).fail(function(msg) {
+									$('#enhance-message').attr('style', 'display: initial;');
+									$('#enhance-msg').html(msg.fail_enhance);
+								});
+							});
 						} else if ($(this).val() == 4) {
+							// thumbnail
 							$('#enhance').attr('style', 'display: none;');
 							$('#blur').attr('style', 'display: none;')
 							$('#crop').attr('style', 'display: none;');
+							$('#crop-2').attr('style', 'display: none');
+							$('#button-holder').attr('style', 'display: none;');
+							$('#save-enhance-photo').attr('style', 'display: none;');
+							$('#enhance-message').attr('style', 'display: none;');
+							$('#blur-message').attr('style', 'display: none;');
+							$('#crop-message').attr('style', 'display: none;');
+
 							
 							$('#thumbnail').attr('style', 'display: initial;');
+
+							$('#save-thumbnail-photo').on('click', function(e) {
+								e.preventDefault();
+
+								$.ajax({
+									url: "/members/profile/handle-photo-edit",
+									type: "POST",
+									dataType: "json",
+									data: {
+										thumbnail_image: 1,
+										album_name: $('#album-name option:selected').val(),
+										photo: /[^/]*$/.exec($('#selected-photo img').attr('src'))[0],
+										tx: $('#crop-tx').val(),
+										ty: $('#crop-ty').val()
+									}
+								}).done(function(msg) {
+									$('#thumbnail-message').attr('style', 'display: initial;');
+									$('#thumbnail-msg').html(msg.success_thumbnail);
+								}).fail(function(msg) {
+									$('#thumbnail-message').attr('style', 'display: initial;');
+									$('#thumbnail-msg').html(msg.fail_thumbnail);
+								});
+							});
 						} else { 
 							// blank option selected, hide everything
 							$('#enhance').attr('style', 'display: none;');
 							$('#blur').attr('style', 'display: none;')
 							$('#crop').attr('style', 'display: none;');
 							$('#thumbnail').attr('style', 'display: none;');
+							$('#crop-2').attr('style', 'display: none');
+							$('#button-holder').attr('style', 'display: none;');
+							$('#button-blur-holder').attr('style', 'display: none;');
+							$('#blur-message').attr('style', 'display: none;');
+							$('#enhance-message').attr('style', 'display: none;');
+							$('#crop-message').attr('style', 'display: none;');
 						}
 					});
 

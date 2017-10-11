@@ -140,10 +140,12 @@ class EditPhotos
      */
     public function enhanceImage()
     {
-        // use Imagick::enhanceImage to enhance the image
-        $this->imagick->enhanceImage();
+        if ($this->edits['enhance'] !== false) {
+            // use Imagick::enhanceImage to enhance the image
+            $this->imagick->enhanceImage();
         
-        return $this;
+            return $this;
+        }
     }
     
     
