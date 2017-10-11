@@ -64,7 +64,6 @@ class LoginModel
             // return admin pass
             return array('admin' => true, 'pass' => $admin_pass);
         } else {
-            // @todo add member registration page
             // try the members table if no admin was found
             $query = $adapter->execute("SELECT password FROM members WHERE username = '" . $login->username . "'");
 
