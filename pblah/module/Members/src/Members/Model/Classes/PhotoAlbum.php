@@ -265,16 +265,26 @@ class PhotoAlbum extends Profile
     public function photosFromAlbum()
     {
         $photos_holder = array();
+        $img_size = array();
         
-        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..' , '.htaccess', 'location.txt')) as $photos) {
-             if (count($photos, 1) > 0) {
-                 $photos_holder[] = $photos;
-             } else {
-                 $photos_holder[] = null;
-             }
+        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..' , '.htaccess', 'location.txt', 'edited_photos')) as $photos) {
+            if (count($photos, 1) > 0) {
+                $photos_holder[] = $photos;
+                $img_size[] = getimagesize(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '/' . $photos);
+            } else {
+                $photos_holder[] = null;
+            }
         }
         
-        return json_encode(array('photos' => $photos_holder));
+        return json_encode(array('photos' => $photos_holder, 'size' => $img_size));
+    }
+    
+    
+    public function getImageSize($photo)
+    {
+        $size = getimagesize('./public' . $photo);
+        
+        return $size;
     }
        
     
@@ -286,14 +296,14 @@ class PhotoAlbum extends Profile
      */
     public function deletePhotosFromAlbum(array $images)
     {
-        //var_dump($images); return;
+        
         foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name, 1), array('.', '..', '.htaccess', 'location.txt')) as $value) {
-             // retrieve the files selected from the album
-             if (in_array($value, $images)) {
-                 foreach ($images as $v) {
-                     unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '/' . $v);
-                 }
-             } 
+            // retrieve the files selected from the album
+            if (in_array($value, $images)) {
+                foreach ($images as $v) {
+                    unlink(getcwd() . '/public/images/profile/' . parent::getUser() . '/albums/' . $this->album_name . '/' . $v);
+                }
+            } 
         }
         
       

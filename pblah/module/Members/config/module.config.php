@@ -3,6 +3,8 @@ use Members\Form\AddPhotosForm;
 use Members\Form\Factory\AddPhotosFormFactory;
 use Members\Form\RemovePhotosForm;
 use Members\Form\Factory\RemovePhotosFormFactory;
+use Members\Form\EditPhotosForm;
+use Members\Form\Factory\EditPhotosFormFactory;
 
 return array(
     'controllers' => array(
@@ -159,6 +161,7 @@ return array(
         'factories' => array(
             AddPhotosForm::class     => AddPhotosFormFactory::class,
             RemovePhotosForm::class  => RemovePhotosFormFactory::class,
+            EditPhotosForm::class    => EditPhotosFormFactory::class,
         ),
     ),
     

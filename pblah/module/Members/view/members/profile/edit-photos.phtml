@@ -1,0 +1,396 @@
+<div class="w3-row">
+	<!-- left col -->
+	<div class="w3-col m3">
+		<!-- group members currently online col (left) -->
+		<div class="w3-card-2 w3-round w3-theme-d2">
+			<div class="w3-container w3-round w3-theme-d2">
+				<h6 class="w3-center" style="border-bottom: 1px solid #ddd;">Group
+					Members Online</h6>
+
+				<p id="members-online"></p>
+				
+				<script type="text/javascript">
+					$(function() {
+						 function buildOnlineMemberList() {
+							$.ajax({
+								type: "GET",
+							    url: "/members/groups/get-group-members-online",
+							    dataType: "json"
+							}).done(function(msg) {
+								if (msg.display_name == "" || msg.display_name == undefined) {
+									$('#members-online').html("No group members are online.");
+									return false;
+								} else {
+							    	var displayNames = msg.display_name.join('<br />');
+							    	$("#members-online").html(displayNames);
+								}
+							}).fail(function() {
+							   	$('#members-online').html("Error retrieving group list.");
+							});
+						 }
+
+						 setInterval(function() {
+						  	buildOnlineMemberList();
+						 }, 5000);
+
+					     buildOnlineMemberList();
+					});
+				</script>
+			</div>
+		</div>
+
+		<br> <br>
+		<div class="w3-card-2 w3-round w3-theme-d2">
+			<div class="w3-container w3-round w3-theme-d2">
+				<h6 class="w3-center" style="border-bottom: 1px solid #ddd;">Photo
+					Options</h6>
+				<p class="w3-left">
+					<a
+						href="<?php echo $this->url('members/profile', array('action' => 'view-photo-albums')); ?>">View
+						Photos</a> <br> <a
+						href="<?php echo $this->url('members/profile', array('action' => 'add-photos')); ?>">Add
+						Photos</a> <br> <a
+						href="<?php echo $this->url('members/profile', array('action' => 'remove-photos')); ?>">Remove
+						Photos</a> <br> <a
+						href="<?php echo $this->url('members/profile', array('action' => 'remove-photo-album')); ?>">Remove
+						Photo Album</a> <br> <a
+						href="<?php echo $this->url('members/profile', array('action' => 'make-photo-album')); ?>">Create
+						a Photo Album</a> <br>
+				</p>
+			</div>
+		</div>
+	</div>
+	<!-- end left col -->
+
+	<!-- mid col -->
+	<div class="w3-col m7" id="refresh-div">
+		<div class="w3-row-padding">
+			<div class="w3-col m12">
+				<div class="w3-card-2 w3-round w3-white">
+					<div class="w3-container w3-padding" id="edit-photos">
+						<p class="w3-center">Edit Photos</p>
+						<p>
+							<?php 
+							       $this->form->setAttribute('action', $this->url('members/profile', array(
+							           'action' => 'handle-photo-edit'
+							       )));
+							       
+							       $this->form->prepare();
+							       
+							       echo $this->form()->openTag($this->form);
+							?>
+							
+							<br>
+							
+							<?php 
+							
+							    echo $this->formRow($this->form->get('album-name'));
+							    
+							    echo $this->formElement($this->form->get('csrf_security'));
+							?>
+						</p>
+						
+						<br>
+
+						<div class="w3-container" id="album-header" style="display: none;">
+							<h4 class="w3-text-black"></h4>
+						</div>
+						
+						<div class="w3-row-padding w3-margin-top" style="display: none;"></div>
+						
+						<div class="w3-row" id="no-album-photos">
+							<div class="w3-col m12" style="display: none;"></div>
+						</div>
+						
+						<script type="text/javascript">
+							// retrieve the images
+							$('#album-name').on('change', function() {
+								if ($('#album-name option:selected').val() == "") {
+									alert("Please choose a valid album.");
+									return false;
+								}
+
+								$.ajax({
+									type: "POST",
+									url: "/members/profile/get-photos-from-album",
+									dataType: "json",
+									data: { 
+										album_name: $('#album-name option:selected').val()
+									}
+								}).done(function(msg) {
+									if (msg.photos == undefined || msg.photos == null || msg.photos == "") {
+										$('#no-album-photos, .w3-col m12').attr('style', 'display: initial;');
+										$('#no-album-photos, .w3-col m12').html("<p>No photos were found in the album " +  $('#album-name option:selected').val() + "</p>");
+
+										return false;
+									} else {
+										if ($('.w3-row-padding .w3-margin-top img').length > 0) {
+											// remove previous images
+											$('.w3-row-padding .w3-margin-top').empty();
+										}
+
+										$('#photos').attr('style', 'display: initial;');
+
+										$('.w3-row-padding .w3-margin-top').attr('style', 'display: initial;');
+
+										$.each(msg.photos, function(i, item) {
+											$('.w3-row-padding .w3-margin-top').append('<div class="w3-third" style="width: 32.5%; max-height: 200px;"><div class="w3-card-2 w3-margin"><img class="photo" src="<?php echo $this->basePath() . '/images/profile/' . $this->identity() . '/albums/'; ?>' 
+											+ $('#album-name option:selected').val() + '/' + msg.photos[i] + '" style="width: 100%; max-height: 150px;">' +
+											'&nbsp;<label for="edit-photo">&nbsp;Click Image to Edit</label></div><br></div>');
+										});
+
+										
+										
+										$('img.photo').on('click', function() {
+											var width;
+											var height;
+											
+											$.ajax({
+												type: "POST",
+												url: "/members/profile/get-photo-size",
+												dataType: "json",
+												data: {
+													album_name: $('#album-name option:selected').val(),
+													image_name: $(this).attr('src')
+												}
+											}).done(function(data) {
+												width  = data.width;
+												height = data.height;
+
+												document.getElementById('edit-photo-modal').style.display = 'block';
+
+											    $('#selected-photo').html("<img src='" + $('img.photo').attr('src') + "' alt='Image' class='w3-center w3-round w3-border' id='selected-photo-enlarged' style='width: 400px; height: 350px;'>" +
+													    "<br><p class='w3-small'>Original Image Size: " + width + "&times;" + height + "</p><br>");
+											}).fail(function(data) {
+												console.log(data);
+											});
+										});
+									}
+								}).fail(function(msg) {
+									$('#no-album-photos, .w3-col m12').attr('style', 'display: initial;');
+									$('#no-album-photos, .w3-col m12').html("Error retrieving photos, please try again.");
+								});
+							});
+						</script>
+						
+						<?php 
+						    echo $this->formElement($this->form->get('submit')); 
+						    
+						    echo $this->form()->closeTag();
+						?>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end mid col -->
+	
+	<!-- modal -->
+	<div class="w3-modal" id="edit-photo-modal">
+		<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 500px;">
+			<div class="w3-container">
+				<p class="w3-center w3-small">
+					<span onclick="document.getElementById('edit-photo-modal').style.display = 'none'" class="w3-closebtn">&times;</span>
+					Photo to edit
+				</p>
+				
+				<br>
+				
+				<p id="selected-photo" class="w3-center"></p>
+				
+				<div class="w3-clear"></div>
+				
+				<form method="post" action="<?php echo $this->url('members/profile', array('action' => 'handle-photo-edit')); ?>">
+					<select class="w3-input w3-border w3-round" name="edit-select" id="edit-select">
+						<option value="">Choose an option</option>
+						<option value="1">Crop Image</option>
+						<option value="2">Blur Image</option>
+						<option value="3">Enhance Image</option>
+						<option value="4">Make Thumbnail</option>
+					</select>
+					
+					<br>
+					
+					<!-- crop -->
+					<div class="w3-row" id="crop" style="display: none;">
+						<div class="w3-half w3-padding-right">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - Width" name="crop-width" id="crop-width">
+						</div>
+					
+						<div class="w3-half">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - Height" name="crop-height" id="crop-height">
+						</div>
+					</div>
+					
+					<br>
+					
+					<div class="w3-row" id="crop-2" style="display: none;">
+						<div class="w3-half w3-padding-right">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - X" name="crop-x" id="crop-x">
+						</div>
+						
+						<div class="w3-half">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - Y" name="crop-y" id="crop-y">
+						</div>
+					</div>
+					
+					<br>
+					
+					<div class="w3-row" id="button-holder" style="display: none;">
+						<div class="w3-right">
+							<button type="button" name="save-photo" id="save-photo" style="height: 40px;" class="w3-btn w3-white w3-border w3-border-blue w3-round w3-right">Save Photo</button>
+						</div>
+					</div>
+					
+					<div class="w3-row" style="display: none;" id="message">
+						<p class="w3-twothird w3-text-white" id="crop-msg"></p>
+					</div>
+					<!-- end crop -->
+					
+					
+					<!-- blur image -->
+					<div class="w3-row" id="blur" style="display: none;">
+						<div class="w3-third w3-padding-right">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Radius Value" name="radius" id="radius">
+						</div>
+						
+						<div class="w3-third w3-padding-right">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Sigma Value" name="sigma" id="sigma">
+						</div>
+						
+						<div class="w3-third" id="button-holder-blur">
+							<button type="button" name="save-photo" id="save-photo-blur" style="height: 40px;" class="w3-btn w3-white w3-border w3-border-blue w3-round w3-right">Save Photo</button>
+						</div>
+					</div>
+					
+					<div class="w3-row" style="display: none;" id="blur-message">
+						<p class="w3-twothird w3-text-white" id="blur-msg"></p>
+					</div>
+					<!-- end blur -->
+					
+					
+					<!-- enhance image -->
+					<div class="w3-row" id="enhance" style="display: none;">
+						<div class="w3-third w3-right">
+							<button type="button" name="save-photo" id="save-photo" style="height: 40px;" class="w3-btn w3-white w3-border w3-border-blue w3-round w3-right">Save Photo</button>
+						</div>
+					</div>
+					
+					
+					<!-- make thumbnail -->
+					<div class="w3-row" id="thumbnail" style="display: none;">
+						<div class="w3-third w3-padding-right">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - X value" name="crop-tx">
+						</div>
+					
+						<div class="w3-third w3-padding-right">
+							<input class="w3-input w3-border w3-round" type="text" placeholder="Crop - Y value" name="crop-ty">
+						</div>
+						
+						<div class="w3-third">
+							<button type="button" name="save-photo" id="save-photo" style="height: 40px;" class="w3-btn w3-white w3-border w3-border-blue w3-round w3-right">Save Photo</button>
+						</div>
+					</div>
+				</form>
+				
+				<script type="text/javascript">
+					$('#edit-select').on('change', function() {
+						if ($(this).val() == 1) {
+							// hide any other selected options
+							$('#blur').attr('style', 'display: none;');
+							$('#enhance').attr('style', 'display: none');
+							$('#thumbnail').attr('style', 'display: none;');
+							
+							$('#crop').attr('style', 'display: initial;');
+							$('#crop-2').attr('style', 'display: initial;');
+							$('#button-holder').attr('style', 'display: initial;');
+							
+							$('#save-photo').on('click', function(e) {
+								e.preventDefault();
+								
+								$.ajax({
+									url: "/members/profile/handle-photo-edit",
+									type: "POST",
+									dataType: "json",
+									data: {
+										crop_image: 1,
+										album_name: $('#album-name option:selected').val(),
+										photo: /[^/]*$/.exec($('#selected-photo img').attr('src'))[0],
+										width:  $('#crop-width').val(),
+										height: $('#crop-height').val(),
+										x:      $("#crop-x").val(),
+										y:      $("#crop-y").val()
+									}
+								}).done(function(msg) {
+									$('#message').attr('style', 'display: initial;');
+									$('#crop-msg').html(msg.success);
+								}).fail(function(msg) {
+									$('#message').attr('style', 'display: initial;');
+									$('#crop-msg').html(msg.fail);
+								});
+							});
+						} else if ($(this).val() == 2) {
+							$('#enhance').attr('style', 'display: none;');
+							$('#thumbnail').attr('style', 'display: none;')
+							$('#crop').attr('style', 'display: none;');
+							$('#crop-2').attr('style', 'display: none');
+							$('#button-holder').attr('style', 'display: none;');
+							
+							$('#blur').attr('style', 'display: initial;');
+
+							$('#button-holder-blur').attr('style', 'display: initial;');
+
+							$('#save-photo-blur').on('click', function(e) {
+								e.preventDefault();
+
+								$.ajax({
+									url: "/members/profile/handle-photo-edit",
+									type: "POST",
+									dataType: "json",
+									data: {
+										blur_image: 1,
+										album_name: $('#album-name option:selected').val(),
+										photo: /[^/]*$/.exec($('#selected-photo img').attr('src'))[0],
+										radius: $('#radius').val(),
+										sigma: $('#sigma').val()
+									}
+								}).done(function(msg) {
+									$('#blur-message').attr('style', 'display: initial;');
+									$('#blur-msg').html(msg.success_blur);
+								}).fail(function(msg) {
+									$('#blur-message').attr('style', 'display: initial;');
+									$('#blur-msg').html(msg.fail_blur);
+								});
+							});
+						} else if ($(this).val() == 3) {
+							$('#blur').attr('style', 'display: none;');
+							$('#thumbnail').attr('style', 'display: none;')
+							$('#crop').attr('style', 'display: none;');
+							
+							$('#enhance').attr('style', 'display: initial;');
+						} else if ($(this).val() == 4) {
+							$('#enhance').attr('style', 'display: none;');
+							$('#blur').attr('style', 'display: none;')
+							$('#crop').attr('style', 'display: none;');
+							
+							$('#thumbnail').attr('style', 'display: initial;');
+						} else { 
+							// blank option selected, hide everything
+							$('#enhance').attr('style', 'display: none;');
+							$('#blur').attr('style', 'display: none;')
+							$('#crop').attr('style', 'display: none;');
+							$('#thumbnail').attr('style', 'display: none;');
+						}
+					});
+
+					
+				</script>
+				
+			    
+				<br><br>
+				
+			</div>
+		</div>
+	</div>
+	<!-- end modal -->
+</div>

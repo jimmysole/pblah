@@ -7,10 +7,10 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 
-use Members\Form\RemovePhotosForm;
+use Members\Form\EditPhotosForm;
 
 
-class RemovePhotosFormFactory implements FactoryInterface
+class EditPhotosFormFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $service_locator)
     {
@@ -31,8 +31,9 @@ class RemovePhotosFormFactory implements FactoryInterface
             }
         }
         
+        
         // set the select option attributes
-        $form = new RemovePhotosForm();
+        $form = new EditPhotosForm();
         
         $form->get('album-name')->setAttribute('options', $directories);
         

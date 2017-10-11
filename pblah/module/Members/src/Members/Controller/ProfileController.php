@@ -10,7 +10,7 @@ use Members\Model\Classes\Exceptions\PhotoAlbumException;
 use Members\Form\CreateAlbumForm;
 use Members\Form\AddPhotosForm;
 use Members\Form\RemovePhotosForm;
-use Members\Model\Filters\RemovePhotos;
+use Members\Form\EditPhotosForm;
 
 
 
@@ -341,6 +341,32 @@ class ProfileController extends AbstractActionController
     }
     
     
+    public function getphotosizeAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        if ($this->request->isPost()) {
+            $params = $this->getRequest()->getPost()->toArray();
+            
+            $viewsize = $this->getProfileService()->getPhotoSize($params['album_name'], $params['image_name']);
+            
+            $arr = array();
+            
+            foreach ($viewsize as $v) {
+                $arr[] = $v;
+            }
+            
+            echo json_encode(array('width' => $arr[0], 'height' => $arr[1]));
+        }
+        
+        return $view_model;
+    }
+    
+    
     public function editprofileAction()
     {
         if (!$this->getProfileService()->checkIfProfileSet()) {
@@ -498,6 +524,53 @@ class ProfileController extends AbstractActionController
     public function profileviewsAction()
     {
 
+    }
+    
+    
+    public function editphotosAction()
+    {
+        $form = $this->getServiceLocator()
+        ->get('FormElementManager')
+        ->get(EditPhotosForm::class);
+        
+        return new ViewModel(array('form' => $form));
+    }
+    
+    
+    public function handlephotoeditAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        $params = $this->params()->fromPost();
+        
+        if (@(int)$params['crop_image'] == 1) {
+            try {
+                if ($this->getProfileService()->editPhoto($params['album_name'], $params['photo'], array('crop_image' => $params['crop_image'], 
+                    'width' => $params['width'], 'height' => $params['height'], 'x' => $params['x'], 'y' => $params['y']))) {
+                    echo json_encode(array('success' => 'Photo was cropped successfully.'));
+                }
+            } catch (\ImagickException $e) {
+                echo json_encode(array('fail' => $e->getMessage()));
+            }
+        } 
+        
+        
+        if (@(int)$params['blur_image'] == 1) {
+            try {
+                if ($this->getProfileService()->editPhoto($params['album_name'], $params['photo'], array('blur_image' => $params['blur_image'],
+                    'radius' => $params['radius'], 'sigma' => $params['sigma']))) {
+                    echo json_encode(array('success_blur' => 'Adaptive blur applied to photo successfully.'));
+                }
+            } catch (\ImagickException $e) {
+                echo json_encode(array('fail_blur' => $e->getMessage()));
+            }
+        }
+        
+        return $view_model;
     }
 
 

@@ -6,6 +6,7 @@ use Zend\Db\TableGateway\TableGateway;
 
 use Members\Model\Classes\Profile;
 use Members\Model\Classes\PhotoAlbum;
+use Members\Model\Classes\EditPhotos;
 
 
 
@@ -216,5 +217,58 @@ class ProfileModel extends Profile
         $get_photos = new PhotoAlbum($album_name, array());
         
         return $get_photos->photosFromAlbum();
+    }
+    
+    
+    /**
+     * Gets a size of the photo
+     * @param string $album_name
+     * @param resource $photo
+     * @return array
+     */
+    public function getPhotoSize($album_name, $photo)
+    {
+        $size = new PhotoAlbum($album_name, array());
+        
+        return $size->getImageSize($photo);
+    }
+    
+    
+   
+    /**
+     * Enables editing of photo(s)
+     * @param string $album_name
+     * @param resource $photo
+     * @param array $edits
+     * @return boolean
+     */
+    public function editPhoto($album_name, $photo, array $edits)
+    {
+        if (@$edits['crop_image'] == 1) {
+             $photo = new EditPhotos($album_name, $photo, array('crop' => array('width' => $edits['width'], 'height' => $edits['height'],
+                 'x' => $edits['x'], 'y' => $edits['y'])));
+            
+            $photo->cropImage()->saveImage();
+            
+            return true;
+        } else if (@$edits['blur_image'] == 1) {
+            $photo = new EditPhotos($album_name, $photo, array('blur' => array('radius' => $edits['radius'], 'sigma' => $edits['sigma'])));
+                
+            $photo->blurImage()->saveImage();
+            
+            return true;
+        } else if (@$edits['enhance_image'] == 1) {
+            $photo = new EditPhotos($album_name, $photo, array());
+                
+            $photo->enhanceImage()->saveImage();  
+            
+            return true;
+        } else if (@$edits['make_thumbnail'] == 1) {
+            $photo = new EditPhotos($album_name, $photo, array('crop' => array('t_width' => $edits['t_width'], 't_height' => $edits['t_height'])));
+                
+            $photo->makeThumbnail()->saveImage();
+            
+            return true;
+        } 
     }
 }

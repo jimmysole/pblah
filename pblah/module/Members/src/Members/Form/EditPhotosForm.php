@@ -1,5 +1,4 @@
 <?php
-
 namespace Members\Form;
 
 use Zend\Form\Form;
@@ -9,11 +8,11 @@ use Zend\Form\Element\Select;
 use Zend\Form\Element\Button;
 
 
-class RemovePhotosForm extends Form
+class EditPhotosForm extends Form
 {
     public function __construct($name = null)
     {
-        parent::__construct('pblah-remove-photos');
+        parent::__construct('pblah-edit-photos');
         
         // set the form attributes
         $this->setAttribute('method', 'post')
@@ -24,7 +23,7 @@ class RemovePhotosForm extends Form
             'name' => 'album-name',
             'type' => Select::class,
             'options' => array(
-                'label' => 'Album to remove photos from',
+                'label' => 'Album to edit photos from',
                 'label_attributes' => array(
                     'class' => 'w3-label w3-left',
                 ),
@@ -40,8 +39,6 @@ class RemovePhotosForm extends Form
         ));
         
         
-       
-        
         $this->add(new Csrf('csrf_security'));
         
         
@@ -49,13 +46,13 @@ class RemovePhotosForm extends Form
             'name' => 'submit',
             'type' => Button::class,
             'options' => array(
-                'label' => 'Delete',
+                'label' => 'Edit',
             ),
             
             'attributes' => array(
                 'id'    => 'submit',
                 'class' => 'w3-btn w3-white w3-border w3-border-blue w3-round w3-right',
-                'value' => 'Remove Photos',
+                'value' => ''
             )
         ));
     }

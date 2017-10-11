@@ -67,12 +67,8 @@ class EditPhotos
                 throw new PhotoAlbumException("Invalid album name provided, please fix this and try again.");
             } else {
                 $this->album_name = $album_name;
-            
-                if (is_file($photo)) {
-                    $this->photo = $photo;
-                } else {
-                    $this->photo = null;
-                }
+                $this->photo = $photo;
+                
                 
                 // get the edit(s) passed
                 if (count($edits, 1) > 0) {
@@ -85,7 +81,7 @@ class EditPhotos
                 
                 
                 if ($this->imagick_loaded !== false) {
-                    $this->imagick = new \Imagick($this->photos['files']);
+                    $this->imagick = new \Imagick(getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/' . $this->album_name . '/' . $this->photo);
                 } else {
                     throw new PhotoAlbumException(self::IMAGICK_LOADED_FAILURE);
                 }
@@ -106,10 +102,10 @@ class EditPhotos
         // set the crop values
         // if the values are null
         // assign zero to them
-        $crop_width = is_int($this->edits['crop']['width']) ? $this->edits['crop']['width'] : 0;
-        $crop_height = is_int($this->edits['crop']['height']) ? $this->edits['crop']['height'] : 0;
-        $x = is_int($this->edits['crop']['x']) ? $this->edits['crop']['x'] : 0;
-        $y = is_int($this->edits['crop']['y']) ? $this->edits['crop']['y'] : 0;
+        $crop_width = is_int($this->edits['crop']['width']) ? $this->edits['crop']['width'] : intval($this->edits['crop']['width']);
+        $crop_height = is_int($this->edits['crop']['height']) ? $this->edits['crop']['height'] : intval($this->edits['crop']['height']);
+        $x = is_int($this->edits['crop']['x']) ? $this->edits['crop']['x'] : intval($this->edits['crop']['x']);
+        $y = is_int($this->edits['crop']['y']) ? $this->edits['crop']['y'] : intval($this->edits['crop']['y']);
         
         // crop the image
         $this->imagick->cropImage($crop_width, $crop_height, $x, $y);
@@ -127,8 +123,8 @@ class EditPhotos
     {
         // check to see if a value was supplied for the radius, if not, use zero and let the radius be chosen automatically
         // if the sigma was left empty, default to zero
-        $radius = is_float($this->edits['blur']['radius']) ? $this->edits['blur']['radius'] : 0;
-        $sigma = is_float($this->edits['blur']['sigma']) ? $this->edits['blur']['sigma'] : 0;
+        $radius = is_float($this->edits['blur']['radius']) ? $this->edits['blur']['radius'] : floatval($this->edits['blur']['radius']);
+        $sigma = is_float($this->edits['blur']['sigma']) ? $this->edits['blur']['sigma'] : floatval($this->edits['blur']['sigma']);
         
         // perform the adaptive blur on the image
         $this->imagick->adaptiveBlurImage($radius, $sigma);
@@ -159,9 +155,8 @@ class EditPhotos
     public function makeThumbnail()
     {
         // set the thumbnail width + height
-        // if empty, default to zero
-        $crop_thumbnail_width  = is_int($this->edits['crop']['t_width'])  ? $this->edits['crop']['t_width']  : 0;
-        $crop_thumbnail_height = is_int($this->edits['crop']['t_height']) ? $this->edits['crop']['t_height'] : 0;
+        $crop_thumbnail_width  = is_int($this->edits['crop']['t_width'])  ? $this->edits['crop']['t_width']  : intval($this->edits['crop']['t_width']);
+        $crop_thumbnail_height = is_int($this->edits['crop']['t_height']) ? $this->edits['crop']['t_height'] : intval($this->edits['crop']['t_height']);
         
         $this->imagick->cropThumbnailImage($crop_thumbnail_width, $crop_thumbnail_height);
         
@@ -178,10 +173,15 @@ class EditPhotos
     {
         $this->imagick->setImageFormat('jpeg'); // set the format of the image to jpeg
         
+        if (!is_dir(getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/' . $this->album_name . '/edited_photos')) {
+            mkdir(getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/' . $this->album_name . '/edited_photos', 0777);
+        }
+        
         // save the image
-        $this->imagick->writeImageFile(@fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/'
-           . $this->album_name . '/' . $this->photo), false);
+        $this->imagick->writeImageFile(fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/'
+           . $this->album_name . '/edited_photos/' . date('Y-m-d') . '_' . $this->photo, 'w'));
        
+        
         
         return true;
     }
