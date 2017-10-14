@@ -269,6 +269,12 @@ class ProfileModel extends Profile
             $photo->makeThumbnail()->saveImage();
             
             return true;
-        } 
+        } else if (@$edits['sepia_image'] == 1) {
+            $photo = new EditPhotos($album_name, $photo, array('sepia' => array('threshold' => $edits['sepia_threshold'])));
+            
+            $photo->sepiaImage()->saveImage();
+            
+            return true;
+        }
     }
 }

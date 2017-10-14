@@ -167,6 +167,22 @@ class EditPhotos
     
     
     /**
+     * Adds a sepia tone edit to the image
+     * @return \Members\Model\Classes\EditPhotos
+     * @throws \ImagickException
+     */
+    public function sepiaImage()
+    {
+        // set the threshold of the sepia edit
+        $sepia_threshold = is_float($this->edits['sepia']['threshold']) ? $this->edits['sepia']['threshold'] : floatval($this->edits['sepia']['threshold']);
+        
+        $this->imagick->sepiaToneImage($sepia_threshold);
+        
+        return $this;
+    }
+    
+    
+    /**
      * Saves the image
      * @return bool
      * @throws \ImagickException

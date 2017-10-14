@@ -599,6 +599,19 @@ class ProfileController extends AbstractActionController
             }
         }
         
+        if (@(int)$params['sepia_image'] == 1) {
+            try {
+                if ($this->getProfileService()->editPhoto($params['album_name'], $params['photo'], array('sepia_image' => $params['sepia_image'],
+                    'sepia_threshold' => $params['sepia_threshold']))) {
+                    echo json_encode(array('success_sepia' => 'Sepia tone edit applied to photo successfully.'));
+                }
+            } catch (\ImagickException $e) {
+                echo json_encode(array('fail_sepia' => $e->getMessage()));
+            } catch (PhotoAlbumException $e) {
+                echo json_encode(array('fail_sepia' => $e->getMessage()));
+            }
+        }
+        
         return $view_model;
     }
 
