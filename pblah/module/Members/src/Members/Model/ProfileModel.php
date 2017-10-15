@@ -275,6 +275,12 @@ class ProfileModel extends Profile
             $photo->sepiaImage()->saveImage();
             
             return true;
+        } else if (@$edits['bw_image'] == 1) {
+            $photo = new EditPhotos($album_name, $photo, array('colorspace' => array('value' => $edits['colorspace'], 'channel' => $edits['channel'])));
+            
+            $photo->blackWhiteImage()->saveImage();
+            
+            return true;
         }
     }
 }

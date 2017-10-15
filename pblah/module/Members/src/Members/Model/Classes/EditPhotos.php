@@ -5,11 +5,7 @@ use Members\Model\Classes\Exceptions\PhotoAlbumException;
 
 class EditPhotos
 {
-
-    const EDIT_PHOTO_ALBUM_SUCCESS = 'Your photo album was successfully edited.';
-
-    const EDIT_PHOTO_ALBUM_FAILURE = 'Error editing your photo album.';
-
+    
     const IMAGICK_LOADED_FAILURE = 'Imagick is not enabled/installed on your system, some features will not be available.';
 
     
@@ -177,6 +173,15 @@ class EditPhotos
         $sepia_threshold = is_float($this->edits['sepia']['threshold']) ? $this->edits['sepia']['threshold'] : floatval($this->edits['sepia']['threshold']);
         
         $this->imagick->sepiaToneImage($sepia_threshold);
+        
+        return $this;
+    }
+    
+    
+    public function blackWhiteImage()
+    {
+        $this->imagick->transformimagecolorspace($this->edits['colorspace']['value']);
+        $this->imagick->separateImageChannel($this->edits['colorspace']['channel']);
         
         return $this;
     }

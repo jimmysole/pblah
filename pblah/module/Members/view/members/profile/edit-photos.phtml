@@ -208,6 +208,7 @@
 						<option value="3">Enhance Image</option>
 						<option value="4">Make Thumbnail</option>
 						<option value="5">Sepia Tone</option>
+						<option value="6">Black White</option>
 					</select>
 					
 					<br>
@@ -319,6 +320,36 @@
 						<p class="w3-threequarter w3-text-white" id="sepia-msg"></p>
 					</div>
 					<!-- end sepia edit -->
+					
+					
+					<!-- black white edit -->
+					<div class="w3-row" id="black-white" style="display: none;">
+						<div class="w3-third w3-padding-right">
+							<select class="w3-select w3-border w3-round" name="colorspace" id="colorspace">
+								<option value="">Colorspace</option>
+								<option value="1">RGB</option>
+								<option value="13">SRGB</option>
+							</select>
+						</div>
+					
+						<div class="w3-third w3-padding-right">
+							<select class="w3-select w3-border w3-round" name="channel" id="channel">
+								<option value="">Channel</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="4">3</option>
+								<option value="32">Black</option>
+							</select>
+						</div>
+						
+						<div class="w3-third">
+							<button type="button" name="save-photo" id="save-bw-photo" style="height: 40px;" class="w3-btn w3-white w3-border w3-border-blue w3-round w3-right">Save Photo</button>
+						</div>
+					</div>
+					
+					<div class="w3-row" style="display: none;" id="bw-message">
+						<p class="w3-threequarter w3-text-white" id="bw-msg"></p>
+					</div>
 				</form>
 				
 				<script type="text/javascript">

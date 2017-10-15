@@ -612,6 +612,19 @@ class ProfileController extends AbstractActionController
             }
         }
         
+        if (@(int)$params['bw_image'] == 1) {
+            try {
+                if ($this->getProfileService()->editPhoto($params['album_name'], $params['photo'], array('bw_image' => $params['bw_image'],
+                    'colorspace' => $params['colorspace'], 'channel' => $params['channel']))) {
+                    echo json_encode(array('success_bw' => 'B&W edit applied to photo successfully.'));
+                }
+            } catch (\ImagickException $e) {
+                echo json_encode(array('fail_bw' => $e->getMessage()));
+            } catch (PhotoAlbumException $e) {
+                echo json_encode(array('fail_bw' => $e->getMessage()));
+            }
+        }
+        
         return $view_model;
     }
 
