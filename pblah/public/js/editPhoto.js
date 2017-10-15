@@ -10,6 +10,8 @@ function editPhoto(select_element) {
 		$('#blur-message').attr('style', 'display: none;');
 		$('#sepia').attr('style', 'display: none;');
 		$('#sepia-message').attr('style', 'display: none;');
+		$('#black-white').attr('style', 'display: none;');
+		$('#bw-message').attr('style', 'display: none;');
 		
 		$('#crop').attr('style', 'display: initial;');
 		$('#crop-2').attr('style', 'display: initial;');
@@ -51,6 +53,8 @@ function editPhoto(select_element) {
 		$('#crop-message').attr('style', 'display: none;');
 		$('#sepia').attr('style', 'display: none;');
 		$('#sepia-message').attr('style', 'display: none;');
+		$('#black-white').attr('style', 'display: none;');
+		$('#bw-message').attr('style', 'display: none;');
 		
 		$('#blur').attr('style', 'display: initial;');
 
@@ -90,6 +94,8 @@ function editPhoto(select_element) {
 		$('#crop-message').attr('style', 'display: none;');
 		$('#sepia').attr('style', 'display: none;');
 		$('#sepia-message').attr('style', 'display: none;');
+		$('#black-white').attr('style', 'display: none;');
+		$('#bw-message').attr('style', 'display: none;');
 		
 		$('#enhance').attr('style', 'display: initial;');
 
@@ -126,6 +132,8 @@ function editPhoto(select_element) {
 		$('#crop-message').attr('style', 'display: none;');
 		$('#sepia').attr('style', 'display: none;');
 		$('#sepia-message').attr('style', 'display: none;');
+		$('#black-white').attr('style', 'display: none;');
+		$('#bw-message').attr('style', 'display: none;');
 
 		
 		$('#thumbnail').attr('style', 'display: initial;');
@@ -164,6 +172,8 @@ function editPhoto(select_element) {
 		$('#blur-message').attr('style', 'display: none;');
 		$('#enhance-message').attr('style', 'display: none;');
 		$('#crop-message').attr('style', 'display: none;');
+		$('#black-white').attr('style', 'display: none;');
+		$('#bw-message').attr('style', 'display: none;');
 
 		$('#sepia').attr('style', 'display: initial;');
 
@@ -188,6 +198,46 @@ function editPhoto(select_element) {
 				$('#sepia-msg').html(msg.fail_sepia);
 			});
 		});
+	} else if (select_element.value == 6) {
+		// black and white
+		$('#enhance').attr('style', 'display: none;');
+		$('#blur').attr('style', 'display: none;')
+		$('#crop').attr('style', 'display: none;');
+		$('#thumbnail').attr('style', 'display: none;');
+		$('#crop-2').attr('style', 'display: none');
+		$('#button-holder').attr('style', 'display: none;');
+		$('#button-blur-holder').attr('style', 'display: none;');
+		$('#blur-message').attr('style', 'display: none;');
+		$('#enhance-message').attr('style', 'display: none;');
+		$('#crop-message').attr('style', 'display: none;');
+		$('#sepia').attr('style', 'display: none;');
+		$('#sepia-message').attr('style', 'display: none;');
+		
+		$('#black-white').attr('style', 'display: initial;');
+		
+		$('#save-bw-photo').on('click', function(e) {
+			e.preventDefault();
+			
+			$.ajax({
+				url: "/members/profile/handle-photo-edit",
+				type: "POST",
+				dataType: "json",
+				data: {
+					bw_image: 1,
+					album_name: $('#album-name option:selected').val(),
+					photo: /[^/]*$/.exec($('#selected-photo img').attr('src'))[0],
+					colorspace: $('#colorspace option:selected').val(),
+					channel: $('#channel option:selected').val()
+				}
+			}).done(function(msg) {
+				$('#bw-message').attr('style', 'display: initial;');
+				$('#bw-msg').html(msg.success_bw);
+			}).fail(function(msg) {
+				$('#bw-message').attr('style', 'display: initial;');
+				$('#bw-msg').html(msg.fail_bw);
+			});
+		});
+	
 	} else { 
 		// blank option selected, hide everything
 		$('#enhance').attr('style', 'display: none;');
@@ -202,5 +252,7 @@ function editPhoto(select_element) {
 		$('#crop-message').attr('style', 'display: none;');
 		$('#sepia').attr('style', 'display: none;');
 		$('#sepia-message').attr('style', 'display: none;');
+		$('#black-white').attr('style', 'display: none;');
+		$('#bw-message').attr('style', 'display: none;');
 	}
 }
