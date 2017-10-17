@@ -119,6 +119,11 @@
 									}
 								}).done(function(msg) {
 									if (msg.photos == undefined || msg.photos == null || msg.photos == "") {
+										if ($('.w3-row-padding .w3-margin-top img').length > 0) {
+											// remove previous images
+											$('.w3-row-padding .w3-margin-top').empty();
+										}
+										
 										$('#no-album-photos, .w3-col m12').attr('style', 'display: initial;');
 										$('#no-album-photos, .w3-col m12').html("<p>No photos were found in the album " +  $('#album-name option:selected').val() + "</p>");
 
@@ -129,6 +134,9 @@
 											$('.w3-row-padding .w3-margin-top').empty();
 										}
 
+										// hide the no photos message as photos were found.
+										$('#no-album-photos, .w3-col m12').attr('style', 'display: none;');
+										
 										$('#photos').attr('style', 'display: initial;');
 
 										$('.w3-row-padding .w3-margin-top').attr('style', 'display: initial;');
@@ -140,10 +148,10 @@
 										});
 
 										
-										
 										$('img.photo').on('click', function() {
 											var width;
 											var height;
+											var image = $(this).attr('src');
 											
 											$.ajax({
 												type: "POST",
@@ -159,8 +167,8 @@
 
 												document.getElementById('edit-photo-modal').style.display = 'block';
 
-											    $('#selected-photo').html("<img src='" + $('img.photo').attr('src') + "' alt='Image' class='w3-center w3-round w3-border' id='selected-photo-enlarged' style='width: 400px; height: 350px;'>" +
-													    "<br><p class='w3-small'>Original Image Size: " + width + "&times;" + height + "</p><br>");
+											    $('#selected-photo').html("<img src='" + image + "' alt='Image' class='w3-center w3-round w3-border' id='selected-photo-enlarged' style='width: 400px; height: 350px;'>" +
+													"<br><p class='w3-small'>Original Image Size: " + width + "&times;" + height + "<br><b>*NOTE</b>&nbsp; All other edits will be removed upon choosing another editing option.</p><br>");
 											}).fail(function(data) {
 												console.log(data);
 											});
@@ -194,11 +202,8 @@
 					Photo to edit
 				</p>
 				
-				<br>
-				
 				<p id="selected-photo" class="w3-center"></p>
 				
-				<div class="w3-clear"></div>
 				
 				<form method="post" action="<?php echo $this->url('members/profile', array('action' => 'handle-photo-edit')); ?>">
 					<select class="w3-input w3-border w3-round" name="edit-select" id="edit-select">

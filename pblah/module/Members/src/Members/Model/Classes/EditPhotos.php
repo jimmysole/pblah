@@ -178,9 +178,13 @@ class EditPhotos
     }
     
     
+    /**
+     * Adds black white edit to the image
+     * @return \Members\Model\Classes\EditPhotos
+     */
     public function blackWhiteImage()
     {
-        $this->imagick->transformimagecolorspace($this->edits['colorspace']['value']);
+        $this->imagick->transformImageColorSpace($this->edits['colorspace']['value']);
         $this->imagick->separateImageChannel($this->edits['colorspace']['channel']);
         
         return $this;
