@@ -237,7 +237,6 @@ function editPhoto(select_element) {
 				$('#bw-msg').html(msg.fail_bw);
 			});
 		});
-	
 	} else { 
 		// blank option selected, hide everything
 		$('#enhance').attr('style', 'display: none;');

@@ -206,9 +206,8 @@ class EditPhotos
         
         // save the image
         $this->imagick->writeImageFile(fopen(getcwd() . '/public/images/profile/' . Profile::getUser() . '/albums/'
-           . $this->album_name . '/edited_photos/' . date('Y-m-d') . '_' . $this->photo, 'w'));
+           . $this->album_name . '/edited_photos/' . date('Y-m-d') . '_' . rand() . '_' . $this->photo, 'w'));
        
-        
         
         return true;
     }

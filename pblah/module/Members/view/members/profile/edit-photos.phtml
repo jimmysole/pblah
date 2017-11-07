@@ -168,7 +168,7 @@
 												document.getElementById('edit-photo-modal').style.display = 'block';
 
 											    $('#selected-photo').html("<img src='" + image + "' alt='Image' class='w3-center w3-round w3-border' id='selected-photo-enlarged' style='width: 400px; height: 350px;'>" +
-													"<br><p class='w3-small'>Original Image Size: " + width + "&times;" + height + "<br><b>*NOTE</b>&nbsp; All other edits will be removed upon choosing another editing option.</p><br>");
+													"<br><p class='w3-small'>Original Image Size: " + width + "&times;" + height + "</p><br>");
 											}).fail(function(data) {
 												console.log(data);
 											});
@@ -205,7 +205,7 @@
 				<p id="selected-photo" class="w3-center"></p>
 				
 				
-				<form method="post" action="<?php echo $this->url('members/profile', array('action' => 'handle-photo-edit')); ?>">
+				<form method="post" action="<?php echo $this->url('members/profile', array('action' => 'handle-photo-edit')); ?>" id="edit-photo-form">
 					<select class="w3-input w3-border w3-round" name="edit-select" id="edit-select">
 						<option value="">Choose an option</option>
 						<option value="1">Crop Image</option>
@@ -374,9 +374,12 @@
 	
 	<script type="text/javascript">
 		var modal_id = document.getElementById('edit-photo-modal');
-		
+	
 		window.onclick = function(event) {
 			if (event.target == modal_id) {
+				$('#edit-photo-form').find('input:text, select').val('');
+				$('.w3-row').find('.w3-twothird.w3-text-white').html("");
+				$('.w3-row').find('.w3-threequarter.w3-text-white').html("");
 				modal_id.style.display = 'none';
 			}
 		};
