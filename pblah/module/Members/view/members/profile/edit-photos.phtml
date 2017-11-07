@@ -198,7 +198,7 @@
 		<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 500px;">
 			<div class="w3-container">
 				<p class="w3-center w3-small">
-					<span onclick="document.getElementById('edit-photo-modal').style.display = 'none'" class="w3-closebtn">&times;</span>
+					<span onclick="closeModal();" class="w3-closebtn">&times;</span>
 					Photo to edit
 				</p>
 				
@@ -383,5 +383,12 @@
 				modal_id.style.display = 'none';
 			}
 		};
+
+		function closeModal() {
+			$('#edit-photo-form').find('input:text, select').val('');
+			$('.w3-row').find('.w3-twothird.w3-text-white').html("");
+			$('.w3-row').find('.w3-threequarter.w3-text-white').html("");
+			document.getElementById('edit-photo-modal').style.display = 'none'
+		}
 	</script>
 </div>
