@@ -377,17 +377,15 @@
 	
 		window.onclick = function(event) {
 			if (event.target == modal_id) {
-				$('#edit-photo-form').find('input:text, select').val('');
-				$('.w3-row').find('.w3-twothird.w3-text-white').html("");
-				$('.w3-row').find('.w3-threequarter.w3-text-white').html("");
+				$('#edit-photo-form').find('input:text, select').val("");
+				$('.w3-row').find('.w3-text-white').html("");
 				modal_id.style.display = 'none';
 			}
 		};
 
 		function closeModal() {
-			$('#edit-photo-form').find('input:text, select').val('');
-			$('.w3-row').find('.w3-twothird.w3-text-white').html("");
-			$('.w3-row').find('.w3-threequarter.w3-text-white').html("");
+			$('#edit-photo-form').find('input:text, select').val("");
+			$('.w3-row').find('.w3-text-white').html("");
 			document.getElementById('edit-photo-modal').style.display = 'none'
 		}
 	</script>
