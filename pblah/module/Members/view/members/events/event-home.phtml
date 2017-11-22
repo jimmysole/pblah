@@ -12,7 +12,7 @@
 					function buildOnlineMemberList() {
 					    $.ajax({
 					    	type: "GET",
-					      	url: "/members/groups/get-one-group-members-online/" + location.pathname.split("/")[4],
+					      	url: "/members/groups/get-group-members-online",
 					      	dataType: "json",
 					    }).done(function(msg) {
 					    	if (msg.display_name == "" || msg.display_name == undefined) {
