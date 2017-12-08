@@ -30,7 +30,7 @@ class ProfileController extends AbstractActionController
             return $this->redirect()->toRoute('members/profile', array('action' => 'create-profile'));
         }
 
-
+        
         $params = $this->identity();
 
         $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums'));
@@ -46,6 +46,12 @@ class ProfileController extends AbstractActionController
 
             natsort($images);
 
+            $layout->setVariable('my_images', $images);
+        } else {
+            $images[] = "<img src=\"/images/profile/avatar2.png\" class=\"w3-margin-bottom w3-round w3-border\" style=\"width: 100%; height: 88px;\">";
+            
+            $layout = $this->layout();
+            
             $layout->setVariable('my_images', $images);
         }
     }
@@ -864,6 +870,7 @@ class ProfileController extends AbstractActionController
 
         $params = $this->identity();
 
+        
         $dir = @array_diff(@scandir(getcwd() . '/public/images/profile/' . $params . '/current/', 1), array('.', '..'));
 
         if (!$dir) {
@@ -871,7 +878,7 @@ class ProfileController extends AbstractActionController
             $string_img = "<img src=\"/images/profile/defaults/avatar2.png\" class=\"w3-round w3-border\"
             style=\"width: 200px; height: 200px;\" alt=\"Avatar\" id=\"avatar\">";
         } else {
-            $string_img = "<img src=\"/images/profile/$params/current/$dir[0]\" class=\"w3-round w3-border\"
+            $string_img = "<img src=\"/images/profile/avatar2.png\" class=\"w3-round w3-border\"
             style=\"width: 200px; height: 200px;\" alt=\"Avatar\" id=\"avatar\">";
         }
 

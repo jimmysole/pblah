@@ -57,13 +57,13 @@ class RegisterController extends AbstractActionController
 
     public function failureAction()
     {
-
+        return;
     }
 
 
     public function successAction()
     {
-
+        return;
     }
 
 

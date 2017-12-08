@@ -19,6 +19,8 @@ class MembersController extends AbstractActionController
             return $this->redirect()->toRoute('members/profile', array('action' => 'create-profile'));
         }
         
+        
+        
         $params = $this->identity();
 
         $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums'));
@@ -35,7 +37,13 @@ class MembersController extends AbstractActionController
             natsort($images);
 
             $layout->setVariable('my_images', $images);
-        } 
+        } else {
+            $images[] = "<img src=\"/images/profile/avatar2.png\" class=\"w3-margin-bottom w3-round w3-border\" style=\"width: 100%; height: 88px;\">";
+            
+            $layout = $this->layout();
+            
+            $layout->setVariable('my_images', $images);
+        }
     }
 
 
