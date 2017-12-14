@@ -2,7 +2,7 @@
 
 return array(
     'db' => array(
-        'username' => '', // change this to your mysql username
+        'username' => 'root', // change this to your mysql username
         'password' => '',     // change this to your mysql password
     )
 );

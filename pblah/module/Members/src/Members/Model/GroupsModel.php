@@ -9,6 +9,7 @@ use Zend\Db\Adapter\Adapter;
 use Members\Model\Filters\CreateGroup;
 use Members\Model\Filters\JoinGroup;
 
+
 class GroupsModel extends Groups
 {
 

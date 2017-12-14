@@ -873,12 +873,15 @@ class ProfileController extends AbstractActionController
         
         $dir = @array_diff(@scandir(getcwd() . '/public/images/profile/' . $params . '/current/', 1), array('.', '..'));
 
+        
         if (!$dir) {
             // set default avatar
             $string_img = "<img src=\"/images/profile/defaults/avatar2.png\" class=\"w3-round w3-border\"
             style=\"width: 200px; height: 200px;\" alt=\"Avatar\" id=\"avatar\">";
         } else {
-            $string_img = "<img src=\"/images/profile/avatar2.png\" class=\"w3-round w3-border\"
+            $img = $dir[0];
+            
+            $string_img = "<img src=\"/images/profile/$params/current/$img\" class=\"w3-round w3-border\"
             style=\"width: 200px; height: 200px;\" alt=\"Avatar\" id=\"avatar\">";
         }
 
