@@ -19,4 +19,6 @@ return array(
     'Members\Model\Classes\Exceptions\MessagesException'           => __DIR__ . '/src/Members/Model/Classes/Exceptions/MessagesException.php',
     'Members\Model\Classes\Exceptions\GroupManagerException'       => __DIR__ . '/src/Members/Model/Classes/Exceptions/GroupManagerException.php',
     'Members\Model\Classes\Exceptions\GroupMembersOnlineException' => __DIR__ . '/src/Members/Model/Classes/Exceptions/GroupMembersOnlineException.php',
+    'Members\Model\Classes\Exceptions\StatusException'             => __DIR__ . '/src/Members/Model/Classes/Exceptions/StatusException.php',
+    
 );

@@ -15,6 +15,7 @@ return array(
             'Members\Controller\Profile'  => 'Members\Controller\ProfileController',
             'Members\Controller\Groups'   => 'Members\Controller\GroupsController',
             'Members\Controller\Events'   => 'Members\Controller\EventsController',
+            'Members\Controller\Status'   => 'Members\Controller\StatusController',
         ),
     ),
 
@@ -47,6 +48,16 @@ return array(
                         ),
                     ),
 
+                    'status' => array(
+                        'type'    => 'segment',
+                        'options' => array(
+                            'route' => '/status[/:action]',
+                            'defaults' => array(
+                                'controller' => 'Members\Controller\Status',
+                                'action' => 'index',
+                            ),
+                        ),
+                    ),
 
                     'edit-profile' => array(
                         'type'     => 'Segment',

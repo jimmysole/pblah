@@ -11,6 +11,7 @@ class MembersController extends AbstractActionController
 {
     protected $profile_service;
     protected $groups_service;
+    protected $status_service;
 
 
     public function indexAction()
@@ -45,8 +46,7 @@ class MembersController extends AbstractActionController
             $layout->setVariable('my_images', $images);
         }
     }
-
-
+    
     public function getProfileService()
     {
         if (!$this->profile_service) {

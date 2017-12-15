@@ -3,7 +3,7 @@
 namespace Members\Model\Classes\Exceptions;
 
 
-class MembersException extends \Exception
+class StatusException extends \Exception
 {
     
 }

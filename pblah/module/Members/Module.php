@@ -12,6 +12,7 @@ use Members\Model\Filters\EditProfile;
 use Members\Model\EditProfileModel;
 use Members\Model\GroupsModel;
 use Members\Model\EventsModel;
+use Members\Model\StatusModel;
 
 class Module implements AutoloaderProviderInterface
 {
@@ -164,6 +165,18 @@ class Module implements AutoloaderProviderInterface
                 'EventsService' => function ($sm) {
                     $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
                     return new TableGateway('events', $db_adapter);
+                },
+                
+                'Members\Model\StatusModel' => function ($sm) {
+                    $table_gateway = $sm->get('StatusService');
+                    $members_model = new StatusModel($table_gateway, $sm->get('pblah-auth')->getIdentity());
+                    
+                    return $members_model;
+                },
+                
+                'StatusService' => function ($sm) {
+                    $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    return new TableGateway('status', $db_adapter);
                 }
             )
         );

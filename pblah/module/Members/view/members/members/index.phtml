@@ -307,14 +307,37 @@
 			<div class="w3-col m12">
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding">
-						<h6 class="w3-opacity">Welcome! Today is <?php echo date('l'); ?>. How are you?</h6>
+						<h6 class="w3-opacity">Welcome <?php echo $this->identity(); ?>! Today is <?php echo date('l'); ?>. How are you?</h6>
 
-						<p contenteditable="true" class="w3-border w3-padding">Status:
-							Feeling Blue</p>
+						<p contenteditable="true" class="w3-border w3-padding" id="status">Status: </p>
 
-						<button type="button" class="w3-btn w3-theme">
+						<button type="button" class="w3-btn w3-theme" id="post-status">
 							<i class="fa fa-pencil"></i> Post
 						</button>
+						
+						<p id="status-msg"></p>
+						
+						<script type="text/javascript">
+							$('#status').on('focus', function() {
+								$(this).html('');
+							});
+
+							$('#post-status').on('click', function() {
+								$.ajax({
+									type: "POST",
+									url: "/members/status/post-status",
+									dataType: "json",
+									data: {
+										status: $('#status').html()
+									}
+								}).done(function(msg) {
+									$('#status-msg').html(msg.success);
+									$('#status').html('Status: ');
+								}).fail(function(msg) {
+									$('#status-msg').html(msg.fail);
+								});
+							});
+						</script>
 					</div>
 				</div>
 			</div>
