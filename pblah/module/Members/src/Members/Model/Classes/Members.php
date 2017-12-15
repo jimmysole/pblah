@@ -2,7 +2,7 @@
 
 namespace Members\Model\Classes;
 
-use Members\Model\Classes\Exceptions\MembersException;
+use Members\Model\Classes\Exceptions\StatusException;
 
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Sql;
@@ -62,7 +62,7 @@ class Members
     public function postStatus($status)
     {
         if (empty($status)) {
-            throw new MembersException("Status text cannot be left empty.");
+            throw new StatusException("Status text cannot be left empty.");
         } else {
             // get the user's id based on $user
             $select = new Select('members');
@@ -84,7 +84,7 @@ class Members
                 $insert = new Insert('status');
                 
                 $insert->columns(array('id', 'status'))
-                ->values((array('id' => $row['id'], 'status' => $status)));
+                ->values(array('id' => $row['id'], 'status' => $status));
                 
                 $query = self::getSQLClass()->getAdapter()->query(
                     self::$sql->buildSqlString($insert),
@@ -92,18 +92,23 @@ class Members
                 );
                 
                 if (!$query) {
-                    throw new MembersException("Error posting status.");
+                    throw new StatusException("Error posting status.");
                 } 
                 
                 return true;
             } else {
-                throw new MembersException("Invalid username passed.");
+                throw new StatusException("Invalid username passed.");
             }
         }
         
         return false;
     }
     
+    
+    public function getStatus($user)
+    {
+        
+    }
     
     
     
