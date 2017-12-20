@@ -311,7 +311,7 @@
 
 						<p contenteditable="true" class="w3-border w3-padding" id="status">Status: </p>
 
-						<button type="button" class="w3-btn w3-theme" id="post-status">
+						<button type="button" class="w3-btn w3-theme" id="post-status" disabled>
 							<i class="fa fa-pencil"></i> Post
 						</button>
 						
@@ -320,25 +320,42 @@
 						<script type="text/javascript">
 							$('#status').on('focus', function() {
 								$(this).html('');
+
+								$('#status-msg').html("");
+								$('#post-status').attr('disabled', false);
 							});
 
-							// get status 
+							$('#status').on('focusout', function() {
+								if ($(this).html() != "") {
+									return;
+								} else {
+									$(this).html('Status: ');
+								}
+							});
 							
 							$('#post-status').on('click', function() {
-								$.ajax({
-									type: "POST",
-									url: "/members/status/post-status",
-									dataType: "json",
-									data: {
-										status: $('#status').html()
-									}
-								}).done(function(msg) {
-									$('#status-msg').html(msg.success);
-									$('#status').html('Status: ');
-								}).fail(function(msg) {
-									$('#status-msg').html(msg.fail);
-								});
+								if ($('#status').html() != "Status: " && $('#status').html() != "") {
+									$.ajax({
+										type: "POST",
+										url: "/members/status/post-status",
+										dataType: "json",
+										data: {
+											status: $('#status').html()
+										}
+									}).done(function(msg) {
+										$('#status-msg').html(msg.success);
+										$('#status').html('Status: ');
+									}).fail(function(msg) {
+										$('#status-msg').html(msg.fail);
+									});
+								} else {
+									$('#status-msg').html("Please enter a valid status.");
+									return;
+								}
 							});
+
+							
+							// get status
 						</script>
 					</div>
 				</div>
