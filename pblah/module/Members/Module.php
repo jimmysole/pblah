@@ -118,7 +118,7 @@ class Module implements AutoloaderProviderInterface
     {
         return array(
             'factories' => array(
-                'Members\Module\EditProfileModel' => function ($sm) {
+                'Members\Model\EditProfileModel' => function ($sm) {
                     $table_gateway = $sm->get('EditProfileService');
                     $profile = new EditProfileModel($table_gateway);
                     return $profile;
