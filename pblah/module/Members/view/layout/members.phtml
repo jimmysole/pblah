@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+f<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="UTF-8">
@@ -86,39 +86,40 @@
         <!-- Navbar -->
 		<div class="w3-top">
  			<ul class="w3-navbar w3-theme-d2 w3-left-align w3-large">
-  				<li class="w3-hide-medium w3-hide-large w3-opennav w3-right">
+  				<li class="w3-bar-item w3-hide-medium w3-hide-large w3-opennav w3-right">
     				<a class="w3-padding-large w3-hover-pale-green w3-large w3-theme-d2" href="javascript:void(0);" id="open-nav"><i class="fa fa-bars"></i></a>
   				</li>
 
   				<li><a href="<?php echo $this->url('members', array('action' => 'index')); ?>" class="w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right"></i>Home</a></li>
 
-  				<li class="w3-hide-small"><a href="<?php echo $this->url('home/forum', array('action' => 'index')); ?>" class="w3-padding-large w3-hover-pale-green" title="Forums"><i class="fa fa-globe"></i></a></li>
+  				<li class="w3-hide-small"><a href="<?php echo $this->url('home/forum', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Forums"><i class="fa fa-globe"></i></a></li>
 
-  				<li class="w3-hide-small"><a href="<?php echo $this->url('members/account', array('action' => 'index')); ?>" class="w3-padding-large w3-hover-pale-green" title="Account Settings"><i class="fa fa-user"></i></a></li>
+  				<li class="w3-hide-small"><a href="<?php echo $this->url('members/account', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Account Settings"><i class="fa fa-user"></i></a></li>
 
-  				<li class="w3-hide-small"><a href="<?php echo $this->url('members/messages', array('action' => 'index')); ?>" class="w3-padding-large w3-hover-pale-green" title="Messages"><i class="fa fa-envelope"></i></a></li>
+  				<li class="w3-hide-small"><a href="<?php echo $this->url('members/messages', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Messages"><i class="fa fa-envelope"></i></a></li>
 
-				<li class="w3-hide-small"><a href="<?php echo $this->url('members/profile', array('action' => 'index')); ?>" class="w3-padding-large w3-hover-pale-green" title="Profile"><i class="fa fa-address-book"></i></a></li>
+				<li class="w3-hide-small"><a href="<?php echo $this->url('members/profile', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Profile"><i class="fa fa-address-book"></i></a></li>
 
-				<li class="w3-hide-small"><a href="<?php echo $this->url('members/groups', array('action' => 'index')); ?>" class="w3-padding-large w3-hover-pale-green" title="Groups"><i class="fa fa-users"></i></a></li>
+				<li class="w3-hide-small"><a href="<?php echo $this->url('members/groups', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Groups"><i class="fa fa-users"></i></a></li>
 
-				<li class="w3-hide-small"><a href="<?php echo $this->url('members/events', array('action' => 'index')); ?>" class="w3-padding-large w3-hover-pale-green" title="Events"><i class="fa fa-calendar-check-o"></i></a></li>
+				<li class="w3-hide-small"><a href="<?php echo $this->url('members/events', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Events"><i class="fa fa-calendar-check-o"></i></a></li>
 
- 				<li class="w3-hide-small"><a href="<?php echo $this->url('home/logout', array('action' => 'member-logout')); ?>" class="w3-padding-large w3-hover-pale-green" title="Logout"><i class="fa fa-power-off"></i></a></li>
+ 				<li class="w3-hide-small"><a href="<?php echo $this->url('members/friends', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Friends"><i class="fa fa-id-card-o"></i></a></li>
+ 				
+ 				<li class="w3-hide-small"><a href="<?php echo $this->url('home/logout', array('action' => 'member-logout')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Logout"><i class="fa fa-power-off"></i></a></li>
  			</ul>
 		</div>
 
         <!-- Navbar on small screens -->
-		<div id="small-nav" class="w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top: 51px;">
-  			<ul class="w3-navbar w3-left-align w3-large w3-theme">
-    			<li><a class="w3-padding-large" href="<?php echo $this->url('home/forum', array('action' => 'index')); ?>">Forums</a></li>
-    			<li><a class="w3-padding-large" href="<?php echo $this->url('members/account', array('action' => 'index')); ?>">My Account</a></li>
-    			<li><a class="w3-padding-large" href="<?php echo $this->url('members/messages', array('action' => 'index')); ?>">Messages</a></li>
-  				<li><a class="w3-padding-large" href="<?php echo $this->url('members/profile', array('action' => 'index')); ?>">Profile</a></li>
-  				<li><a class="w3-padding-large" href="<?php echo $this->url('members/groups', array('action' => 'index')); ?>">Groups</a></li>
-  				<li><a class="w3-padding-large" href="<?php echo $this->url('members/events', array('action' => 'index')); ?>">Events</a></li>
-  				<li><a class="w3-padding-large" href="<?php echo $this->url('home/logout', array('action' => 'member-logout')); ?>">Logout</a></li>
-  			</ul>
+		<div id="small-nav" class="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large">
+    		<a class="w3-padding-large" href="<?php echo $this->url('home/forum', array('action' => 'index')); ?>">Forums</a>
+    		<a class="w3-padding-large" href="<?php echo $this->url('members/account', array('action' => 'index')); ?>">My Account</a>
+    		<a class="w3-padding-large" href="<?php echo $this->url('members/messages', array('action' => 'index')); ?>">Messages</a>
+  			<a class="w3-padding-large" href="<?php echo $this->url('members/profile', array('action' => 'index')); ?>">Profile</a>
+  			<a class="w3-padding-large" href="<?php echo $this->url('members/groups', array('action' => 'index')); ?>">Groups</a>
+  			<a class="w3-padding-large" href="<?php echo $this->url('members/events', array('action' => 'index')); ?>">Events</a>
+  			<a class="w3-padding-large" href="<?php echo $this->url('members/friends', array('action' => 'index')); ?>">Friends</a>
+  			<a class="w3-padding-large" href="<?php echo $this->url('home/logout', array('action' => 'member-logout')); ?>">Logout</a>
 		</div>
 
 
