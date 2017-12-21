@@ -16,6 +16,7 @@ return array(
             'Members\Controller\Groups'   => 'Members\Controller\GroupsController',
             'Members\Controller\Events'   => 'Members\Controller\EventsController',
             'Members\Controller\Status'   => 'Members\Controller\StatusController',
+            'Members\Controller\Friends'  => 'Members\Controller\FriendsController',
         ),
     ),
 
@@ -102,6 +103,17 @@ return array(
                             ),
                         ),
                     ),
+                    
+                    'friends' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/friends[/:action]',
+                            'defaults' => array(
+                                'controller' => 'Members\Controller\Friends',
+                                'action' => 'index',
+                            ),
+                        ),
+                    ),
 
                     'groups' => array(
                         'type'    => 'Segment',
@@ -147,6 +159,8 @@ return array(
                             'index'      => 'index',
                         ),
                     ),
+                    
+                   
                 ),
             ),
             
