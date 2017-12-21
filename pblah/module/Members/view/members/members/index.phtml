@@ -319,10 +319,14 @@
 						
 						<script type="text/javascript">
 							$('#status').on('focus', function() {
-								$(this).html('');
+								if ($(this).html() != "" && $(this).html() != "Status: ") {
+									return;
+								} else {
+									$(this).html('');
 
-								$('#status-msg').html("");
-								$('#post-status').attr('disabled', false);
+									$('#status-msg').html("");
+									$('#post-status').attr('disabled', false);
+								}
 							});
 
 							$('#status').on('focusout', function() {
