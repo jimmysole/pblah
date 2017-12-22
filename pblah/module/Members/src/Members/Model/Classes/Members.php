@@ -5,10 +5,13 @@ namespace Members\Model\Classes;
 use Members\Model\Classes\Exceptions\StatusException;
 
 use Zend\Db\TableGateway\TableGateway;
+
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
-use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Insert;
+use Zend\Db\Sql\Update;
+
+use Zend\Db\Adapter\Adapter;
 
 
 class Members
@@ -80,22 +83,51 @@ class Members
                     $row = $result;
                 }
                 
-                // use $row['id'] to insert the status
-                $insert = new Insert('status');
+                $select_status = new Select('status');
                 
-                $insert->columns(array('id', 'status'))
-                ->values(array('id' => $row['id'], 'status' => $status));
+                $select_status->columns(array('id', 'status'))
+                ->where(array('id' => $row['id']));
                 
                 $query = self::getSQLClass()->getAdapter()->query(
-                    self::$sql->buildSqlString($insert),
+                    self::$sql->buildSqlString($select_status),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
-                if (!$query) {
-                    throw new StatusException("Error posting status.");
-                } 
+                if (count($query) > 0) {
+                    // do update
+                    $update = new Update('status');
+                    
+                    $update->set(array('status' => $status))
+                    ->where(array('id' => $row['id']));
+                    
+                    $query = self::getSQLClass()->getAdapter()->query(
+                        self::$sql->buildSqlString($update),
+                        Adapter::QUERY_MODE_EXECUTE
+                    );
+                    
+                    if (!$query) {
+                        throw new StatusException("Error posting status.");
+                    }
+                    
+                    return true;
+                } else {
+                    // use $row['id'] to insert the status
+                    $insert = new Insert('status');
                 
-                return true;
+                    $insert->columns(array('id', 'status'))
+                    ->values(array('id' => $row['id'], 'status' => $status));
+                
+                    $query = self::getSQLClass()->getAdapter()->query(
+                        self::$sql->buildSqlString($insert),
+                        Adapter::QUERY_MODE_EXECUTE
+                    );
+                
+                    if (!$query) {
+                        throw new StatusException("Error posting status.");
+                    } 
+                
+                    return true;
+                }
             } else {
                 throw new StatusException("Invalid username passed.");
             }
