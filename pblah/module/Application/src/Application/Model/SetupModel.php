@@ -316,6 +316,15 @@ class SetupModel
         $status_table->addColumn(new Column\Integer('id', false, null, array('auto_increment' => false, 'unsigned' => true)));
         $status_table->addColumn(new Column\Char('status', 150));
 
+        
+        // create the friends table
+        $friends_table = new Ddl\CreateTable('friends');
+        $friends_table->addColumn(new Column\Integer('friend_id', false, null, array('auto_increment' => false, 'unsigned' => true)));
+        
+        // add the constraints
+        $friends_table->addConstraint(new Constraint\ForeignKey('fk_friend_id', 'friend_id', 'members', 'id', 'cascade', 'cascade'));
+        $friends_table->addConstraint(new Constraint\UniqueKey('friend_id'));
+        
 
 
         // make the tables
@@ -340,6 +349,7 @@ class SetupModel
             $pending_users_table,
             $sessions_table,
             $status_table,
+            $friends_table,
         ));
 
         return true;
