@@ -315,7 +315,13 @@
 			<div class="w3-col m12">
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding">
-						<h6 class="w3-opacity">Welcome <?php echo $this->identity(); ?>! Today is <?php echo date('l'); ?>. How are you?</h6>
+						<h6 class="w3-opacity" id="current-status"></h6>
+						
+						<script type="text/javascript">
+							$.getJSON('/members/status/get-status', function(stat) {
+								$('#current-status').html("Current Status: " + stat.status);
+							});
+						</script>
 
 						<p contenteditable="true" class="w3-border w3-padding" id="status">Status: </p>
 
@@ -357,6 +363,11 @@
 									}).done(function(msg) {
 										$('#status-msg').html(msg.success);
 										$('#status').html('Status: ');
+
+										// update status text
+										$.getJSON('/members/status/get-status', function(stat) {
+											$('#current-status').html("Current Status: " + stat.status);
+										});
 									}).fail(function(msg) {
 										$('#status-msg').html(msg.fail);
 									});
@@ -365,15 +376,13 @@
 									return;
 								}
 							});
-
-							
-							// get status
 						</script>
 					</div>
 				</div>
 			</div>
 		</div>
 
+		<!-- friends activity feed -->
 		<div class="w3-container w3-card-2 w3-white w3-round w3-margin">
 			<br> <img src="<?php echo $this->basePath(); ?>/images/avatar2.png" alt="Avatar"
 				class="w3-left w3-circle w3-margin-right" style="width: 60px"> <span
