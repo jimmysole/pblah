@@ -52,7 +52,7 @@ class StatusController extends AbstractActionController
         try {
             echo json_encode($this->getStatusService()->getCurrentStatus($this->identity()));
         } catch (StatusException $e) {
-            // don't do anything
+            echo json_encode(array('fail' => $e->getMessage()));
         }
         
         return $view_model;
