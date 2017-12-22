@@ -139,7 +139,49 @@ class Members
     
     public function getStatus($user)
     {
-        
+        if (empty($user)) {
+            throw new StatusException("Invalid username passed.");
+        } else {
+            // get the user id based on $user
+            $select = new Select('members');
+            
+            $select->columns(array('id'))
+            ->where(array('username' => $user));
+            
+            $query = self::getSQLClass()->getAdapter()->query(
+                self::$sql->buildSqlString($select),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            if (!$query) {
+                throw new StatusException("Status for $user was not found.");
+            }
+            
+            // get the current status for the user
+            foreach ($query as $result) {
+                $row = $result;
+            }
+            
+            $get_status = new Select('status');
+            
+            $get_status->columns(array('status'))
+            ->where(array('id' => $row['id']));
+            
+            $query = self::getSQLClass()->getAdapter()->query(
+                self::$sql->buildSqlString($get_status),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            if (!$query) {
+                throw new StatusException("Error retrieving status.");
+            }
+            
+            foreach ($query as $user_status) {
+                $status_row = $user_status;
+            }
+            
+            return $status_row;
+        }
     }
     
     

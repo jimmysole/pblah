@@ -33,4 +33,10 @@ class StatusModel extends Members
     {
        return parent::postStatus($data['status']);
     }
+    
+    
+    public function getCurrentStatus($user)
+    {
+        return parent::getStatus($user);
+    }
 }

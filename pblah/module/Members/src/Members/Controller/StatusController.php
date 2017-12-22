@@ -40,6 +40,25 @@ class StatusController extends AbstractActionController
         return $view_model;
     }
     
+    
+    public function getstatusAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        try {
+            echo json_encode($this->getStatusService()->getCurrentStatus($this->identity()));
+        } catch (StatusException $e) {
+            // don't do anything
+        }
+        
+        return $view_model;
+    }
+    
+    
     public function getStatusService()
     {
         if (!$this->status_service) {
