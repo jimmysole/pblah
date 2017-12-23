@@ -315,6 +315,9 @@ class SetupModel
         $status_table = new Ddl\CreateTable('status');
         $status_table->addColumn(new Column\Integer('id', false, null, array('auto_increment' => false, 'unsigned' => true)));
         $status_table->addColumn(new Column\Char('status', 150));
+        
+        // add the constraints
+        $status_table->addConstraint(new Constraint\PrimaryKey('id'));
 
         
         // create the friends table
