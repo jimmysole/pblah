@@ -172,8 +172,8 @@ class Members
                 Adapter::QUERY_MODE_EXECUTE
             );
             
-            if (!$query) {
-                throw new StatusException("Error retrieving status.");
+            if (count($query) <= 0) {
+                throw new StatusException("Looks like you haven't posted a status yet!");
             }
             
             foreach ($query as $user_status) {
