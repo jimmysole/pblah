@@ -1,4 +1,5 @@
 <?php
+
 namespace Members\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
