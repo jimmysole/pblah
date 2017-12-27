@@ -35,7 +35,7 @@ class Friends extends Members
             // determine what critera was passed
             if ($critera == 'age') {
                 $select->columns(array('profle_id', 'display_name', 'age', 'location', 'bio'))
-                ->where(array('age' => intval($critera['age'])));
+                ->where(array('age' => intval($critera_params['age'])));
                 
                 $query = parent::getSQLClass()->getAdapter()->query(
                     parent::getSQLClass()->buildSqlString($select),
@@ -49,7 +49,7 @@ class Friends extends Members
                     
                     return $this->browse_results;
                 } else {
-                    throw new FriendsException("No friends were found with " . $critera['age'] . " as the critera.");
+                    throw new FriendsException("No friends were found with " . $critera_params['age'] . " as the critera.");
                 }
                 
             } else if ($critera == 'display_name') {
