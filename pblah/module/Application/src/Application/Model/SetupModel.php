@@ -113,7 +113,7 @@ class SetupModel
         // add the constraints
         $profile_table->addConstraint(new Constraint\UniqueKey('display_name'));
         $profile_table->addConstraint(new Constraint\UniqueKey('email_address'));
-        $profile_table->addConstraint(new Constraint\PrimaryKey(array('profile_id', 'friend_id')));
+        $profile_table->addConstraint(new Constraint\PrimaryKey('profile_id'));
 
 
         // create the profile settings table
