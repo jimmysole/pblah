@@ -326,6 +326,11 @@ class SetupModel
         $friends_table->addColumn(new Column\Integer('friend_id', false, null, array('auto_increment' => false, 'unsigned' => true)));
         $friends_table->addColumn(new Column\Integer('user_id', false, null, array('auto_increment' => false, 'unsigned' => true)));
         
+        
+        // create the friend requests table
+        $friend_requests_table = new Ddl\CreateTable('friend_requests');
+        $friend_requests_table->addColumn(new Column\Integer('request_id', false, null, array('auto_increment' => true, 'unsigned' => true)));
+        $friend_requests_table->addColumn(new Column\Integer('friend_id', false, null, array('auto_increment' => true, 'unsigned' => true)));
 
 
         // make the tables
@@ -351,6 +356,7 @@ class SetupModel
             $sessions_table,
             $status_table,
             $friends_table,
+            $friend_requests_table,
         ));
 
         return true;
