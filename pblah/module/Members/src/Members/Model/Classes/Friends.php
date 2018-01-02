@@ -35,8 +35,12 @@ class Friends extends Members
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($request_id, $friend_id)
     {
+        
+        $this->friend_id    = (!empty($friend_id))    ? $this->friend_id    = $friend_id    : null;
+        $this->request_id   = (!empty($request_id))   ? $this->request_id   = $request_id   : null;
+        
         $this->user = parent::getUser();
     }
     
@@ -138,16 +142,11 @@ class Friends extends Members
     
     /**
      * Sends a friend add request
-     * @param integer $friend_id
-     * @param integer $request_id
      * @throws FriendsException
      * @return boolean
      */
-    public function sendAddRequest($friend_id, $request_id)
+    public function sendAddRequest()
     {
-        $this->friend_id    = (!empty($friend_id))    ? $this->friend_id    = $friend_id    : null;
-        $this->request_id   = (!empty($request_id))   ? $this->request_id   = $request_id   : null;
-        
         // see if a request is already pending first
         $select = new Select('friend_requests');
         
@@ -169,7 +168,7 @@ class Friends extends Members
             $insert = new Insert('friend_requests');
             
             $insert->columns(array('request_id', 'friend_id'))
-            ->values(array('request_id' => $this->request_id, 'friend_id' => $friend_id));
+            ->values(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
             
             $query = parent::getSQLClass()->getAdapter()->query(
                 parent::getSQLClass()->buildSqlString($insert),
