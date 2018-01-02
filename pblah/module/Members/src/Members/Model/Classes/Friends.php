@@ -32,21 +32,31 @@ class Friends extends Members
     protected $request_id;
     
     
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         $this->user = parent::getUser();
     }
     
     
-    public function browseFriends($critera = null, array $critera_params = array())
+    /**
+     * Browses through the user's friend list with optional criteria
+     * @param null|string $criteria
+     * @param array $criteria_params
+     * @throws FriendsException
+     * @return array
+     */
+    public function browseFriends($criteria = null, array $criteria_params = array())
     {
-        if (null !== $critera) {
+        if (null !== $criteria) {
             $select = new Select('profiles');
             
             // determine what critera was passed
-            if ($critera == 'age') {
+            if ($criteria == 'age') {
                 $select->columns(array('profle_id', 'display_name', 'age', 'location', 'bio'))
-                ->where(array('age' => intval($critera_params['age']), 'friend_id' => $critera_params['friend_id']));
+                ->where(array('age' => intval($criteria_params['age']), 'friend_id' => $criteria_params['friend_id']));
                 
                 $query = parent::getSQLClass()->getAdapter()->query(
                     parent::getSQLClass()->buildSqlString($select),
@@ -60,11 +70,11 @@ class Friends extends Members
                     
                     return $this->browse_results;
                 } else {
-                    throw new FriendsException("No friends were found with " . $critera_params['age'] . " as the critera.");
+                    throw new FriendsException("No friends were found with " . $criteria_params['age'] . " as the critera.");
                 }
-            } else if ($critera == 'display_name') {
+            } else if ($criteria == 'display_name') {
                 $select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
-                ->where(array('display_name' => $critera_params['display_name'], 'friend_id' => $critera_params['friend_id']));
+                ->where(array('display_name' => $criteria_params['display_name'], 'friend_id' => $criteria_params['friend_id']));
                 
                 $query = parent::getSQLClass()->getAdapter()->query(
                     parent::getSQLClass()->buildSqlString($select),
@@ -78,11 +88,11 @@ class Friends extends Members
                     
                     return $this->browse_results;
                 } else {
-                    throw new FriendsException("No friends were found with " . $critera_params['display_name'] . " as the critera.");
+                    throw new FriendsException("No friends were found with " . $criteria_params['display_name'] . " as the critera.");
                 }
-            } else if ($critera == 'location') {
+            } else if ($criteria == 'location') {
                 $select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
-                ->where(array('display_name' => $critera_params['location'], 'friend_id' => $critera_params['friend_id']));
+                ->where(array('display_name' => $criteria_params['location'], 'friend_id' => $criteria_params['friend_id']));
                 
                 $query = parent::getSQLClass()->getAdapter()->query(
                     parent::getSQLClass()->buildSqlString($select),
@@ -96,7 +106,7 @@ class Friends extends Members
                     
                     return $this->browse_results;
                 } else {
-                    throw new FriendsException("No friends were found with " . $critera_params['location'] . " as the critera.");
+                    throw new FriendsException("No friends were found with " . $criteria_params['location'] . " as the critera.");
                 }
             } else {
                 throw new FriendsException("Invalid search critera passed.");
@@ -106,7 +116,7 @@ class Friends extends Members
             $select = new Select('profiles');
             
             $select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
-            ->where(array('friend_id' => $critera_params['friend_id']));
+            ->where(array('friend_id' => $criteria_params['friend_id']));
             
             $query = parent::getSQLClass()->getAdapter()->query(
                 parent::getSQLClass()->buildSqlString($select),
@@ -126,7 +136,14 @@ class Friends extends Members
     }
     
     
-    public function sendAddRequest($friend_id, $request_id, array $params = array())
+    /**
+     * Sends a friend add request
+     * @param integer $friend_id
+     * @param integer $request_id
+     * @throws FriendsException
+     * @return boolean
+     */
+    public function sendAddRequest($friend_id, $request_id)
     {
         $this->friend_id    = (!empty($friend_id))    ? $this->friend_id    = $friend_id    : null;
         $this->request_id   = (!empty($request_id))   ? $this->request_id   = $request_id   : null;
