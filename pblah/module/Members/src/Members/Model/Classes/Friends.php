@@ -4,9 +4,11 @@ namespace Members\Model\Classes;
 
 use Members\Model\Classes\Exceptions\FriendsException;
 
-use Zend\Db\Sql\Select;
 use Zend\Db\Adapter\Adapter;
+
+use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Insert;
+use Zend\Db\Sql\Delete;
 
 
 class Friends extends Members
@@ -178,15 +180,36 @@ class Friends extends Members
             if (count($query) > 0) {
                 return true;
             } else {
-                return false;
+                throw new FriendsException("Error sending your friend request, please try again.");
             }
         }
     }
     
     
-    public function cancelAddRequest()
+    /**
+     * Cancels a pending friend request
+     * @throws FriendsException
+     * @return boolean
+     */
+    public function cancelFriendRequest()
     {
+        // remove both of the columns by matching up the request id and the friend id
+        // since no duplicate friend ids are allowed (unique for each friend/person)
+        // we can do a simple delete
+        $delete = new Delete('friend_requests');
         
+        $delete->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
+        
+        $query = parent::getSQLClass()->getAdapter()->query(
+            parent::getSQLClass()->buildSqlString($delete),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if (count($query) > 0) {
+            return true;
+        } else {
+            throw new FriendsException("Error cancelling your friend request, please try again.");
+        }
     }
     
     
