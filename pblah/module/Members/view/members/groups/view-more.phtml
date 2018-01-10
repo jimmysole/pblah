@@ -72,10 +72,10 @@
 	<!-- end left column -->
 
    <?php
-		  if (count($this->groups) <= 0):
+		  if (count($this->groups) <= 0 || is_string($this->groups)):
    ?>
 	<div class="w3-responsive">
-		<p class="w3-center" id="no-groups">No more groups found.</p>
+		<p class="w3-center" id="no-groups">No groups were found.</p>
 	</div>
 
 	<script type="text/javascript">

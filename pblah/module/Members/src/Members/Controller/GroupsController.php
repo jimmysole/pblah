@@ -58,8 +58,15 @@ class GroupsController extends AbstractActionController
         
         return new ViewModel(array('paginator' => $paginator));
         */
+        try {
+            $view_model = new ViewModel();
+            
+            $view_model->setVariable('groups', $this->getGroupsService()->listAllGroups());
+        } catch (GroupsException $e) {
+            $view_model->setVariable('groups', $e->getMessage());
+        }
         
-        return new ViewModel(array('groups' => $this->getGroupsService()->listAllGroups()));
+        return $view_model;
     }
 
 
