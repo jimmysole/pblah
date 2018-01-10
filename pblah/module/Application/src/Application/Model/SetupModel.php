@@ -329,10 +329,14 @@ class SetupModel
         
         // create the friend requests table
         $friend_requests_table = new Ddl\CreateTable('friend_requests');
-        $friend_requests_table->addColumn(new Column\Integer('request_id', false, null, array('auto_increment' => true, 'unsigned' => true)));
-        $friend_requests_table->addColumn(new Column\Integer('friend_id', false, null, array('auto_increment' => true, 'unsigned' => true)));
+        $friend_requests_table->addColumn(new Column\Integer('id', false, null, array('auto_increment' => true, 'unsigned' => true)));
+        $friend_requests_table->addColumn(new Column\Integer('request_id', false, null, array('auto_increment' => false, 'unsigned' => true)));
+        $friend_requests_table->addColumn(new Column\Integer('friend_id', false, null, array('auto_increment' => false, 'unsigned' => true)));
 
-
+        // add the constraints
+        $friend_requests_table->addConstraint(new Constraint\PrimaryKey('id'));
+        
+        
         // make the tables
         $this->query(array(
             $admin_table,
