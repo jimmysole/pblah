@@ -38,14 +38,14 @@ class SetupController extends AbstractActionController
 
                 if ($this->getSetupInstance()->createTables()) {
                     if ($this->getSetupInstance()->makeAdmin($setup)) {
-                        $this->flashMessenger()->addSuccessMessage("p-Blah was setup successfully!");
+                        $this->flashMessenger()->addSuccessMessage("pblah was setup successfully!");
                         return $this->redirect()->toUrl('setup/success');
                     } else {
-                        $this->flashMessenger()->addErrorMessage("p-Blah encountered a error while creating the admin information, please try again.");
+                        $this->flashMessenger()->addErrorMessage("pblah encountered a error while creating the admin information, please try again.");
                         return $this->redirect()->toUrl('setup/failure');
                     }
                 } else {
-                    $this->flashMessenger()->addErrorMessage("p-Blah encountered a error while creating the database tables, please try again.");
+                    $this->flashMessenger()->addErrorMessage("pblah encountered a error while creating the database tables, please try again.");
                     return $this->redirect()->toUrl('setup/failure');
                 }
             }
