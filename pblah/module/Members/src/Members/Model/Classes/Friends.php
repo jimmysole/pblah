@@ -233,12 +233,6 @@ class Friends extends Members
     }
     
     
-    public function blockFriendRequest($who, array $params = array())
-    {
-        
-    }
-    
-    
     /**
      * Approves a pending friend request
      * @throws FriendsException
@@ -298,6 +292,12 @@ class Friends extends Members
         } else {
             throw new FriendsException("Request id not found.");
         }
+    }
+    
+    
+    public function blockFriendRequest($who, array $params = array())
+    {
+        // really necessary?
     }
     
     
