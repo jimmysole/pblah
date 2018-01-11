@@ -56,6 +56,35 @@ class Members
     
     
     /**
+     * Gets the user id
+     * @return ResultSet|boolean
+     */
+    public static function getUserId()
+    {
+        $select = new Select('members');
+        
+        $select->columns(array('*'))
+        ->where(array('username' => self::getUser()));
+        
+        
+        $query = self::getSQLClass()->getAdapter()->query(
+            self::$sql->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if (count($query) > 0) {
+            foreach ($query as $result) {
+                $row = $result;
+            }
+            
+            return $row;
+        }
+        
+        return false;
+    }
+    
+    
+    /**
      * Posts the current status for the user 
      * @param mixed $status
      * @param mixed $user
