@@ -194,21 +194,41 @@ class Friends extends Members
     public function cancelFriendRequest()
     {
         // remove both of the columns by matching up the request id and the friend id
-        // since no duplicate friend ids are allowed (unique for each friend/person)
+        // since no duplicate requests ids are allowed (unique for each friend/person)
         // we can do a simple delete
-        $delete = new Delete('friend_requests');
+        $select = new Select('friend_requests');
         
-        $delete->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
+        $select->columns(array('id'))
+        ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
         
         $query = parent::getSQLClass()->getAdapter()->query(
-            parent::getSQLClass()->buildSqlString($delete),
+            parent::getSQLClass()->buildSqlString($select),
             Adapter::QUERY_MODE_EXECUTE
         );
         
         if (count($query) > 0) {
-            return true;
+            $row_id = array();
+            
+            foreach ($query as $val) {
+                $row_id[] = $val;    
+            }
+            
+            $delete = new Delete('friend_requests');
+            
+            $delete->where(array('id' => $row_id[0]));
+            
+            $query = parent::getSQLClass()->getAdapter()->query(
+                parent::getSQLClass()->buildSqlString($delete),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            if (count($query) > 0) {
+                return true;
+            } else {
+                throw new FriendsException("Error cancelling your friend request, please try again.");
+            }
         } else {
-            throw new FriendsException("Error cancelling your friend request, please try again.");
+            throw new FriendsException("Could not locate the supplied friend request.");
         }
     }
     
@@ -219,9 +239,65 @@ class Friends extends Members
     }
     
     
+    /**
+     * Approves a pending friend request
+     * @throws FriendsException
+     * @return boolean
+     */
     public function approveFriendRequest()
     {
+        // if approved, add request id to the friends table
+        // and then delete the friend request
+        $select = new Select('friend_requests');
         
+        $select->columns(array('id', 'request_id', 'friend_id'))
+        ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
+        
+        $query = parent::getSQLClass()->getAdapter()->query(
+            parent::getSQLClass()->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if (count($query) > 0) {
+            $request_id = array();
+            
+            foreach ($query as $value) {
+                $request_id[] = $value['id'];
+            }
+            
+            // insert now into friends table
+            $insert = new Insert('friends');
+            
+            $insert->columns(array('friend_id', 'user_id'))
+            ->values(array('friend_id' => $this->friend_id, 'user_id' => parent::getUserId()['id']));
+            
+            $query = parent::getSQLClass()->getAdapter()->query(
+                parent::getSQLClass()->buildSqlString($insert),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            if (count($query) > 0) {
+                // delete from friend_requests now
+                $delete = new Delete('friend_requests');
+                
+                $delete->where(array('id' => $request_id[0]));
+                
+                $query = parent::getSQLClass()->getAdapter()->query(
+                    parent::getSQLClass()->buildSqlString($delete),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                if (count($query) > 0) {
+                    return true;
+                } else {
+                    throw new FriendsException("Error removing friend request, please try again.");
+                }
+            } else {
+                throw new FriendsException("Error finding user in friends table, aborting.");
+            }
+        } else {
+            throw new FriendsException("Request id not found.");
+        }
     }
     
     
