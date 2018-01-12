@@ -325,8 +325,7 @@
 								} else {
 									$('#current-status').html("Current Status: " + status.status);
 								}
-							})
-							.fail(function(stat_fail) {
+							}).fail(function(stat_fail) {
 								$('#current-status').html(stat_fail.fail);
 							});
 						</script>
