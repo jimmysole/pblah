@@ -13,6 +13,7 @@ use Members\Model\EditProfileModel;
 use Members\Model\GroupsModel;
 use Members\Model\EventsModel;
 use Members\Model\StatusModel;
+use Members\Model\FriendsModel;
 
 class Module implements AutoloaderProviderInterface
 {
@@ -177,6 +178,18 @@ class Module implements AutoloaderProviderInterface
                 'StatusService' => function ($sm) {
                     $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
                     return new TableGateway('status', $db_adapter);
+                },
+                
+                'Members\Model\FriendsModel' => function ($sm) {
+                    $table_gateway = $sm->get('FriendsService');
+                    $friends_model = new FriendsModel($table_gateway, $sm->get('pblah-auth')->getIdentity());
+                    
+                    return $friends_model;
+                },
+                
+                'FriendsService' => function ($sm) {
+                    $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    return new TableGateway('friends', $db_adapter);
                 }
             )
         );
