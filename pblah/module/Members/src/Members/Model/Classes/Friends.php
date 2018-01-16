@@ -35,6 +35,22 @@ class Friends extends Members
     
     
     /**
+     * @var Select
+     */
+    private $select;
+    
+    /**
+     * 
+     * @var Insert
+     */
+    private $insert;
+    
+    /**
+     * @var Delete
+     */
+    private $delete;
+    
+    /**
      * Constructor
      */
     public function __construct($request_id, $friend_id)
@@ -44,6 +60,12 @@ class Friends extends Members
         $this->request_id   = (!empty($request_id))   ? $this->request_id   = $request_id   : null;
         
         $this->user = parent::getUser();
+        
+        $this->select = new Select();
+        
+        $this->insert = new Insert();
+        
+        $this->delete = new Delete();
     }
     
     
@@ -57,15 +79,14 @@ class Friends extends Members
     public function browseFriends($criteria = null, array $criteria_params = array())
     {
         if (null !== $criteria) {
-            $select = new Select('profiles');
-            
             // determine what critera was passed
             if ($criteria == 'age') {
-                $select->columns(array('profle_id', 'display_name', 'age', 'location', 'bio'))
+                $this->select->columns(array('profle_id', 'display_name', 'age', 'location', 'bio'))
+                ->from('profiles')
                 ->where(array('age' => intval($criteria_params['age']), 'friend_id' => $criteria_params['friend_id']));
                 
                 $query = parent::getSQLClass()->getAdapter()->query(
-                    parent::getSQLClass()->buildSqlString($select),
+                    parent::getSQLClass()->buildSqlString($this->select),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
@@ -79,11 +100,12 @@ class Friends extends Members
                     throw new FriendsException("No friends were found with " . $criteria_params['age'] . " as the critera.");
                 }
             } else if ($criteria == 'display_name') {
-                $select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
+                $this->select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
+                ->from('profiles')
                 ->where(array('display_name' => $criteria_params['display_name'], 'friend_id' => $criteria_params['friend_id']));
                 
                 $query = parent::getSQLClass()->getAdapter()->query(
-                    parent::getSQLClass()->buildSqlString($select),
+                    parent::getSQLClass()->buildSqlString($this->select),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
@@ -97,11 +119,12 @@ class Friends extends Members
                     throw new FriendsException("No friends were found with " . $criteria_params['display_name'] . " as the critera.");
                 }
             } else if ($criteria == 'location') {
-                $select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
+                $this->select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
+                ->from('profiles')
                 ->where(array('display_name' => $criteria_params['location'], 'friend_id' => $criteria_params['friend_id']));
                 
                 $query = parent::getSQLClass()->getAdapter()->query(
-                    parent::getSQLClass()->buildSqlString($select),
+                    parent::getSQLClass()->buildSqlString($this->select),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
@@ -119,13 +142,12 @@ class Friends extends Members
             }
         } else {
             // display all friends based on friend id
-            $select = new Select('profiles');
-            
-            $select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
+            $this->select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
+            ->from('profiles')
             ->where(array('friend_id' => $criteria_params['friend_id']));
             
             $query = parent::getSQLClass()->getAdapter()->query(
-                parent::getSQLClass()->buildSqlString($select),
+                parent::getSQLClass()->buildSqlString($this->select),
                 Adapter::QUERY_MODE_EXECUTE
             );
             
@@ -150,13 +172,12 @@ class Friends extends Members
     public function sendAddRequest()
     {
         // see if a request is already pending first
-        $select = new Select('friend_requests');
-        
-        $select->columns(array('request_id', 'friend_id'))
+        $this->select->columns(array('request_id', 'friend_id'))
+        ->from('friend_requests')
         ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
         
         $query = parent::getSQLClass()->getAdapter()->query(
-            parent::getSQLClass()->buildSqlString($select),
+            parent::getSQLClass()->buildSqlString($this->select),
             Adapter::QUERY_MODE_EXECUTE
         );
         
@@ -167,13 +188,13 @@ class Friends extends Members
             // request_id is the id of the current user logged in
             // and friend_id is the id of the user who the current user
             // logged in wants to be a friend with
-            $insert = new Insert('friend_requests');
             
-            $insert->columns(array('request_id', 'friend_id'))
+            $this->insert->into('friend_requests')
+            ->columns(array('request_id', 'friend_id'))
             ->values(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
             
             $query = parent::getSQLClass()->getAdapter()->query(
-                parent::getSQLClass()->buildSqlString($insert),
+                parent::getSQLClass()->buildSqlString($this->insert),
                 Adapter::QUERY_MODE_EXECUTE
             );
             
@@ -242,13 +263,12 @@ class Friends extends Members
     {
         // if approved, add request id to the friends table
         // and then delete the friend request
-        $select = new Select('friend_requests');
-        
-        $select->columns(array('id', 'request_id', 'friend_id'))
+        $this->select->columns(array('id', 'request_id', 'friend_id'))
+        ->from('friend_requests')
         ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
         
         $query = parent::getSQLClass()->getAdapter()->query(
-            parent::getSQLClass()->buildSqlString($select),
+            parent::getSQLClass()->buildSqlString($this->select),
             Adapter::QUERY_MODE_EXECUTE
         );
         
@@ -260,24 +280,22 @@ class Friends extends Members
             }
             
             // insert now into friends table
-            $insert = new Insert('friends');
-            
-            $insert->columns(array('friend_id', 'user_id'))
+            $this->insert->into('friends')
+            ->columns(array('friend_id', 'user_id'))
             ->values(array('friend_id' => $this->friend_id, 'user_id' => parent::getUserId()['id']));
             
             $query = parent::getSQLClass()->getAdapter()->query(
-                parent::getSQLClass()->buildSqlString($insert),
+                parent::getSQLClass()->buildSqlString($this->insert),
                 Adapter::QUERY_MODE_EXECUTE
             );
             
             if (count($query) > 0) {
                 // delete from friend_requests now
-                $delete = new Delete('friend_requests');
-                
-                $delete->where(array('id' => $request_id[0]));
+                $this->delete->from('friend_requests')
+                ->where(array('id' => $request_id[0]));
                 
                 $query = parent::getSQLClass()->getAdapter()->query(
-                    parent::getSQLClass()->buildSqlString($delete),
+                    parent::getSQLClass()->buildSqlString($this->delete),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
@@ -301,8 +319,26 @@ class Friends extends Members
     }
     
     
+    /**
+     * Denies a pending friend request
+     * @throws FriendsException
+     * @return boolean
+     */
     public function denyFriendRequest()
     {
+        // delete the request from the friend_requests table
+        $this->delete->from('friend_requests')
+        ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
         
+        $query = parent::getSQLClass()->getAdapter()->query(
+            parent::getSQLClass()->buildSqlString($this->delete),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if (count($query) > 0) {
+            return true;
+        } else {
+            throw new FriendsException("Error removing denied friend request, please try again.");
+        }
     }
 }
