@@ -14,11 +14,6 @@ use Zend\Db\Sql\Delete;
 class Friends extends Members
 {
     /**
-     * @var string
-     */
-    protected $user;
-    
-    /**
      * @var array
      */
     protected $browse_results = array();
@@ -57,9 +52,8 @@ class Friends extends Members
     {
         
         $this->friend_id    = (!empty($friend_id))    ? $this->friend_id    = $friend_id    : null;
-        $this->request_id   = (!empty($request_id))   ? $this->request_id   = $request_id   : null;
         
-        $this->user = parent::getUser();
+        $this->request_id   = (!empty($request_id))   ? $this->request_id   = $request_id   : null;
         
         $this->select = new Select();
         
@@ -188,7 +182,6 @@ class Friends extends Members
             // request_id is the id of the current user logged in
             // and friend_id is the id of the user who the current user
             // logged in wants to be a friend with
-            
             $this->insert->into('friend_requests')
             ->columns(array('request_id', 'friend_id'))
             ->values(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
@@ -217,13 +210,12 @@ class Friends extends Members
         // remove both of the columns by matching up the request id and the friend id
         // since no duplicate requests ids are allowed (unique for each friend/person)
         // we can do a simple delete
-        $select = new Select('friend_requests');
-        
-        $select->columns(array('id'))
+        $this->select->columns(array('id'))
+        ->from('friend_requests')
         ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
         
         $query = parent::getSQLClass()->getAdapter()->query(
-            parent::getSQLClass()->buildSqlString($select),
+            parent::getSQLClass()->buildSqlString($this->select),
             Adapter::QUERY_MODE_EXECUTE
         );
         
@@ -234,12 +226,11 @@ class Friends extends Members
                 $row_id[] = $val;    
             }
             
-            $delete = new Delete('friend_requests');
-            
-            $delete->where(array('id' => $row_id[0]));
+            $this->delete->from('friend_requests')
+            ->where(array('id' => $row_id[0]));
             
             $query = parent::getSQLClass()->getAdapter()->query(
-                parent::getSQLClass()->buildSqlString($delete),
+                parent::getSQLClass()->buildSqlString($this->delete),
                 Adapter::QUERY_MODE_EXECUTE
             );
             
