@@ -16,7 +16,7 @@ class FriendRequestModel extends Friends
      * @param TableGateway $gateway
      * @param string $user
      */
-    public final function __construct(TableGateway $gateway, $user)
+    public function __construct(TableGateway $gateway, $user)
     {
         $this->gateway = $gateway instanceof TableGateway ? $gateway : null;
         
@@ -27,6 +27,7 @@ class FriendRequestModel extends Friends
     
     /**
      * Sends a friend request
+     * @param integer $request_id
      * @param integer $friend_id
      * @return boolean
      */
