@@ -91,7 +91,7 @@ class Members
      * @throws MembersException
      * @return boolean
      */
-    public function postStatus($status)
+    public static function postStatus($status)
     {
         if (empty($status)) {
             throw new StatusException("Status text cannot be left empty.");
@@ -166,7 +166,7 @@ class Members
     }
     
     
-    public function getStatus($user)
+    public static function getStatus($user)
     {
         if (empty($user)) {
             throw new StatusException("Invalid username passed.");
