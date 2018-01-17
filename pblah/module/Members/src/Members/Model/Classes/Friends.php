@@ -6,60 +6,79 @@ use Members\Model\Classes\Exceptions\FriendsException;
 
 use Zend\Db\Adapter\Adapter;
 
+use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Delete;
 
+use Zend\Db\TableGateway\TableGateway;
 
-class Friends extends Members
+
+class Friends
 {
+    /**
+     * @var string
+     */
+    public static $user;
+    
+    /**
+     * @var TableGateway
+     */
+    public static $table_gateway;
+    
+    /**
+     * @var Sql
+     */
+    public static $sql;
+    
+    
     /**
      * @var array
      */
-    protected $browse_results = array();
+    protected static $browse_results = array();
     
     /**
      * @var integer
      */
-    protected $friend_id;
+    protected static $friend_id;
     
     /**
      * @var integer
      */
-    protected $request_id;
+    protected static $request_id;
     
     
     /**
      * @var Select
      */
-    private $select;
+    private static $select;
     
     /**
      * 
      * @var Insert
      */
-    private $insert;
+    private static $insert;
     
     /**
      * @var Delete
      */
-    private $delete;
+    private static $delete;
     
-    /**
-     * Constructor
-     */
-    public function __construct($request_id, $friend_id)
+    
+    public static function setIds($request_id, $friend_id)
     {
         
-        $this->friend_id    = (!empty($friend_id))    ? $this->friend_id    = $friend_id    : null;
+        self::$friend_id    = (!empty($friend_id))    ? self::$friend_id    = $friend_id    : null;
         
-        $this->request_id   = (!empty($request_id))   ? $this->request_id   = $request_id   : null;
+        self::$request_id   = (!empty($request_id))   ? self::$request_id   = $request_id   : null;
         
-        $this->select = new Select();
+        self::$select = new Select();
         
-        $this->insert = new Insert();
+        self::$insert = new Insert();
         
-        $this->delete = new Delete();
+        self::$delete = new Delete();
+        
+        return new self();
     }
     
     
@@ -70,64 +89,64 @@ class Friends extends Members
      * @throws FriendsException
      * @return array
      */
-    public function browseFriends($criteria = null, array $criteria_params = array())
+    public static function browseFriends($criteria = null, array $criteria_params = array())
     {
         if (null !== $criteria) {
             // determine what critera was passed
             if ($criteria == 'age') {
-                $this->select->columns(array('profle_id', 'display_name', 'age', 'location', 'bio'))
+                self::$select->columns(array('profle_id', 'display_name', 'age', 'location', 'bio'))
                 ->from('profiles')
                 ->where(array('age' => intval($criteria_params['age']), 'friend_id' => $criteria_params['friend_id']));
                 
-                $query = parent::getSQLClass()->getAdapter()->query(
-                    parent::getSQLClass()->buildSqlString($this->select),
+                $query = self::getSQLClass()->getAdapter()->query(
+                    self::getSQLClass()->buildSqlString(self::$select),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
                 if (count($query) > 0) {
                     foreach ($query as $key => $value) {
-                        $this->browse_results[$key] = $value;
+                        self::$browse_results[$key] = $value;
                     }
                     
-                    return $this->browse_results;
+                    return self::$browse_results;
                 } else {
                     throw new FriendsException("No friends were found with " . $criteria_params['age'] . " as the critera.");
                 }
             } else if ($criteria == 'display_name') {
-                $this->select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
+                self::$select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
                 ->from('profiles')
                 ->where(array('display_name' => $criteria_params['display_name'], 'friend_id' => $criteria_params['friend_id']));
                 
-                $query = parent::getSQLClass()->getAdapter()->query(
-                    parent::getSQLClass()->buildSqlString($this->select),
+                $query = self::getSQLClass()->getAdapter()->query(
+                    self::getSQLClass()->buildSqlString(self::$select),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
                 if (count($query) > 0) {
                     foreach ($query as $key => $value) {
-                        $this->browse_results[$key] = $value;
+                        self::$browse_results[$key] = $value;
                     }
                     
-                    return $this->browse_results;
+                    return self::$browse_results;
                 } else {
                     throw new FriendsException("No friends were found with " . $criteria_params['display_name'] . " as the critera.");
                 }
             } else if ($criteria == 'location') {
-                $this->select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
+                self::$select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
                 ->from('profiles')
                 ->where(array('display_name' => $criteria_params['location'], 'friend_id' => $criteria_params['friend_id']));
                 
-                $query = parent::getSQLClass()->getAdapter()->query(
-                    parent::getSQLClass()->buildSqlString($this->select),
+                $query = self::getSQLClass()->getAdapter()->query(
+                    self::getSQLClass()->buildSqlString(self::$select),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
                 if (count($query) > 0) {
                     foreach ($query as $key => $value) {
-                        $this->browse_results[$key] = $value;
+                        self::$browse_results[$key] = $value;
                     }
                     
-                    return $this->browse_results;
+                    return self::$browse_results;
                 } else {
                     throw new FriendsException("No friends were found with " . $criteria_params['location'] . " as the critera.");
                 }
@@ -136,21 +155,21 @@ class Friends extends Members
             }
         } else {
             // display all friends based on friend id
-            $this->select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
+            self::$select->columns(array('profile_id', 'display_name', 'age', 'location', 'bio'))
             ->from('profiles')
             ->where(array('friend_id' => $criteria_params['friend_id']));
             
-            $query = parent::getSQLClass()->getAdapter()->query(
-                parent::getSQLClass()->buildSqlString($this->select),
+            $query = self::getSQLClass()->getAdapter()->query(
+                self::getSQLClass()->buildSqlString(self::$select),
                 Adapter::QUERY_MODE_EXECUTE
             );
             
             if (count($query) > 0) {
                 foreach ($query as $key => $value) {
-                    $this->browse_results[$key] = $value;
+                    self::$browse_results[$key] = $value;
                 }
                 
-                return $this->browse_results;
+                return self::$browse_results;
             } else {
                 throw new FriendsException("No friends were found.");
             }
@@ -163,15 +182,15 @@ class Friends extends Members
      * @throws FriendsException
      * @return boolean
      */
-    public function sendAddRequest()
+    public static function sendAddRequest()
     {
         // see if a request is already pending first
-        $this->select->columns(array('request_id', 'friend_id'))
+        self::$select->columns(array('request_id', 'friend_id'))
         ->from('friend_requests')
-        ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
+        ->where(array('request_id' => self::$request_id, 'friend_id' => self::$friend_id));
         
-        $query = parent::getSQLClass()->getAdapter()->query(
-            parent::getSQLClass()->buildSqlString($this->select),
+        $query = self::getSQLClass()->getAdapter()->query(
+            self::getSQLClass()->buildSqlString(self::$select),
             Adapter::QUERY_MODE_EXECUTE
         );
         
@@ -182,12 +201,12 @@ class Friends extends Members
             // request_id is the id of the current user logged in
             // and friend_id is the id of the user who the current user
             // logged in wants to be a friend with
-            $this->insert->into('friend_requests')
+            self::$insert->into('friend_requests')
             ->columns(array('request_id', 'friend_id'))
-            ->values(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
+            ->values(array('request_id' => self::$request_id, 'friend_id' => self::$friend_id));
             
-            $query = parent::getSQLClass()->getAdapter()->query(
-                parent::getSQLClass()->buildSqlString($this->insert),
+            $query = self::getSQLClass()->getAdapter()->query(
+                self::getSQLClass()->buildSqlString(self::$insert),
                 Adapter::QUERY_MODE_EXECUTE
             );
             
@@ -205,17 +224,17 @@ class Friends extends Members
      * @throws FriendsException
      * @return boolean
      */
-    public function cancelFriendRequest()
+    public static function cancelFriendRequest()
     {
         // remove both of the columns by matching up the request id and the friend id
         // since no duplicate requests ids are allowed (unique for each friend/person)
         // we can do a simple delete
-        $this->select->columns(array('id'))
+        self::$select->columns(array('id'))
         ->from('friend_requests')
-        ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
+        ->where(array('request_id' => self::$request_id, 'friend_id' => self::$friend_id));
         
-        $query = parent::getSQLClass()->getAdapter()->query(
-            parent::getSQLClass()->buildSqlString($this->select),
+        $query = self::getSQLClass()->getAdapter()->query(
+            self::getSQLClass()->buildSqlString(self::$select),
             Adapter::QUERY_MODE_EXECUTE
         );
         
@@ -226,11 +245,11 @@ class Friends extends Members
                 $row_id[] = $val;    
             }
             
-            $this->delete->from('friend_requests')
+            self::$delete->from('friend_requests')
             ->where(array('id' => $row_id[0]));
             
-            $query = parent::getSQLClass()->getAdapter()->query(
-                parent::getSQLClass()->buildSqlString($this->delete),
+            $query = self::getSQLClass()->getAdapter()->query(
+                self::getSQLClass()->buildSqlString(self::$delete),
                 Adapter::QUERY_MODE_EXECUTE
             );
             
@@ -250,16 +269,16 @@ class Friends extends Members
      * @throws FriendsException
      * @return boolean
      */
-    public function approveFriendRequest()
+    public static function approveFriendRequest()
     {
         // if approved, add request id to the friends table
         // and then delete the friend request
-        $this->select->columns(array('id', 'request_id', 'friend_id'))
+        self::$select->columns(array('id', 'request_id', 'friend_id'))
         ->from('friend_requests')
-        ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
+        ->where(array('request_id' => self::$request_id, 'friend_id' => self::$friend_id));
         
-        $query = parent::getSQLClass()->getAdapter()->query(
-            parent::getSQLClass()->buildSqlString($this->select),
+        $query = self::getSQLClass()->getAdapter()->query(
+            self::getSQLClass()->buildSqlString(self::select),
             Adapter::QUERY_MODE_EXECUTE
         );
         
@@ -271,22 +290,22 @@ class Friends extends Members
             }
             
             // insert now into friends table
-            $this->insert->into('friends')
+            self::$insert->into('friends')
             ->columns(array('friend_id', 'user_id'))
-            ->values(array('friend_id' => $this->friend_id, 'user_id' => parent::getUserId()['id']));
+            ->values(array('friend_id' => self::$friend_id, 'user_id' => self::getUserId()['id']));
             
-            $query = parent::getSQLClass()->getAdapter()->query(
-                parent::getSQLClass()->buildSqlString($this->insert),
+            $query = self::getSQLClass()->getAdapter()->query(
+                self::getSQLClass()->buildSqlString(self::insert),
                 Adapter::QUERY_MODE_EXECUTE
             );
             
             if (count($query) > 0) {
                 // delete from friend_requests now
-                $this->delete->from('friend_requests')
+                self::$delete->from('friend_requests')
                 ->where(array('id' => $request_id[0]));
                 
-                $query = parent::getSQLClass()->getAdapter()->query(
-                    parent::getSQLClass()->buildSqlString($this->delete),
+                $query = self::getSQLClass()->getAdapter()->query(
+                    self::getSQLClass()->buildSqlString(self::$delete),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
@@ -304,7 +323,7 @@ class Friends extends Members
     }
     
     
-    public function blockFriendRequest($who, array $params = array())
+    public static function blockFriendRequest($who, array $params = array())
     {
         // really necessary?
     }
@@ -315,14 +334,14 @@ class Friends extends Members
      * @throws FriendsException
      * @return boolean
      */
-    public function denyFriendRequest()
+    public static function denyFriendRequest()
     {
         // delete the request from the friend_requests table
-        $this->delete->from('friend_requests')
-        ->where(array('request_id' => $this->request_id, 'friend_id' => $this->friend_id));
+        self::$delete->from('friend_requests')
+        ->where(array('request_id' => self::$request_id, 'friend_id' => self::$friend_id));
         
-        $query = parent::getSQLClass()->getAdapter()->query(
-            parent::getSQLClass()->buildSqlString($this->delete),
+        $query = self::getSQLClass()->getAdapter()->query(
+            self::getSQLClass()->buildSqlString(self::$delete),
             Adapter::QUERY_MODE_EXECUTE
         );
         
@@ -331,5 +350,87 @@ class Friends extends Members
         } else {
             throw new FriendsException("Error removing denied friend request, please try again.");
         }
+    }
+    
+    
+    
+    
+ 
+    
+    
+    /**
+     * Setter method
+     * @param string $user
+     * @return \Members\Profile
+     */
+    public static function setUser($user)
+    {
+        self::$user = $user;
+        
+        return new self();
+    }
+    
+    
+    /**
+     * Getter method
+     * @return string
+     */
+    public static function getUser()
+    {
+        return self::$user;
+    }
+    
+    
+    /**
+     * Gets the user id
+     * @return ResultSet|boolean
+     */
+    public static function getUserId()
+    {
+        $select = new Select('members');
+        
+        $select->columns(array('*'))
+        ->where(array('username' => self::getUser()));
+        
+        
+        $query = self::getSQLClass()->getAdapter()->query(
+            self::$sql->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if (count($query) > 0) {
+            foreach ($query as $result) {
+                $row = $result;
+            }
+            
+            return $row;
+        }
+        
+        return false;
+    }
+    
+    
+    /**
+     * Gets table gateway instance
+     * @param TableGateway $gateway
+     * @return NULL|\Zend\Db\TableGateway\TableGateway
+     */
+    public static function getTableGateway(TableGateway $gateway)
+    {
+        self::$table_gateway = $gateway instanceof TableGateway ? $gateway : null;
+        
+        return self::$table_gateway;
+    }
+    
+    
+    /**
+     * gets sql instance
+     * @return \Zend\Db\Sql\Sql
+     */
+    public static function getSQLClass()
+    {
+        self::$sql = new Sql(self::$table_gateway->getAdapter());
+        
+        return self::$sql;
     }
 }
