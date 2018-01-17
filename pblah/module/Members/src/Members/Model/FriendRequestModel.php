@@ -35,4 +35,40 @@ class FriendRequestModel extends Friends
     {
         return parent::setIds($request_id, $friend_id)->sendAddRequest();
     }
+    
+    
+    /**
+     * Cancels a pending friend request
+     * @param integer $request_id
+     * @param integer $friend_id
+     * @return boolean
+     */
+    public function abortFriendRequest($request_id, $friend_id)
+    {
+        return parent::setIds($request_id, $friend_id)->cancelFriendRequest();
+    }
+    
+    
+    /**
+     * Accepts a pending friend request
+     * @param integer $request_id
+     * @param integer $friend_id
+     * @return boolean
+     */
+    public function acceptFriendRequest($request_id, $friend_id)
+    {
+        return parent::setIds($request_id, $friend_id)->approveFriendRequest();
+    }
+    
+    
+    /**
+     * Rejects pending friend request
+     * @param integer $request_id
+     * @param integer $friend_id
+     * @return boolean
+     */
+    public function rejectFriendRequest($request_id, $friend_id)
+    {
+        return parent::setIds($request_id, $friend_id)->denyFriendRequest();
+    }
 }

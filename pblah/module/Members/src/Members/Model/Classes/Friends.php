@@ -361,7 +361,7 @@ class Friends
     /**
      * Setter method
      * @param string $user
-     * @return \Members\Profile
+     * @return Friends
      */
     public static function setUser($user)
     {
