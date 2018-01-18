@@ -354,8 +354,54 @@ class Friends
     
     
     
+    ////////////////////////////////////////////
+    // friend methods
+    ////////////////////////////////////////////
+    public static function followFriend()
+    {
+        
+    }
     
+    
+    public static function unfollowFriend()
+    {
+        
+    }
+    
+    
+    /**
+     * Messages friend
+     * @param Messages $messages
+     * @param unknown $to
+     * @param array $message
+     * @return void
+     */
+    public static function messageFriend(Messages $messages, $to, array $message)
+    {
+        $messages->setFrom(self::getUserId()['id']);
+        
+        $messages->sendMessage($to, $message);
+    }
  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     /**

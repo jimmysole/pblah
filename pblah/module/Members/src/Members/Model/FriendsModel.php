@@ -2,8 +2,10 @@
 
 namespace Members\Model;
 
-use Members\Model\Classes\Friends;
 use Zend\Db\TableGateway\TableGateway;
+
+use Members\Model\Classes\Friends;
+use Members\Model\Classes\Messages;
 
 
 class FriendsModel extends Friends
@@ -17,5 +19,11 @@ class FriendsModel extends Friends
         
         parent::getTableGateway($this->gateway);
         parent::setUser($user);
+    }
+    
+    
+    public function sendFriendMessage($to, array $message)
+    {
+        parent::messageFriend(new Messages(), $to, $message);
     }
 }
