@@ -1,12 +1,11 @@
 <?php
 
-namespace Members\Model\Classes\Interfaces;
+namespace Members\Model\Interfaces;
 
 use Members\Model\Classes\Events;
-use Members\Model\Classes\Exceptions\GroupsException;
 
 
-interface GroupAdmin
+interface GroupAdminInterface
 {
     /**
      * @param int $group_id

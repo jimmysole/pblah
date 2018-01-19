@@ -3,21 +3,63 @@
 namespace Members\Model;
 
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Insert;
+use Zend\Db\Sql\Delete;
+use Zend\Db\Sql\Update;
+use Zend\Db\Adapter\Adapter;
 
-use Members\Model\Classes\Profile;
-use Members\Model\Classes\PhotoAlbum;
-use Members\Model\Classes\EditPhotos;
+
+use Members\Model\Interfaces\ProfileInterface;
+use Members\Model\Exceptions\ProfileException;
 
 
-
-class ProfileModel extends Profile
+class ProfileModel implements ProfileInterface
 {
 
+    
     /**
      * @var TableGateway
      */
-    protected $gateway;
+    public $gateway;
 
+    /**
+     * @var string
+     */
+    public $user;
+    
+    /**
+     * @var Select
+     */
+    public $select;
+    
+    /**
+     * @var Insert
+     */
+    public $insert;
+    
+    /**
+     * @var Delete
+     */
+    public $delete;
+    
+    /**
+     * @var Update
+     */
+    public $update;
+    
+    /**
+     * @var Sql
+     */
+    public $sql;
+    
+    
+    /**
+     * @var array
+     */
+    private $profile_changes = array();
+    
 
     /**
      * Constructor method for ProfileModel class
@@ -27,260 +69,262 @@ class ProfileModel extends Profile
     public function __construct(TableGateway $gateway, $user)
     {
         $this->gateway = $gateway instanceof TableGateway ? $gateway : null;
-
-        parent::getTableGateway($this->gateway);
-        parent::getSQLClass($this->gateway->getAdapter());
-        parent::setUser($user);
+        
+        $this->select = new Select();
+        
+        $this->insert = new Insert();
+        
+        $this->delete = new Delete();
+        
+        $this->update = new Update();
+        
+        $this->sql = new Sql($this->gateway->getAdapter());
+        
+        $this->user =  $user;
     }
 
-
+    
     /**
-     * Checks if a profile has been set
-     * @return boolean
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::getUserId()
      */
-    public function checkIfProfileSet()
+    public function getUserId()
     {
-        // check if a user has set a profile
-        // used only if a member has just completed the verification process
-        $get_user = parent::getUserId();
-
-        if ($get_user['new'] == 1) {
-            // new member, hasn't set up profile yet
-            // return false
-            return false;
+        $this->select->columns(array('*'))
+        ->from('members')
+        ->where(array('username' => $this->user));
+        
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($this->select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($query->count() > 0) {
+            foreach ($query as $result) {
+                $row = $result;
+            }
+            
+            return $row;
         }
-
-        return true;
-    }
-
-
-    /**
-     * Creates the profile for the user
-     * @param array $data
-     * @return boolean
-     */
-    public function makeProfile(array $data)
-    {
-
-        if (parent::createProfile($data) !== false) {
-            return true;
-        }
-
-        return false;
-    }
-
-
-    /**
-     * Gets the user's display name
-     * @return string
-     */
-    public function getUserDisplayName()
-    {
-        return parent::getDisplayName();
-    }
-
-
-    /**
-     * Gets the user's location
-     * @return string
-     */
-    public function getUserLocation()
-    {
-        return parent::getLocation();
-    }
-
-
-    /**
-     * Gets the user's age
-     * @return number
-     */
-    public function getUserAge()
-    {
-        return parent::getAge();
-    }
-
-
-    /**
-     * Gets the user profile
-     * @return ArrayObject|NULL
-     */
-    public function getUserProfile()
-    {
-        return parent::getProfile();
-    }
-
-
-    /**
-     * Gets the user's bio
-     * @return string
-     */
-    public function getUserBio()
-    {
-        return parent::getBio();
-    }
-
-
-    /**
-     * Performs any edits on the user's profile
-     * @param array $changes
-     * @return boolean
-     */
-    public function editUserProfile(array $changes)
-    {
-        if (parent::editProfile($changes) !== false) {
-            return true;
-        }
-
+        
         return false;
     }
     
     
     /**
-     * Makes a photo album
-     * @param mixed $album_name
-     * @param array $album_photos
-     * @param string $location
-     * @return boolean
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::getDisplayName()
      */
-    public function makePhotoAlbum($album_name, array $album_photos, $location = "")
+    public function getDisplayName()
     {
-        $photo_album = new PhotoAlbum($album_name, $album_photos, $location);
-        
-        return $photo_album->createAlbum();
+        return $this->getProfile()['display_name'];
     }
     
     
     /**
-     * Deletes a photo album 
-     * @param mixed $album_name
-     * @return boolean
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::getLocation()
      */
-    public function deletePhotoAlbum($album_name)
+    public function getLocation()
     {
-        $photo_album = new PhotoAlbum($album_name, array());
-        
-        return $photo_album->deleteAlbum();
-    }
-    
-    
-    
-    /**
-     * Gets all the photo album for the user
-     * @param sting $album_name
-     * @return array
-     */
-    public function getPhotoAlbums($album_name)
-    {
-        $photo_album = new PhotoAlbum($album_name, array());
-        
-        return $photo_album->getAlbums();
+        return $this->getProfile()['location'];
     }
     
     
     /**
-     * Adds photos to albums
-     * @param string $album_name
-     * @param array $album_photos
-     * @param bool $other_album
-     * @return bool
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::getAge()
      */
-    public function addPhotosToAlbum($album_name, array $album_photos, $other_album = false)
+    public function getAge()
     {
-        $add_photos = new PhotoAlbum($album_name, $album_photos);
-        
-        return $add_photos->addPhotosToAlbum($album_name, $other_album);
-    }
-    
-    
-    
-    /**
-     * Removes photo(s) from albums
-     * @param string $album_name
-     * @param array $album_photos
-     * @return bool
-     */
-    public function removePhotosFromAlbum($album_name, array $album_photos)
-    {
-        $remove_photos = new PhotoAlbum($album_name, $album_photos);
-        
-        return $remove_photos->deletePhotosFromAlbum($album_photos);
+        return $this->getProfile()['age'];
     }
     
     
     /**
-     * Gets photos from the specified album
-     * @param string $album_name
-     * @return string
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::getBio()
      */
-    public function getPhotosFromAlbum($album_name)
+    public function getBio()
     {
-        $get_photos = new PhotoAlbum($album_name, array());
-        
-        return $get_photos->photosFromAlbum();
+        return $this->getProfile()['bio'];
     }
     
     
     /**
-     * Gets a size of the photo
-     * @param string $album_name
-     * @param resource $photo
-     * @return array
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::editProfile()
      */
-    public function getPhotoSize($album_name, $photo)
+    public function editProfile(array $changes)
     {
-        $size = new PhotoAlbum($album_name, array());
-        
-        return $size->getImageSize($photo);
-    }
-    
-    
-   
-    /**
-     * Enables editing of photo(s)
-     * @param string $album_name
-     * @param resource $photo
-     * @param array $edits
-     * @return boolean
-     */
-    public function editPhoto($album_name, $photo, array $edits)
-    {
-        if (@$edits['crop_image'] == 1) {
-             $photo = new EditPhotos($album_name, $photo, array('crop' => array('width' => $edits['width'], 'height' => $edits['height'],
-                 'x' => $edits['x'], 'y' => $edits['y'])));
+        if (count($changes, 1) > 0) {
+            foreach ($changes as $key => $value) {
+                $this->profile_changes[$key] = $value;
+            }
             
-            $photo->cropImage()->saveImage();
+            // proceed to update the profile information
+            // that resides in the profiles table
+            // locate the id in the profiles table 
+            $select = $this->gateway->select(array('profile_id' => $this->getUserId()['id']));
             
-            return true;
-        } else if (@$edits['blur_image'] == 1) {
-            $photo = new EditPhotos($album_name, $photo, array('blur' => array('radius' => $edits['radius'], 'sigma' => $edits['sigma'])));
+            if ($select->count() > 0) {
+                $rowset = array();
                 
-            $photo->blurImage()->saveImage();
-            
-            return true;
-        } else if (@$edits['enhance_image'] == 1) {
-            $photo = new EditPhotos($album_name, $photo, array('enhance' => true));
+                foreach ($select as $row) {
+                    $rowset[] = $row;
+                }
                 
-            $photo->enhanceImage()->saveImage();  
-            
-            return true;
-        } else if (@$edits['make_thumbnail'] == 1) {
-            $photo = new EditPhotos($album_name, $photo, array('crop' => array('t_width' => $edits['t_width'], 't_height' => $edits['t_height'])));
+                // profile found
+                // update the changes now
+                $updated_data = array(
+                    'display_name'  => array_key_exists('display_name', $this->profile_changes)  ? rtrim($this->profile_changes['display_name'])  : $rowset['display_name'],
+                    'email_address' => array_key_exists('email_address', $this->profile_changes) ? rtrim($this->profile_changes['email_address']) : $rowset['email_address'],
+                    'age'           => array_key_exists('age', $this->profile_changes)           ? rtrim($this->profile_changes['age'])           : $rowset['age'],
+                    'location'      => array_key_exists('location', $this->profile_changes)      ? rtrim($this->profile_changes['location'])      : $rowset['location'],
+                    'bio'           => array_key_exists('bio', $this->profile_changes)           ? rtrim($this->profile_changes['bio'])           : $rowset['bio'],
+                ); 
                 
-            $photo->makeThumbnail()->saveImage();
-            
-            return true;
-        } else if (@$edits['sepia_image'] == 1) {
-            $photo = new EditPhotos($album_name, $photo, array('sepia' => array('threshold' => $edits['sepia_threshold'])));
-            
-            $photo->sepiaImage()->saveImage();
-            
-            return true;
-        } else if (@$edits['bw_image'] == 1) {
-            $photo = new EditPhotos($album_name, $photo, array('colorspace' => array('value' => $edits['colorspace'], 'channel' => $edits['channel'])));
-            
-            $photo->blackWhiteImage()->saveImage();
-            
-            return true;
+                $update = $this->gateway->update($updated_data, array('profile_id' => $rowset['profile_id']));
+                
+                if ($update > 0) {
+                    return true;
+                } else {
+                    throw new ProfileException("Error updating your profile, please try again.");
+                }
+            } else {
+                throw new ProfileException("User was not found.");
+            }
+        } else {
+            throw new ProfileException("Profile changes cannot be left empty if you wish to edit your profile.");
         }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::removeProfile()
+     */
+    public function removeProfile()
+    {
+        $delete = $this->gateway->delete(array('profile_id' => $this->getUserId()['id']));
+        
+        if ($delete > 0) {
+            return true;
+        } else {
+            throw new ProfileException("Error removing your profile, please try again.");
+        }
+    }
+    
+    
+    public function profileSettings(array $settings)
+    {
+        
+    }
+    
+    
+    public function profileViews()
+    {
+        
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::createProfile()
+     */
+    public function createProfile(array $data)
+    {
+        if (count($data) > 0) {
+            // assign the data to a array
+            // then insert the data into the profiles table
+            $profile_data = array();
+            
+            foreach ($data as $key => $value) {
+                $profile_data[$key] = $value;
+            }
+            
+            $insert_data = array(
+                'profile_id'    => $this->getUserId()['id'],
+                'display_name'  => $profile_data['display_name'],
+                'email_address' => $profile_data['email_address'],
+                'age'           => $profile_data['age'],
+                'location'      => $profile_data['location'],
+                'bio'           => $profile_data['bio'],
+            );
+            
+            $insert = $this->gateway->insert($insert_data);
+            
+            if ($insert > 0) {
+                // set the member table field new to zero
+                $this->update->table('members')
+                ->set(array('new' => 0))
+                ->where(array('id' => $this->getUserId()['id']));
+                
+                $query = $this->sql->getAdapter()->query(
+                    $this->sql->buildSqlString($this->update),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                if ($query->count() > 0) {
+                    // make the profile dir (for images)
+                    mkdir(getcwd() . '/public/images/profile/' . $this->user);
+                    mkdir(getcwd() . '/public/images/profile/' . $this->user . '/current');
+                    
+                    // make the htaccess file
+                    // used to prevent hotlinking of images
+                    $domain = str_replace('www.', '', $_SERVER['HTTP_HOST']);
+                    
+                    $file_data = "RewriteEngine on
+                                  RewriteCond %{HTTP_REFERER} !^$
+                                  RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$domain [NC]
+                                  RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]";
+                    
+                    file_put_contents(getcwd() . '/public/images/profile/' . $this->user . '/.htaccess', $file_data);
+                    
+                    return true;
+                } else {
+                    throw new ProfileException("Error finalizing creation of profile...");
+                }
+            } else {
+                throw new ProfileException("Error inserting profile data, please try again.");
+            }
+        } else {
+            throw new ProfileException("Profile data cannot be left empty.");
+        }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::getProfile()
+     */
+    public function getProfile()
+    {
+        $row = $this->gateway->select(array('profile_id' => $this->getUserId()['id']));
+        
+        if ($row->count() > 0) {
+            $rowset = array();
+            
+            foreach ($row as $result) {
+                $rowset[] = $result;
+            }
+            
+            return $rowset;
+        } else {
+            throw new ProfileException("It looks like you haven't set up a profile yet.");
+        }
+        
+        return false;
+    }
+    
+    
+    public function makeProfilePrivate()
+    {
+        
+    }
+    
+    
+    public function makeProfilePublic()
+    {
+        
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Members\Model\Classes\Exceptions;
+namespace Members\Model\Exceptions;
 
 
 class MessagesException extends \Exception

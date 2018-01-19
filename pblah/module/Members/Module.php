@@ -14,7 +14,6 @@ use Members\Model\GroupsModel;
 use Members\Model\EventsModel;
 use Members\Model\StatusModel;
 use Members\Model\FriendsModel;
-use Members\Model\FriendRequestModel;
 
 class Module implements AutoloaderProviderInterface
 {
@@ -191,18 +190,6 @@ class Module implements AutoloaderProviderInterface
                 'FriendsService' => function ($sm) {
                     $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
                     return new TableGateway('friends', $db_adapter);
-                },
-                
-                'Members\Model\FriendRequestModel' => function ($sm) {
-                    $table_gateway = $sm->get('FriendRequestService');
-                    $friends_request_model = new FriendRequestModel($table_gateway, $sm->get('pblah-auth')->getIdentity());
-                    
-                    return $friends_request_model;
-                },
-                
-                'FriendRequestService' => function ($sm) {
-                    $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    return new TableGateway('friend_requests', $db_adapter);
                 },
             )
         );
