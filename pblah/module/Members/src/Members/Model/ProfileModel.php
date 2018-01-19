@@ -85,6 +85,24 @@ class ProfileModel implements ProfileInterface
 
     
     /**
+     * Checks if a profile has been set
+     * 
+     * @return boolean
+     */
+    public function checkIfProfileSet()
+    {
+        // check if a user has set a profile
+        // used only if a member has just completed the verification process
+        if ($this->getUserId()['new'] == 1) {
+            // new member, hasn't set up profile yet
+            // return false
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\ProfileInterface::getUserId()
      */
