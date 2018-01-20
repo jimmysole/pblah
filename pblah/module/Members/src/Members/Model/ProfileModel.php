@@ -12,10 +12,14 @@ use Zend\Db\Adapter\Adapter;
 
 
 use Members\Model\Interfaces\ProfileInterface;
+use Members\Model\Interfaces\PhotoAlbumInterface;
+
 use Members\Model\Exceptions\ProfileException;
+use Members\Model\Exceptions\PhotoAlbumException;
 
 
-class ProfileModel implements ProfileInterface
+
+class ProfileModel implements ProfileInterface, PhotoAlbumInterface
 {
 
     
@@ -56,9 +60,52 @@ class ProfileModel implements ProfileInterface
     
     
     /**
+     * @var string
+     */
+    public $photo_album_name;
+    
+    /**
+     * @var string
+     */
+    public $photo_album_create_date;
+    
+    /**
+     * @var int
+     */
+    public $photo_album_count;
+    
+    /**
+     * @var array
+     */
+    public $photo_album_photos = array();
+    
+    /**
+     * @var string
+     */
+    public $photo_album_location;
+    
+    /**
+     * @var array
+     */
+    public $photo_album = array();
+    
+    /**
+     * @var array
+     */
+    public $photo_album_edits = array();
+    
+    /**
+     * @var string
+     */
+    public $photo_album_filtered_name;
+    
+    
+    /**
      * @var array
      */
     private $profile_changes = array();
+    
+    
     
 
     /**
@@ -289,7 +336,7 @@ class ProfileModel implements ProfileInterface
                     
                     // make the htaccess file
                     // used to prevent hotlinking of images
-                    $domain = str_replace('www.', '', $_SERVER['HTTP_HOST']);
+                    $domain = str_replace(array('https', 'http', 'www'), '', $_SERVER['HTTP_HOST']);
                     
                     $file_data = "RewriteEngine on
                                   RewriteCond %{HTTP_REFERER} !^$
@@ -342,6 +389,173 @@ class ProfileModel implements ProfileInterface
     
     
     public function makeProfilePublic()
+    {
+        
+    }
+    
+    
+    //////////////////////////////////////////
+    // photo album interface methods
+    //////////////////////////////////////////
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\PhotoAlbumInterface::createAlbum()
+     */
+    public function createAlbum($album_name, array $album_photos, $location = "")
+    {
+        if (!empty($album_name)) {
+            $this->photo_album_name = $album_name;
+            
+            // set the album created date to now 
+            // the location, if any
+            // and replace the underscore character in the photo album name to a empty space
+            $this->photo_album_create_date = date('Y-m-d', strtotime('now'));
+            
+            $this->photo_album_location = !empty($location) ? $location : null;
+            
+            $this->photo_album_filtered_name = str_replace("_", " ", $this->photo_album_name);
+            
+            // now begin the actual creating of the photo album
+            // first check if a location was provided using a closure
+            $write_location = function() {
+                if (null !== $this->photo_album_location) {
+                    @file_put_contents(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_'
+                        . $this->photo_album_create_date . '/location.txt', $this->photo_album_location);
+                    
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+            
+            $file_info = array();
+            
+            // create the album
+            // first, check if the user has already uploaded images
+            // if so, create a directory with the album name
+            // and upload the photos
+            // if not, create the directory with the user's username
+            // and then create a directory with the album name
+            // and upload the photos
+            if (is_dir(getcwd() . '/public/images/profile/' . $this->user)) {
+                @mkdir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date, 0777);
+                
+                // write the htaccess file
+                // to prevent hotlinking
+                // write the htaccess file
+                $server_name = str_replace(array('https', 'http', 'www'), '', $_SERVER['HTTP_HOST']);
+                
+                $data = "
+                    RewriteEngine on
+                    RewriteCond %{HTTP_REFERER} !^$
+                    RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$server_name [NC]
+                    RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]";
+                
+                file_put_contents(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date . '/.htaccess', $data);
+                
+                
+                // handle the photos now
+                if (count($this->photo_album, 1) > 1) {
+                    // location tagging of album (if provided)
+                    $write_location();
+                    
+                    // handle multiple photos
+                    foreach ($this->photo_album['photos'] as $key => $value) {
+                        $file = $value['name'];
+                        $temp = $value['tmp_name'];
+                        
+                        @move_uploaded_file($temp, 
+                            getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date . '/' . $file);
+                    }
+                    
+                    return true;
+                } else if (count($this->photo_album, 1) == 1) {
+                    // location tagging of album (if provided)
+                    $write_location();
+                    
+                    // single photo
+                    $file_name = $this->photo_album['photos'][0]['name'];
+                    
+                    @move_uploaded_file($this->photo_album['photos'][0]['tmp_name'], 
+                        getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date . '/' . $file_name);
+                    
+                    return true;
+                } else {
+                    throw new PhotoAlbumException("Error processing uploaded photos, please make sure you chose one or more to be uploaded.");
+                }
+            }
+        } else {
+            throw new PhotoAlbumException("Photo album name can't be left empty.");
+        }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\PhotoAlbumInterface::addPhotosToAlbum()
+     */
+    public function addPhotosToAlbum($first_album, $other_album = false)
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\PhotoAlbumInterface::photosFromAlbum()
+     */
+    public function photosFromAlbum()
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\PhotoAlbumInterface::getImageSize()
+     */
+    public function getImageSize($photo)
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\PhotoAlbumInterface::deletePhotosFromAlbum()
+     */
+    public function deletePhotosFromAlbum(array $images)
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\PhotoAlbumInterface::editAlbum()
+     */
+    public function editAlbum(array $edits)
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\PhotoAlbumInterface::deleteAlbum()
+     */
+    public function deleteAlbum()
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\PhotoAlbumInterface::getAlbums()
+     */
+    public function getAlbums()
     {
         
     }

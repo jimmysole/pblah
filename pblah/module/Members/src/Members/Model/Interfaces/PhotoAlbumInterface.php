@@ -8,10 +8,13 @@ interface PhotoAlbumInterface
     /**
      * Creates a photo album
      * 
+     * @param string $album_name
+     * @param array $album_photos
+     * @param string $location
      * @throws PhotoAlbumException
      * @return boolean
      */
-    public function createAlbum();
+    public function createAlbum($album_name, array $album_photos, $location = "");
     
     
     /**
