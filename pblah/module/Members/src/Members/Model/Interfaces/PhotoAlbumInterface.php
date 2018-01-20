@@ -49,7 +49,6 @@ interface PhotoAlbumInterface
      * Deletes photo(s) from an album
      * 
      * @param array $images
-     * @throws PhotoAlbumException
      * @return boolean
      */
     public function deletePhotosFromAlbum(array $images);
@@ -59,7 +58,7 @@ interface PhotoAlbumInterface
      * Allows for various edits of the photo album's photos
      * @param array $edits
      * @throws PhotoAlbumException
-     * @return boolean
+     * @return boolean|string
      */
     public function editAlbum(array $edits);
     

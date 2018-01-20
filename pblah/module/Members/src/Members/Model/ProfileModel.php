@@ -13,13 +13,14 @@ use Zend\Db\Adapter\Adapter;
 
 use Members\Model\Interfaces\ProfileInterface;
 use Members\Model\Interfaces\PhotoAlbumInterface;
+use Members\Model\Interfaces\EditPhotoAlbumInterface;
 
 use Members\Model\Exceptions\ProfileException;
 use Members\Model\Exceptions\PhotoAlbumException;
 
 
 
-class ProfileModel implements ProfileInterface, PhotoAlbumInterface
+class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAlbumInterface
 {
 
     
@@ -497,7 +498,39 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface
      */
     public function addPhotosToAlbum($first_album, $other_album = false)
     {
+        $file_info = array();
         
+        if ($other_album !== false) {
+            $replace = array();
+            
+            // check whether the other album exists
+            // if it does, copy the files from one album to the other album
+            foreach (glob(getcwd() . '/public/images/profile/' . $this->user . '/albums/*', GLOB_ONLYDIR) as $dir) {
+                $replace[] = basename($dir);
+            }
+            
+            if (in_array($other_album, $replace)) {
+                foreach (glob(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $other_album . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE) as $files) {
+                    copy($files, getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $first_album . '/' . substr(strrchr($files, '/'), 1));
+                }
+                
+                return true;
+            } else {
+                throw new PhotoAlbumException("Photo album was not found, please make sure it exists.");
+            }
+        } else {
+            // just copy to the one album
+            foreach ($this->photo_album['photos'] as $key => $value) {
+                $file = $value['name'];
+                $temp = $value['tmp_name'];
+                
+                $file_info[$file] = getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $first_album . '/' . $file;
+                
+                move_uploaded_file($temp, $file_info[$file]);
+            }
+            
+            return true;
+        }
     }
     
     
@@ -507,9 +540,20 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface
      */
     public function photosFromAlbum()
     {
+        $photos   = array();
+        $img_size = array();
         
-    }
-    
+        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_name, 1), array('.', '..', '.htaccess', 'location.txt', 'edited_photos')) as $photo) {
+            if (count($photos, 1) > 0) {
+                $photos[]   = $photo;
+                $img_size[] = getimagesize(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_name . '/' . $photo);
+            } else {
+                $photos[] = null;
+            }
+        }
+        
+        return json_encode(array('photos' => $photos, 'size' => $img_size));
+    }    
     
     /**
      * {@inheritDoc}
@@ -517,7 +561,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface
      */
     public function getImageSize($photo)
     {
-        
+        return getimagesize('./public'. $photo);
     }
     
     
@@ -527,7 +571,16 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface
      */
     public function deletePhotosFromAlbum(array $images)
     {
+        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_name, 1), array('.', '..', '.htaccess', 'location.txt')) as $value) {
+            // retrieve the files selected from the album
+            if (in_array($value, $images)) {
+                foreach ($images as $v) {
+                    unlink(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_name . '/' . $v);
+                }
+            } 
+        }
         
+        return true;
     }
     
     
@@ -537,7 +590,37 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface
      */
     public function editAlbum(array $edits)
     {
-        
+        if (count($edits, 1) > 0) {
+            foreach ($edits as $key => $value) {
+                $this->photo_album_edits[$key] = $value;
+            }
+            
+            
+            // determine which edit option was passed
+            // supported options are:
+            // 1) edit album name
+            // 2) edit album location (for tagging)
+            // 3) edit album photos (photo editor)
+            // 4) add photos to album
+            // 5) remove photos from album
+            if ($this->photo_album_edits['edit_name']) {
+                try {
+                    if ($this->editName($this->photo_album_edits['edit_name']['current_album_name'], $this->photo_album_edits['edit_name']['new_album_name'])) {
+                        return true;
+                    }
+                } catch (PhotoAlbumException $e) {
+                    return json_encode(array('exception_msg' => $e->getMessage()));
+                }
+            } else if ($this->photo_album_edits['edit_location']) {
+                try {
+                    if ($this->changeLocation($this->photo_album_edits['edit_location']['current_album_name'], $this->photo_album_edits['edit_location']['new_location'])) {
+                        return true;
+                    }
+                } catch (PhotoAlbumException $e) {
+                    return json_encode(array('exception_msg' => $e->getMessage()));
+                }
+            }
+        }
     }
     
     
@@ -556,6 +639,136 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface
      * @see \Members\Model\Interfaces\PhotoAlbumInterface::getAlbums()
      */
     public function getAlbums()
+    {
+        
+    }
+    
+    
+    
+    ////////////////////////////////////////////
+    // edit photo album interface methods
+    ////////////////////////////////////////////
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::changeLocation()
+     */
+    public function changeLocation($album_name, $new_location)
+    {
+        if (!empty($new_location)) {
+            // scan for the file (location.txt)
+            // if found, update the location inside location.txt
+            // if not, bail
+            $file = getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $album_name . '/location.txt';
+            
+            if (file_exists($file)) {
+                $fp = @fopen($file, "w");
+                
+                if (@is_resource($fp)) {
+                    if (@fwrite($fp, $new_location)) {
+                        @fclose($fp);
+                        
+                        return true;
+                    } else {
+                        @fclose($fp);
+                        throw new PhotoAlbumException("Error changing your album's location, please try again.");
+                    }
+                } else {
+                    throw new PhotoAlbumException("Error editing your photo album's location.");
+                }
+            } else {
+                // file does not exist
+                // throw PhotoAlbumException
+                throw new PhotoAlbumException("Album location's file could not be found.");
+            }
+        } else {
+           throw new PhotoAlbumException("Cannot change your photo album's location, no value provided.");
+        }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::editName()
+     */
+    public function editName($current_album_name, $album_new_name)
+    {
+        // rename the photo album directory
+        if (@rename(getcwd() . '/public/images/' . $this->user . '/' . $current_album_name . '/',
+            getcwd() . '/public/images/profile/' . $this->user . '/' . $album_new_name . '_' . date('Y-m-d', strtotime('now')))) {
+            return true;
+        } else {
+            throw new PhotoAlbumException("Error changing the name of your photo album, please try again.");
+        }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::cropImage()
+     */
+    public function cropImage($photo, array $crop_values)
+    {
+        // set the crop values
+        // if the values are null
+        // assign zero to them
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::blurImage()
+     */
+    public function blurImage($photo, array $blur_values)
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::enhanceImage()
+     */
+    public function enhanceImage($photo)
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::makeThumbnail()
+     */
+    public function makeThumbnail($photo, array $thumbnail_values)
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::sepiaImage()
+     */
+    public function sepiaImage($photo, array $sepia_values)
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::blackWhiteImage()
+     */
+    public function blackWhiteImage($photo, array $bw_values)
+    {
+        
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::saveImage()
+     */
+    public function saveImage()
     {
         
     }
