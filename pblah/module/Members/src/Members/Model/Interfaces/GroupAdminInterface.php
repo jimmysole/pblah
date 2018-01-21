@@ -38,5 +38,5 @@ interface GroupAdminInterface
      * @throws GroupsException
      * @return self
      */
-    public function manageGroupEvents($group_id, Events $event_id);
+    public function manageGroupEvents($group_id, $event_id);
 }

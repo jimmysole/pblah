@@ -1,16 +1,16 @@
 <?php
 namespace Members\Model;
 
-use Members\Model\Classes\Groups;
-use Members\Model\Classes\GroupMembersOnline;
+
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Adapter\Adapter;
+
 use Members\Model\Filters\CreateGroup;
 use Members\Model\Filters\JoinGroup;
 
 
-class GroupsModel extends Groups
+class GroupsModel 
 {
 
     /**

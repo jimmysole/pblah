@@ -340,7 +340,7 @@ class ProfileController extends AbstractActionController
         if ($this->request->isPost()) {
             $params = $this->params()->fromPost();
             
-            echo $this->getProfileService()->getPhotosFromAlbum($params['album_name']);
+            echo $this->getProfileService()->photosFromAlbum($params['album_name']);
         }
         
         return $view_model;
@@ -358,7 +358,7 @@ class ProfileController extends AbstractActionController
         if ($this->request->isPost()) {
             $params = $this->getRequest()->getPost()->toArray();
             
-            $viewsize = $this->getProfileService()->getPhotoSize($params['album_name'], $params['image_name']);
+            $viewsize = $this->getProfileService()->getPhotoSize($params['image_name']);
             
             $arr = array();
             

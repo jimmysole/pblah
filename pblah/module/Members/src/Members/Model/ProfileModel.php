@@ -178,7 +178,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
             
             return true;
         } else if (@$edits['blur_image'] == 1) {
-            $photo_to_edit = new EditPhotos($this->user, $album_name, $photo, array('radius' => $edit['radius'], 'sigma' => $edits['sigma']));
+            $photo_to_edit = new EditPhotos($this->user, $album_name, $photo, array('blur' => array('radius' => $edits['radius'], 'sigma' => $edits['sigma'])));
             
             $photo_to_edit->blurImage()->saveImage();
             
@@ -208,6 +208,12 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
             
             return true;
         }
+    }
+    
+    
+    public function getPhotoSize($photo)
+    {
+        return $this->getImageSize($photo);
     }
     
     
@@ -597,15 +603,15 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\PhotoAlbumInterface::photosFromAlbum()
      */
-    public function photosFromAlbum()
+    public function photosFromAlbum($album)
     {
         $photos   = array();
         $img_size = array();
         
-        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_name, 1), array('.', '..', '.htaccess', 'location.txt', 'edited_photos')) as $photo) {
+        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $album, 1), array('.', '..', '.htaccess', 'location.txt', 'edited_photos')) as $photo) {
             if (count($photos, 1) > 0) {
                 $photos[]   = $photo;
-                $img_size[] = getimagesize(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_name . '/' . $photo);
+                $img_size[] = getimagesize(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $album . '/' . $photo);
             } else {
                 $photos[] = null;
             }
@@ -620,7 +626,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      */
     public function getImageSize($photo)
     {
-        return getimagesize('./public'. $photo);
+        return getimagesize('./public' . $photo);
     }
     
     

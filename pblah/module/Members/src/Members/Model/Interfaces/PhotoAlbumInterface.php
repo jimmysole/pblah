@@ -33,7 +33,7 @@ interface PhotoAlbumInterface
      * 
      * @return string
      */
-    public function photosFromAlbum();
+    public function photosFromAlbum($album);
     
     
     /**
