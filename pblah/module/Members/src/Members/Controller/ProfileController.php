@@ -4,8 +4,8 @@ namespace Members\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-use Members\Model\Classes\Exceptions\ProfileException;
-use Members\Model\Classes\Exceptions\PhotoAlbumException;
+use Members\Model\Exceptions\ProfileException;
+use Members\Model\Exceptions\PhotoAlbumException;
 
 use Members\Form\CreateAlbumForm;
 use Members\Form\AddPhotosForm;

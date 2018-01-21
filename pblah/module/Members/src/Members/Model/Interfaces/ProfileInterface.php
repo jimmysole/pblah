@@ -19,7 +19,7 @@ interface ProfileInterface
      * 
      * @return string
      */
-    public function getDisplayName();
+    public function getUserDisplayName();
     
     
     /**
@@ -27,7 +27,7 @@ interface ProfileInterface
      * 
      * @return string
      */
-    public function getLocation();
+    public function getUserLocation();
     
     
     /**
@@ -35,7 +35,7 @@ interface ProfileInterface
      * 
      * @return integer
      */
-    public function getAge();
+    public function getUserAge();
     
     
     /**
@@ -43,7 +43,7 @@ interface ProfileInterface
      * 
      * @return string
      */
-    public function getBio();
+    public function getUserBio();
     
     
     /**
@@ -100,7 +100,7 @@ interface ProfileInterface
      * @throws ProfileException
      * @return array|boolean
      */
-    public function getProfile();
+    public function getUserProfile();
   
     
     /**

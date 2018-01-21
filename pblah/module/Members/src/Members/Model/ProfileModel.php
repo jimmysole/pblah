@@ -15,6 +15,8 @@ use Members\Model\Interfaces\ProfileInterface;
 use Members\Model\Interfaces\PhotoAlbumInterface;
 use Members\Model\Interfaces\EditPhotoAlbumInterface;
 
+use Members\Model\Classes\EditPhotos;
+
 use Members\Model\Exceptions\ProfileException;
 use Members\Model\Exceptions\PhotoAlbumException;
 
@@ -102,6 +104,12 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
     
     
     /**
+     * @var mixed
+     */
+    public $photo_to_edit;
+    
+    
+    /**
      * @var array
      */
     private $profile_changes = array();
@@ -150,6 +158,59 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
         return true;
     }
     
+    
+    /**
+     * Enables editing of photo(s)
+     * 
+     * @param string $album_name
+     * @param mixed $photo
+     * @param array $edits
+     * @throws \ImagickException
+     * @return boolean
+     */
+    public function editPhoto($album_name, $photo, array $edits)
+    {
+        if (@$edits['crop_image'] == 1) {
+            $photo_to_edit = new EditPhotos($this->user, $album_name, $photo, array('crop' => array('width' => $edits['width'], 'height' => $edits['height'],
+                'x' => $edits['x'], 'y' => $edits['y'])));
+            
+            $photo_to_edit->cropImage()->saveImage();
+            
+            return true;
+        } else if (@$edits['blur_image'] == 1) {
+            $photo_to_edit = new EditPhotos($this->user, $album_name, $photo, array('radius' => $edit['radius'], 'sigma' => $edits['sigma']));
+            
+            $photo_to_edit->blurImage()->saveImage();
+            
+            return true;
+        } else if (@$edits['enhance_image'] == 1) {
+            $photo_to_edit = new EditPhotos($this->user, $album_name, $photo, array('enhance' => true));
+            
+            $photo_to_edit->enhanceImage()->saveImage();
+            
+            return true;
+        } else if (@$edits['make_thumbnail'] == 1) {
+            $photo_to_edit = new EditPhotos($this->user, $album_name, $photo, array('crop' => array('t_width' => $edits['t_width'], 't_height' => $edits['t_height'])));
+            
+            $photo_to_edit->makeThumbnail()->saveImage();
+            
+            return true;
+        } else if (@$edits['sepia_image'] == 1) {
+            $photo_to_edit = new EditPhotos($this->user, $album_name, $photo, array('sepia' => array('threshold' => $edits['sepia_threshold'])));
+            
+            $photo_to_edit->sepiaImage()->saveImage();
+            
+            return true;
+        } else if (@$edits['bw_image'] == 1) {
+            $photo_to_edit = new EditPhotos($this->user, $album_name, $photo, array('colorspace' => array('value' => $edits['colorspace'], 'channel' => $edits['channel'])));
+            
+            $photo_to_edit->blackWhiteImage()->saveImage();
+            
+            return true;
+        }
+    }
+    
+    
     /**
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\ProfileInterface::getUserId()
@@ -181,39 +242,39 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\ProfileInterface::getDisplayName()
      */
-    public function getDisplayName()
+    public function getUserDisplayName()
     {
-        return $this->getProfile()['display_name'];
+        return $this->getUserProfile()['display_name'];
     }
     
     
     /**
      * {@inheritDoc}
-     * @see \Members\Model\Interfaces\ProfileInterface::getLocation()
+     * @see \Members\Model\Interfaces\ProfileInterface::getUserLocation()
      */
-    public function getLocation()
+    public function getUserLocation()
     {
-        return $this->getProfile()['location'];
+        return $this->getUserProfile()['location'];
     }
     
     
     /**
      * {@inheritDoc}
-     * @see \Members\Model\Interfaces\ProfileInterface::getAge()
+     * @see \Members\Model\Interfaces\ProfileInterface::getUserAge()
      */
-    public function getAge()
+    public function getUserAge()
     {
-        return $this->getProfile()['age'];
+        return $this->getUserProfile()['age'];
     }
     
     
     /**
      * {@inheritDoc}
-     * @see \Members\Model\Interfaces\ProfileInterface::getBio()
+     * @see \Members\Model\Interfaces\ProfileInterface::getUserBio()
      */
-    public function getBio()
+    public function getUserBio()
     {
-        return $this->getProfile()['bio'];
+        return $this->getUserProfile()['bio'];
     }
     
     
@@ -237,7 +298,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                 $rowset = array();
                 
                 foreach ($select as $row) {
-                    $rowset[] = $row;
+                    $rowset = $row;
                 }
                 
                 // profile found
@@ -361,17 +422,15 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
     
     /**
      * {@inheritDoc}
-     * @see \Members\Model\Interfaces\ProfileInterface::getProfile()
+     * @see \Members\Model\Interfaces\ProfileInterface::getUserProfile()
      */
-    public function getProfile()
+    public function getUserProfile()
     {
         $row = $this->gateway->select(array('profile_id' => $this->getUserId()['id']));
         
         if ($row->count() > 0) {
-            $rowset = array();
-            
             foreach ($row as $result) {
-                $rowset[] = $result;
+                $rowset = $result;
             }
             
             return $rowset;
@@ -600,9 +659,6 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
             // supported options are:
             // 1) edit album name
             // 2) edit album location (for tagging)
-            // 3) edit album photos (photo editor)
-            // 4) add photos to album
-            // 5) remove photos from album
             if ($this->photo_album_edits['edit_name']) {
                 try {
                     if ($this->editName($this->photo_album_edits['edit_name']['current_album_name'], $this->photo_album_edits['edit_name']['new_album_name'])) {
@@ -619,6 +675,8 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                 } catch (PhotoAlbumException $e) {
                     return json_encode(array('exception_msg' => $e->getMessage()));
                 }
+            } else {
+                return false;
             }
         }
     }
@@ -700,76 +758,5 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
             throw new PhotoAlbumException("Error changing the name of your photo album, please try again.");
         }
     }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::cropImage()
-     */
-    public function cropImage($photo, array $crop_values)
-    {
-        // set the crop values
-        // if the values are null
-        // assign zero to them
-    }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::blurImage()
-     */
-    public function blurImage($photo, array $blur_values)
-    {
-        
-    }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::enhanceImage()
-     */
-    public function enhanceImage($photo)
-    {
-        
-    }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::makeThumbnail()
-     */
-    public function makeThumbnail($photo, array $thumbnail_values)
-    {
-        
-    }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::sepiaImage()
-     */
-    public function sepiaImage($photo, array $sepia_values)
-    {
-        
-    }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::blackWhiteImage()
-     */
-    public function blackWhiteImage($photo, array $bw_values)
-    {
-        
-    }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @see \Members\Model\Interfaces\EditPhotoAlbumInterface::saveImage()
-     */
-    public function saveImage()
-    {
-        
-    }
+
 }
