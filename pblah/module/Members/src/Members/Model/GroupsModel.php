@@ -3,22 +3,66 @@ namespace Members\Model;
 
 
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Insert;
+use Zend\Db\Sql\Delete;
+use Zend\Db\Sql\Update;
 use Zend\Db\Adapter\Adapter;
 
 use Members\Model\Filters\CreateGroup;
 use Members\Model\Filters\JoinGroup;
 
 
-class GroupsModel 
+use Members\Model\Interfaces\GroupsInterface;
+use Members\Model\Interfaces\GroupMembersOnlineInterface;
+use Members\Model\Exceptions\GroupsException;
+
+
+class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
 {
 
-    /**
-     *
+     /**
      * @var TableGateway
      */
     public $gateway;
 
+    /**
+     * @var string
+     */
+    public $user;
+    
+    /**
+     * @var Select
+     */
+    public $select;
+    
+    /**
+     * @var Insert
+     */
+    public $insert;
+    
+    /**
+     * @var Delete
+     */
+    public $delete;
+    
+    /**
+     * @var Update
+     */
+    public $update;
+    
+    /**
+     * @var Sql
+     */
+    public $sql;
+    
+    /**
+     * @var ConnectionInterface
+     */
+    public $connection;
+
+    
     /**
      * Constructor method for GroupsModel class
      *
@@ -29,195 +73,224 @@ class GroupsModel
     {
         $this->gateway = $gateway instanceof TableGateway ? $gateway : null;
         
-        parent::getTableGateway($this->gateway);
-        parent::getSQLClass();
-        parent::setUser($group_user);
-    }
-
-    /**
-     * Grabs the current user's id
-     * 
-     * @return number
-     */
-    public function grabUserId()
-    {
-        return parent::getCurrentUserId();
-    }
-
-    /**
-     * Gets the list of all the groups
-     * 
-     * @return string[]
-     */
-    public function listAllGroups()
-    {
-        return parent::getAllGroups();
-    }
-
-    /**
-     * Gets the list of groups joined by the user for displaying on the group home page
-     * 
-     * @return array
-     */
-    public function listGroupsIndex()
-    {
-        return parent::getGroupsIndex();
-    }
-
-    /**
-     * Gets the list of groups joined for the user
-     *
-     * @return mixed
-     */
-    public function listGroups()
-    {
-        return parent::getGroups();
-    }
-
-    /**
-     * Lets the user leave a group
-     * 
-     * @param int $group_id            
-     * @return boolean|array
-     */
-    public function leaveTheGroup($group_id)
-    {
-        return parent::leaveGroup($group_id);
-    }
-
-    /**
-     * Lists all the groups for the user
-     * 
-     * @return array
-     */
-    public function getAllUserGroups()
-    {
-        return parent::getMoreGroups();
-    }
-
-    /**
-     * Gets the member id for each group member
-     * 
-     * @return string[]
-     */
-    public function partGroup()
-    {
-        return parent::getMemberGroups();
-    }
-
-    /**
-     * Gets all the group information
-     * 
-     * @param int $group_id            
-     * @return boolean|string[]|ArrayObject[]|NULL[]
-     */
-    public function getGroupInformation($group_id)
-    {
+        $this->select = new Select();
         
-        // get the group admins
-        $select_admins = new Select();
+        $this->insert = new Insert();
         
-        $select_admins->from(array(
-            'ga' => 'group_admins'
-        ))->join(array(
-            'm' => 'members'
-        ), 'ga.user_id = m.id', array(
-            'username'
-        ))->join(array(
-            'g' => 'groups'
-        ), 'ga.group_id = g.id')
-            ->where('g.id = ' . $group_id);
+        $this->delete = new Delete();
         
-        $query_group_admin = parent::$sql->getAdapter()->query(
-            parent::$sql->buildSqlString($select_admins), 
-            Adapter::QUERY_MODE_EXECUTE);
+        $this->update = new Update();
         
-        $group_admins = array();
+        $this->sql = new Sql($this->gateway->getAdapter());
         
-        if (count($query_group_admin) == 0) {
-            $group_admins[] = 'No admins found.';
+        $this->user =  $group_user;
+        
+        $this->connection = $this->sql->getAdapter()->getDriver()->getConnection();
+    }
+    
+    /**
+     * 
+     * Gets user id
+     * 
+     * @return ResultSet|boolean
+     */
+    public function getUserId()
+    {
+        $this->select->columns(array('*'))
+        ->from('members')
+        ->where(array('username' => $this->user));
+        
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($this->select),
+            Adapter::QUERY_MODE_EXECUTE
+            );
+        
+        if ($query->count() > 0) {
+            foreach ($query as $result) {
+                $row = $result;
+            }
+            
+            return $row;
         }
         
-        foreach ($query_group_admin as $group_admin) {
-            $group_admins[] = $group_admin['username'];
+        return false;
+    }
+
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::getAllGroups()
+     */
+    public function getAllGroups()
+    {
+        $query = $this->connection->execute("SELECT id, group name, group_creator, group_created_date FROM groups
+            WHERE id NOT IN (SELECT group_id FROM group_members WHERE member_id = " . $this->getUserId()['id'] . ")");
+        
+        if ($query->count() > 0) {
+            $all_group_holders = array();
+       
+        
+            foreach ($query as $key => $groups) {
+                $all_group_holders[$key] = $groups;
+            }
+        
+            return $all_group_holders;
+        } else {
+            throw new GroupsException("No groups were found.");
         }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::getGroupsIndex()
+     */
+    public function getGroupsIndex()
+    {
+        $query = $this->connection->execute("SELECT groups.id AS group_id, groups.group_name AS g_name FROM group_members
+            INNER JOIN members ON group_members.member_id = members.id
+            INNER JOIN groups ON group_members.group_id = groups.id
+            WHERE members.id = " . $this->getUserId()['id'] . " ORDER BY groups.id LIMIT 5");
         
-        // get the group members
-        $select = new Select();
-        
-        $select->from(array(
-            'g' => 'group_members'
-        ))->join(array(
-            'm' => 'members'
-        ), 'g.member_id = m.id', array(
-            'username'
-        ))->join(array(
-            'grp' => 'groups'
-        ), 'g.group_id = grp.id')
-        ->where(array(
-            'g.group_id' => $group_id
-        ));
-        
-        $query = parent::$sql->getAdapter()->query(parent::$sql->buildSqlString($select), Adapter::QUERY_MODE_EXECUTE);
-        
-        $member_username = array();
-        
-        if (count($query) == 0) {
-            $member_username[] = 'No members found.';
+        if ($query->count() > 0) {
+            $group_holder = array();
+            
+            foreach ($query as $key => $value) {
+                $group_holder[$key] = $value;
+            }
+            
+            return $group_holder;
+        } else {
+            throw new GroupsException("You aren't a part of any groups.");
         }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::getMoreGroups()
+     */
+    public function getMoreGroups()
+    {
+        $query = $this->connection->execute("SELECT groups.id AS group_id, groups.group_name AS g_name FROM members
+            INNER JOIN members ON group_members.member_id = members.id
+            INNER JOIN groups ON group_members.group_id = groups.id
+            WHERE members.id = " . $this->getUserId['id'] . " ORDER BY groups.id");
         
-        foreach ($query as $member) {
-            $member_username[] = $member['username'];
+        if ($query->count() > 0) {
+            $group_holder = array();
+            
+            foreach ($query as $key => $value) {
+                $group_holder[$key] = $value;
+            }
+            
+            return $group_holder;
+        } else {
+            throw new GroupsException("No more groups were found.");
         }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::getGroups()
+     */
+    public function getGroups()
+    {
+        $query = $this->connection->execute("SELECT groups.id AS group_id, groups.group_name AS g_name FROM group_members
+                                       INNER JOIN members ON group_members.member_id = members.id
+                                       INNER JOIN groups ON group_members.group_id = groups.id
+                                       WHERE members.id = " . $this->getUserId()['id'] . " ORDER BY groups.id");
         
-        // get the rest of the group info
-        $fetch = $this->gateway->select(array(
-            'id' => $group_id
-        ));
-        
-        $row = $fetch->current();
-        
-        if (!$row) {
-            return false;
+        if (count($query) > 0) {
+            $group_name = array();
+            $group_id   = array();
+            
+            foreach ($query as $value) {
+                // list the group names and ids
+                $group_name[] = $value['g_name'];
+                $group_id[]   = $value['group_id'];
+            }
+            
+            return array('group_name' => $group_name, 'group_id' => $group_id);
+        } else {
+            throw new GroupsException("You aren't a part of any groups!");
         }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::getGroupIds()
+     */
+    public function getGroupIds()
+    {
+        $this->select->columns(array('id'))
+        ->from('groups')
+        ->where("id IS NOT NULL OR id != ''");
         
-        return array(
-            'admins' => implode(", ", $group_admins),
-            'members' => implode(", ", $member_username),            
-            'info' => $row
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($this->select),
+            Adapter::QUERY_MODE_EXECUTE
         );
+        
+        if ($query->count() > 0) {
+            $groups = array();
+            
+            foreach ($query as $group_ids) {
+                $groups[] = $group_ids['id'];
+            }
+            
+            return $groups;
+        } else {
+            throw new GroupsException("Could not find any groups.");
+        }
     }
-
+    
+    
     /**
-     * Allows user to join group
-     * 
-     * @param int $group_id            
-     * @param JoinGroup $data            
-     * @return boolean
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::leaveGroup()
      */
-    public function joinTheGroup($group_id, JoinGroup $data)
+    public function leaveGroup($group_id)
     {
-        return parent::joinGroup($group_id, $data);
+        if (empty($group_id)) {
+            throw new GroupsException("No group was selected to leave.");
+        }
+        
+        // get the group based on $group_id
+        $query = $this->connection->execute("SELECT groups.group_name, groups.id AS group_id FROM group_members
+            INNER JOIN members on group_members.member_id = member.id
+            INNER JOIN groups ON group_members.group_id = groups.id
+            WHERE members.id = " . $this->getUserId()['id'] . " AND groups.id = " . $group_id);
+        
+        if ($query->count() > 0) {
+            // go ahead and delete the user from the group
+            
+        }
     }
-
-    /**
-     * Gets group members currently online
-     * 
-     * @return array[][]
-     */
-    public function getGroupMemsOnline($group_id = null)
+    
+    
+    public function joinGroup($group_id, array $data)
     {
-        return GroupMembersOnline::getGroupMembersOnline($group_id);
+        
     }
-
-    /**
-     * Creates a new group
-     * 
-     * @param CreateGroup $group            
-     * @return boolean
-     */
-    public function createNewGroup(CreateGroup $group)
+    
+    
+    public function createGroup(CreateGroup $group)
     {
-        return parent::createGroup($group);
+        
+    }
+    
+    
+    public function insertIntoGroupMembersOnlineFromCreateGroupId($id)
+    {
+        
+    }
+    
+    
+    public function getGroupMembersOnline($group_id = null)
+    {
+        
     }
 }

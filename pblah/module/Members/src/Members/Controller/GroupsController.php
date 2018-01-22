@@ -11,8 +11,8 @@ use Zend\View\Model\ViewModel;
 
 use Zend\Db\TableGateway\TableGateway;
 
-use Members\Model\Classes\Exceptions\GroupsException;
-use Members\Model\Classes\Exceptions\GroupMembersOnlineException;
+use Members\Model\Exceptions\GroupsException;
+use Members\Model\Exceptions\GroupMembersOnlineException;
 
 use Members\Form\CreateGroupForm;
 use Members\Form\JoinGroupForm;
@@ -32,7 +32,15 @@ class GroupsController extends AbstractActionController
 
     public function indexAction()
     {
-        return new ViewModel(array('groups' => $this->getGroupsService()->listGroupsIndex()));
+        $view_model = new ViewModel();
+        
+        try {
+            $view_model->setVariable('groups', $this->getGroupsService()->getGroupsIndex());
+        } catch (GroupsException $e) {
+            $view_model->setVariable('groups', $e->getMessage());
+        }
+        
+        return $view_model;
     } 
     
     

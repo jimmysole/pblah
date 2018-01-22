@@ -73,7 +73,7 @@
 
 
    <?php
-		  if ($this->groups === null):
+		  if (!is_array($this->groups)):
    ?>
 	<div class="w3-responsive">
 		<p class="w3-center" id="no-groups">You aren't part of any groups!<br><br>

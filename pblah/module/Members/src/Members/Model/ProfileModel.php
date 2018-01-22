@@ -609,7 +609,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
         $img_size = array();
         
         foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $album, 1), array('.', '..', '.htaccess', 'location.txt', 'edited_photos')) as $photo) {
-            if (count($photos, 1) > 0) {
+            if (count($photo, 1) > 0) {
                 $photos[]   = $photo;
                 $img_size[] = getimagesize(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $album . '/' . $photo);
             } else {
