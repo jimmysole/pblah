@@ -316,7 +316,6 @@ class ProfileController extends AbstractActionController
             try {
                 $params = $this->getRequest()->getPost()->toArray();
                 
-                // var_dump($params['images']); exit;
                 if ($this->getProfileService()->removePhotosFromAlbum($params['album'], $params['images'])) {
                     echo "Image(s) deleted from " . $params['album'];
                 }
@@ -907,15 +906,5 @@ class ProfileController extends AbstractActionController
         }
 
         return $this->profile_service;
-    }
-
-
-    public function getEditProfileService()
-    {
-        if (!$this->edit_profile_service) {
-            $this->edit_profile_service = $this->getServiceLocator()->get('Members\Model\EditProfileModel');
-        }
-
-        return $this->edit_profile_service;
     }
 }

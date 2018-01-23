@@ -5,11 +5,9 @@ use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Http;
-use Members\Model\ProfileModel;
-use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
-use Members\Model\Filters\EditProfile;
-use Members\Model\EditProfileModel;
+
+use Members\Model\ProfileModel;
 use Members\Model\GroupsModel;
 use Members\Model\EventsModel;
 use Members\Model\StatusModel;
@@ -119,19 +117,6 @@ class Module implements AutoloaderProviderInterface
     {
         return array(
             'factories' => array(
-                'Members\Model\EditProfileModel' => function ($sm) {
-                    $table_gateway = $sm->get('EditProfileService');
-                    $profile = new EditProfileModel($table_gateway);
-                    return $profile;
-                },
-                
-                'EditProfileService' => function ($sm) {
-                    $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $result_set_prototype = new ResultSet();
-                    $result_set_prototype->setArrayObjectPrototype(new EditProfile());
-                    return new TableGateway('profiles', $db_adapter, null, $result_set_prototype);
-                },
-                
                 'Members\Model\ProfileModel' => function ($sm) {
                     $table_gateway = $sm->get('ProfileService');
                     $profile = new ProfileModel($table_gateway, $sm->get('pblah-auth')->getIdentity());
