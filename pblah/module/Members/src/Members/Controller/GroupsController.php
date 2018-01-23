@@ -69,7 +69,7 @@ class GroupsController extends AbstractActionController
         try {
             $view_model = new ViewModel();
             
-            $view_model->setVariable('groups', $this->getGroupsService()->listAllGroups());
+            $view_model->setVariable('groups', $this->getGroupsService()->getGroups());
         } catch (GroupsException $e) {
             $view_model->setVariable('groups', $e->getMessage());
         }

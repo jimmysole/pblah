@@ -266,14 +266,143 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
         
         if ($query->count() > 0) {
             // go ahead and delete the user from the group
+            $this->delete->from('group_members')
+            ->where(array('member_id' => $this->getUserId()['id'], 'group_id' => $group_id));
             
+            $query = $this->sql->getAdapter()->query(
+                $this->sql->buildSqlString($this->delete),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            if ($query->count() > 0) {
+                // remove from group members online table
+                $this->delete->from('group_members_online')
+                ->where(array('member_id' => $this->getUserId()['id'], 'group_id' => $group_id));
+                
+                $query = $this->sql->getAdapter()->query(
+                    $this->sql->buildSqlString($this->delete),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                // delete from group admins table as well (if found)
+                $this->delete->from('group_admins')
+                ->where(array('user_id' => $this->getUserId()['id'], 'group_id' => $group_id));
+                
+                $exec = $this->sql->getAdapter()->query(
+                    $this->sql->buildSqlString($this->delete),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                if ($exec->count() < 0) {
+                    // not an admin
+                    return true;
+                } else if ($exec->count() > 0 && $query->count() > 0) {
+                    return true; 
+                } else {
+                    throw new GroupsException("An error occurred while attempting to process your request to leave the group specified, please try again.");
+                }
+            } else {
+                throw new GroupsException("An error occurred while attempting to process your request to leave the group specified, please try again.");
+            }
+        } else {
+            throw new GroupsException("You don't belong to the specified group.");
         }
     }
     
     
-    public function joinGroup($group_id, array $data)
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::joinGroup()
+     */
+    public function joinGroup($group_id, JoinGroup $data)
     {
+        if (empty($group_id)) {
+            throw new GroupsException("Could not locate the group specified.");
+        }
         
+        
+        // assign data to array
+        // for insert
+        $data_holder = array(
+            'group_id'  => $group_id,
+            'member_id' => $this->getUserId()['id'],
+            'user_data' => array($data->first_name, $data->last_name, $data->age, $data->message),
+        );
+        
+        $this->select->columns(array('username'))
+        ->from('members')
+        ->where(array('id' => $data_holder['member_id']));
+        
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($this->select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($query->count() > 0) {
+            $members = array();
+            
+            foreach ($query as $value) {
+                $members[] = $value['username'];
+            }
+        }
+        
+        
+        // get the user ids of the group admins
+        $this->select->columns(array('user_id'))
+        ->from('group_admins')
+        ->where(array('group_id' => $group_id));
+        
+        $admins_query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($this->select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($admins_query->count() > 0) {
+            // admins found
+            $group_admins = array();
+            
+            foreach ($admins_query as $admins) {
+                $group_admins[] = $admins['user_id'];
+            }
+            
+            // locate the admin(s) now based on the ids just fetched
+            $this->select->columns(array('username'))
+            ->from('members')
+            ->where(array('id' => array_values($group_admins)));
+            
+            $admins_from_members_query = $this->sql->getAdapter()->query(
+                $this->sql->buildSqlString($this->select),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            if ($admins_from_members_query->count() > 0) {
+                $admin_users = array();
+                
+                foreach ($admins_from_members_query as $values) {
+                    $admin_users[] = $values['username'];
+                }
+                
+                $this->insert->into('private_messages')
+                ->columns(array('to', 'from', 'message', 'date_received', 'active'))
+                ->values(array('to' => implode(", ", array_values($admin_users)), 'from' => $members[0],
+                    'message' => 'A user has requested to join your group', 'date_received' => date('Y-m-d H:i:s'), 'active' => 1
+                ));
+                
+                $exec = $this->sql->getAdapter()->query(
+                    $this->sql->buildSqlString($this->insert),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                if ($exec->count() > 0) {
+                    
+                } else {
+                    
+                }
+            }
+        } else {
+            // no admins
+            
+        }
     }
     
     

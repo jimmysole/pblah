@@ -58,7 +58,7 @@ interface GroupsInterface
      * 
      * @param int $group_id
      * @throws GroupsException
-     * @return boolean|string[][]
+     * @return boolean
      */
     public function leaveGroup($group_id);
     
