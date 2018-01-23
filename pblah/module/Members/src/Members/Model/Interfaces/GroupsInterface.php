@@ -3,6 +3,7 @@
 namespace Members\Model\Interfaces;
 
 use Members\Model\Filters\CreateGroup;
+use Members\Model\Filters\JoinGroup;
 
 
 interface GroupsInterface
@@ -67,9 +68,9 @@ interface GroupsInterface
      * Lets a user send a request to join a group
      * 
      * @param int $group_id
-     * @param array $data
+     * @param JoinGroup $data
      */
-    public function joinGroup($group_id, array $data);
+    public function joinGroup($group_id, JoinGroup $data);
     
     
     /**

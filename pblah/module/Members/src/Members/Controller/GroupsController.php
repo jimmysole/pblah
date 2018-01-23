@@ -139,7 +139,7 @@ class GroupsController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
 
         try {
-            echo json_encode($this->getGroupsService()->getGroupMemsOnline($id));
+            echo json_encode($this->getGroupsService()->getGroupMembersOnline($id));
         } catch (GroupMembersOnlineException $e) {
             echo json_encode($e->getMessage());
         }
@@ -159,7 +159,7 @@ class GroupsController extends AbstractActionController
         $group_id = $this->params()->fromRoute('id');
 
         try {
-            echo json_encode($this->getGroupsService()->leaveTheGroup($group_id));
+            echo json_encode($this->getGroupsService()->leaveGroup($group_id));
         } catch (GroupsException $e) {
             echo json_encode($e->getMessage());
         }
@@ -195,7 +195,7 @@ class GroupsController extends AbstractActionController
                 $create_group->exchangeArray($form->getData());
                 
                 try {
-                    if ($this->getGroupsService()->createNewGroup($create_group)) {
+                    if ($this->getGroupsService()->createGroup($create_group)) {
                         $this->flashMessenger()->addSuccessMessage("Group was created successfully!");
                     
                         return $this->redirect()->toUrl('create-group-success');
@@ -255,7 +255,7 @@ class GroupsController extends AbstractActionController
                 $join_group->exchangeArray($form->getData());
                 
                 try {
-                    if (false !== $this->getGroupsService()->joinTheGroup($_POST['group_id'], $join_group)) {
+                    if (false !== $this->getGroupsService()->joinGroup($_POST['group_id'], $join_group)) {
                         $this->flashMessenger()->addSuccessMessage("Request to join group sent.");
                         
                         return $this->redirect()->toUrl('join-group-success');
@@ -297,7 +297,7 @@ class GroupsController extends AbstractActionController
     public function viewgroupsAction()
     {
         try {
-            $groups = $this->getGroupsService()->listAllGroups();
+            $groups = $this->getGroupsService()->getAllGroups();
             
             return new ViewModel(array('groups' => $groups));
         } catch (GroupsException $e) {
