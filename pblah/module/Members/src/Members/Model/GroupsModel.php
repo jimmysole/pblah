@@ -394,14 +394,32 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
                 );
                 
                 if ($exec->count() > 0) {
+                    // insert the join data into the group_join_requests table
+                    $this->insert->into('group_join_requests')
+                    ->columns(array('group_id', 'member_id', 'data'))
+                    ->values(array('group_id' => $data_holder['group_id'], 'member_id' => $data_holder['member_id'],
+                        'user_data' => implode(", ", array_values($data_holder['user_data']))
+                    ));
                     
+                    $query = $this->sql->getAdapter()->query(
+                        $this->sql->buildSqlString($this->insert),
+                        Adapter::QUERY_MODE_EXECUTE
+                    );
+                    
+                    if ($query->count() > 0) {
+                        return true;
+                    } else {
+                        throw new GroupsException("An error has occurred while processing the request to join the group, please try again.");
+                    }
                 } else {
-                    
+                    throw new GroupsException("Error sending your request to join, please try again.");
                 }
+            } else {
+                throw new GroupsException("Error locationg admin(s), perhaps they are no longer members of the group.");
             }
         } else {
             // no admins
-            
+            throw new GroupsException("The group has no administrators, request to join cancelled.");
         }
     }
     
