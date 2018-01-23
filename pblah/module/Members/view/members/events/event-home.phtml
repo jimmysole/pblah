@@ -76,7 +76,7 @@
 						<h2
 							class="w3-center w3-white w3-border w3-border-white w3-round-xlarge"
 							style="text-shadow: 1px 1px 0 #000">
-							<?php echo $this->event_info['info']['event_name']; ?>
+							<?php echo $this->event_info['event_name']; ?>
 						</h2>
 					</div>
 				</div>
@@ -101,10 +101,10 @@
 							</thead>
 
 							<tr class="w3-text-black">
-								<td style="width: 15%;"><?php echo $this->event_info['info']['event_name']; ?></td>
-								<td style="width: 45%;"><?php echo $this->event_info['info']['event_description']; ?></td>
-								<td style="width: 15%;"><?php echo date('Y-m-d', strtotime($this->event_info['info']['start_date'])); ?></td>
-								<td style="width: 15%;"><?php echo date('Y-m-d', strtotime($this->event_info['info']['end_date'])); ?></td>
+								<td style="width: 15%;"><?php echo $this->event_info['event_name']; ?></td>
+								<td style="width: 45%;"><?php echo $this->event_info['event_description']; ?></td>
+								<td style="width: 15%;"><?php echo date('Y-m-d', strtotime($this->event_info['start_date'])); ?></td>
+								<td style="width: 15%;"><?php echo date('Y-m-d', strtotime($this->event_info['end_date'])); ?></td>
 							</tr>
 						</table>
 					</div>

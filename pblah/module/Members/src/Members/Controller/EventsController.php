@@ -30,11 +30,11 @@ class EventsController extends AbstractActionController
             return $this->redirect()->toRoute('members/events', array('action' => 'index'));
         }
         
-        if (!$this->getEventService()->getEventInformation($id)) {
+        if (!$this->getEventService()->getEvent($id)) {
             return $this->redirect()->toRoute('members/events', array('action' => 'index'));
         }
         
-        return new ViewModel(array('event_info' => $this->getEventService()->getEventInformation($id)));
+        return new ViewModel(array('event_info' => $this->getEventService()->getEvent($id)));
     }
     
     

@@ -62,6 +62,30 @@ class EventsModel implements EventsInterface
     
     
     /**
+     * Gets info about a particular event
+     * 
+     * @param int $id
+     * @return array
+     */
+    public function getEvent($id)
+    {
+        $select = $this->gateway->select(array('id' => $id));
+        
+        
+        foreach ($select as $rows) {
+            $rowset = array(
+                'event_name'        => $rows['event_name'],
+                'event_description' => $rows['event_description'],
+                'start_date'        => $rows['start_date'],
+                'end_date'          => $rows['end_date'],
+            );
+        }
+        
+        return $rowset;
+    }
+    
+    
+    /**
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\EventsInterface::createEvent()
      */
@@ -166,6 +190,7 @@ class EventsModel implements EventsInterface
             throw new EventsException("No events were found.");
         }
     }
+    
     
     
     /**
