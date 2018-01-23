@@ -437,6 +437,10 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
     }
     
     
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::createGroup()
+     */
     public function createGroup(CreateGroup $group)
     {
         if (empty($group->group_name)) {
@@ -574,21 +578,137 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
                         } else {
                             throw new GroupsException("Error inserting the group settings, please try again.");
                         }
+                    } else if ($set_group_settings[$this->allowed_group_settings[1]] == 1) {
+                        // only the second setting was passed (closed_to_public)
+                        // insert this setting
+                        $this->insert->into('group_settings')
+                        ->columns(array('group_id', 'setting'))
+                        ->values(array('group_id' => $id, 'setting' => $this->allowed_group_settings[1]));
+                        
+                        $query = $this->sql->getAdapter()->query(
+                            $this->sql->buildSqlString($this->insert),
+                            Adapter::QUERY_MODE_EXECUTE
+                        );
+                        
+                        if ($query->count() > 0) {
+                            // insert into group member table and group admins table now
+                            $this->insert->into('group_admins')
+                            ->columns(array('group_id', 'user_id'))
+                            ->values(array('group_id' => $id, 'user_id' => $this->getUserId()['id']));
+                            
+                            $query_admin = $this->sql->getAdapter()->query(
+                                $this->sql->buildSqlString($this->insert),
+                                Adapter::QUERY_MODE_EXECUTE
+                            );
+                            
+                            
+                            $this->insert->into('group_members')
+                            ->columns(array('group_id', 'member_id'))
+                            ->values(array('group_id' => $id, 'member_id' => $this->getUserId()['id']));
+                            
+                            $query_member = $this->sql->getAdapter()->query(
+                                $this->sql->buildSqlString($this->insert),
+                                Adapter::QUERY_MODE_EXECUTE
+                                );
+                            
+                            if ($query_admin->count() > 0 && $query_member->count() > 0) {
+                                // insert user into group members online table
+                                $this->insertIntoGroupMembersOnlineFromCreateGroupId($id);
+                                
+                                return true;
+                            } else {
+                                throw new GroupsException("Error inserting you into the group members and/or group admins table, please try again.");
+                            }
+                        } else {
+                            throw new GroupsException("Error inserting the group settings, please try again.");
+                        }
+                    } else {
+                        throw new GroupsException("Invalid group setting passed, please try again.");
+                    }
+                } 
+            } else {
+                // no group settings passed
+                // just create the group without any settings in place
+                $this->insert->into('groups')
+                ->columns(array('group_name', 'group_creator', 'group_created_date'))
+                ->values(array('group_name' => $group->group_name, 'group_creator' => $group_creator[0], 'group_created_date' => date('Y-m-d H:i:s')));
+                
+                $query = $this->sql->getAdapter()->query(
+                    $this->sql->buildSqlString($this->insert),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                if ($query->count() > 0) {
+                    // get the last id passed
+                    $id = $this->sql->getAdapter()->getDriver()->getLastGeneratedValue();
+                    
+                    // insert into group members table and group admin tables now
+                    $this->insert->into('group_admins')
+                    ->columns(array('group_id', 'user_id'))
+                    ->values(array('group_id' => $id, 'user_id' => $this->getUserId()['id']));
+                    
+                    $query_admin = $this->sql->getAdapter()->query(
+                        $this->sql->buildSqlString($this->insert),
+                        Adapter::QUERY_MODE_EXECUTE
+                    );
+                    
+                    
+                    $this->insert->into('group_members')
+                    ->columns(array('group_id', 'member_id'))
+                    ->values(array('group_id' => $id, 'member_id' => $this->getUserId()['id']));
+                    
+                    $query_member = $this->sql->getAdapter()->query(
+                        $this->sql->buildSqlString($this->insert),
+                        Adapter::QUERY_MODE_EXECUTE
+                    );
+                    
+                    if ($query_admin->count() > 0 && $query_member->count() > 0) {
+                        // insert user into group members online table
+                        $this->insertIntoGroupMembersOnlineFromCreateGroupId($id);
+                        
+                        return true;
+                    } else {
+                        throw new GroupsException("Error inserting you into the group members and/or group admins table, please try again.");
                     }
                 } else {
-                    
+                    throw new GroupsException("Error creating the group, please try again.");
                 }
             }
+        } else {
+            // should never reach this point..
+            throw new GroupsException("Username not found, aborting.");
         }
     }
     
     
-    public function insertIntoGroupMembersOnlineFromCreateGroupId($id)
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::insertIntoGroupMembersOnline()
+     */
+    public function insertIntoGroupMembersOnline($id)
     {
+        // insert the member into the group members online table 
+        $this->insert->into('group_members_online')
+        ->columns(array('member_id', 'group_id', 'status'))
+        ->values(array('member_id' => $this->getUserId()['id'], 'group_id' => $id, 'status' => 1));
         
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($this->insert),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($query->count() > 0) {
+            return true;
+        }
+        
+        return false;
     }
     
     
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupMembersOnlineInterface::getGroupMembersOnline()
+     */
     public function getGroupMembersOnline($group_id = null)
     {
         
