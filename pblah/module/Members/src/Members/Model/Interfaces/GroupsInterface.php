@@ -88,7 +88,6 @@ interface GroupsInterface
      * @param int $id
      * @throws GroupsException
      * @return boolean
-     * @param unknown $id
      */
-    public function insertIntoGroupMembersOnlineFromCreateGroupId($id);
+    public function insertIntoGroupMembersOnline($id);
 }
