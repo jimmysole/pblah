@@ -2,16 +2,22 @@
 
 namespace Members\Model;
 
-use Members\Model\Classes\Members;
 use Zend\Db\TableGateway\TableGateway;
 
+use Members\Model\Interfaces\StatusInterface;
 
-class StatusModel extends Members
+
+class StatusModel implements StatusInterface
 {
     /**
      * @var TableGateway
      */
     public $gateway;
+    
+    /**
+     * @var string
+     */
+    public $user;
     
     
     /**
@@ -23,20 +29,25 @@ class StatusModel extends Members
     {
         $this->gateway = $gateway instanceof TableGateway ? $gateway : null;
         
-        parent::getTableGateway($this->gateway);
-        parent::getSQLClass();
-        parent::setUser($user);
+        $this->user = $user;
     }
     
     
-    public function postCurrentStatus(array $data)
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\StatusInterface::postStatus()
+     */
+    public function postStatus($status)
     {
-       return parent::postStatus($data['status']);
+        
     }
     
-    
-    public function getCurrentStatus($user)
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\StatusInterface::getStatus()
+     */
+    public function getStatus()
     {
-        return parent::getStatus($user);
+        
     }
 }

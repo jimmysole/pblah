@@ -32,6 +32,11 @@ class EventsModel implements EventsInterface
     public $sql;
     
     /**
+     * @var Select
+     */
+    public $select;
+    
+    /**
      * @var ConnectionInterface
      */
     public $connection;
@@ -50,11 +55,16 @@ class EventsModel implements EventsInterface
         
         $this->sql = new Sql($this->gateway->getAdapter());
         
+        $this->select = new Select();
+        
         $this->connection = $this->sql->getAdapter()->getDriver()->getConnection();
     }
     
     
-    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EventsInterface::createEvent()
+     */
     public function createEvent(CreateEvent $event)
     {
         // assign data to array for insert into database
@@ -74,7 +84,10 @@ class EventsModel implements EventsInterface
     }
     
     
-    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\EventsInterface::editEvent()
+     */
     public function editEvent($event_id, array $event_edits)
     {
         if (empty($event_id)) {

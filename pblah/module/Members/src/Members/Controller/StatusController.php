@@ -5,12 +5,13 @@ namespace Members\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-use Members\Model\Classes\Exceptions\StatusException;
+use Members\Model\Exceptions\StatusException;
 
 
 class StatusController extends AbstractActionController
 {
     protected $status_service;
+    
     
     public function indexAction()
     {
@@ -29,7 +30,7 @@ class StatusController extends AbstractActionController
             try {
                 $params = $this->params()->fromPost('status');
                 
-                if ($this->getStatusService()->postCurrentStatus(array('status' => $params))) {
+                if ($this->getStatusService()->postStatus(array('status' => $params))) {
                     echo json_encode(array('success' => 'Status updated'));
                 }
             } catch (StatusException $e) {
@@ -50,7 +51,7 @@ class StatusController extends AbstractActionController
         $view_model->setTerminal(true);
         
         try {
-            echo json_encode($this->getStatusService()->getCurrentStatus($this->identity()));
+            echo json_encode($this->getStatusService()->getStatus());
         } catch (StatusException $e) {
             echo json_encode(array('fail' => $e->getMessage()));
         }

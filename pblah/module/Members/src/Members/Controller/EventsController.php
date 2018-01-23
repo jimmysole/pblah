@@ -7,7 +7,7 @@ use Zend\View\Model\ViewModel;
 
 use Members\Form\CreateEventForm;
 use Members\Model\Filters\CreateEvent;
-use Members\Model\Classes\Exceptions\EventsException;
+use Members\Model\Exceptions\EventsException;
 
 
 
@@ -18,7 +18,7 @@ class EventsController extends AbstractActionController
     
     public function indexAction()
     {
-        return new ViewModel(array('events' => $this->getEventService()->view()));
+        return new ViewModel(array('events' => $this->getEventService()->viewEvents()));
     }
     
     
@@ -64,7 +64,7 @@ class EventsController extends AbstractActionController
                 $create_event->exchangeArray($form->getData());
                 
                 try {
-                    if (false !== $this->getEventService()->createAEvent($create_event)) {
+                    if (false !== $this->getEventService()->createEvent($create_event)) {
                         $this->flashMessenger()->addSuccessMessage("Event created okay!");
                         
                         return $this->redirect()->toUrl('create-event-success');
@@ -114,7 +114,7 @@ class EventsController extends AbstractActionController
     public function vieweventsAction()
     {
         try {
-            $events = $this->getEventService()->viewOtherEvents();
+            $events = $this->getEventService()->getOtherEvents();
             
             return new ViewModel(array('events' => $events));
         } catch (EventsException $e) {
