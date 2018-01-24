@@ -91,12 +91,10 @@ class GroupsController extends AbstractActionController
         $view_model = new ViewModel();
         $view_model->setTerminal(true);
 
-        $id = $this->params()->fromRoute('id');
-        
         try {
-            echo json_encode($this->getGroupsService()->getGroupMembersOnline($id));
+            echo json_encode(array('display_name' => $this->getGroupsService()->getGroupMembersOnline()));
         } catch (GroupMembersOnlineException $e) {
-            echo json_encode($e->getMessage());
+            echo json_encode(array('message' => $e->getMessage()));
         }
 
         return $view_model;

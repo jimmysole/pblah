@@ -93,7 +93,7 @@ class EventsModel implements EventsInterface
     {
         // assign data to array for insert into database
         $holder = array(
-            'member_id'         => '',
+            'member_id'         => $this->getUserId()['id'],
             'event_name'        => $event->event_name,
             'event_description' => $event->event_description,
             'start_date'        => $event->start_date,
@@ -205,16 +205,14 @@ class EventsModel implements EventsInterface
                                              WHERE members.id = " . $this->getUserId()['id'] . " ORDER BY events.id");
         
         if ($query->count() > 0) {
-            $event_id   = array();
-            $event_name = array();
+            $events = array();
             
-            foreach ($query as $value) {
+            foreach ($query as $key => $value) {
                 // list the event id and name
-                $event_id[]   = $value['event_id'];
-                $event_name[] = $value['ename'];
+                $events = array_merge_recursive($events, array($key => $value));
             }
             
-            return array('event_id' => $event_id, 'event_name' => $event_name);
+            return $events;
         } else {
             throw new EventsException("No events either created by you or that you are a part of were found.");
         }
