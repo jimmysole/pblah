@@ -286,7 +286,6 @@ class SetupModel
         $events_table->addColumn(new Column\Datetime('end_date'));
 
         // add the constraints
-        $events_table->addConstraint(new Constraint\ForeignKey('fk_events', 'member_id', 'members', 'id', 'cascade', 'cascade'));
         $events_table->addConstraint(new Constraint\PrimaryKey(array('id', 'member_id')));
 
         $pending_users_table = new Ddl\CreateTable('pending_users');
