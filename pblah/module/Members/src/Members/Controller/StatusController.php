@@ -30,7 +30,7 @@ class StatusController extends AbstractActionController
             try {
                 $params = $this->params()->fromPost('status');
                 
-                if ($this->getStatusService()->postStatus(array('status' => $params))) {
+                if ($this->getStatusService()->postStatus($params)) {
                     echo json_encode(array('success' => 'Status updated'));
                 }
             } catch (StatusException $e) {
