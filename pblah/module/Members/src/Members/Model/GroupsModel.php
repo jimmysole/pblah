@@ -17,6 +17,7 @@ use Members\Model\Filters\JoinGroup;
 use Members\Model\Interfaces\GroupsInterface;
 use Members\Model\Interfaces\GroupMembersOnlineInterface;
 use Members\Model\Exceptions\GroupsException;
+use Members\Model\Exceptions\GroupMembersOnlineException;
 
 
 class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
@@ -74,6 +75,16 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
     private $allowed_group_settings = array(
         'join_authorization', 'closed_to_public'
     );
+    
+    /**
+     * @var array
+     */
+    private $group_members_id = array();
+    
+    /**
+     * @var array
+     */
+    private $group_names = array();
 
     
     /**
@@ -711,6 +722,127 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
      */
     public function getGroupMembersOnline($group_id = null)
     {
+        // check to see which group members are online
+        // by checking the group_members_online table
+        // and fetching the member_id and status
+        if ($group_id !== null) {
+            $query = $this->connection->execute("SELECT DISTINCT groups.id, groups.group_name AS grp_name, gmo.member_id AS gm_mid, 
+                gmo.status AS gm_status
+                FROM group_members_online as gmo
+                INNER JOIN group_members ON group_members.member_id = gmo.member_id
+                INNER JOIN groups ON groups.id = gmo.group_id
+                WHERE gmo.status = 1 AND groups.id = $group_id");
+            
+            if ($query->count() > 0) {
+                // get the users on
+                // fetch the display name based on the member_id
+                // from the profiles table
+                foreach ($query as $value) {
+                    $this->group_members_id[] = $value['gm_mid'];
+                    $this->group_names[] = $value['grp_name'];
+                }
+                
+                $this->select->columns(array('display_name'))
+                ->from('profiles')
+                ->where(array('profile_id' => array_values($this->group_members_id)));
+                
+                $query = $this->sql->getAdapter()->query(
+                    $this->sql->buildSqlString($this->select),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                if ($query->count() > 0) {
+                    $display_name = array();
+                    
+                    foreach ($query as $val) {
+                        $display_name[] = $val['display_name'];
+                    }
+                    
+                    return array('display_name' => $display_name);
+                } else {
+                    throw new GroupMembersOnlineException("User was not found.");
+                }
+            } else {
+                throw new GroupMembersOnlineException("No users are currently on.");
+            }
+        }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::getGroupInformation()
+     */
+    public function getGroupInformation($group_id)
+    {
+        // get the group admins
+        $this->select->from(array('ga' => 'group_admins'))
+        ->join(array(
+            'm' => 'members'
+        ), 'ga.user_id = m.id', array(
+            'username'
+        ))->join(array(
+            'g' => 'groups'
+        ), 'ga.group_id = g.id')
+        ->where(array('g.id' => $group_id));
         
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($this->select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        $group_admins = array();
+        
+        
+        if ($query->count() < 0) {
+            throw new GroupsException("No admins for the group were found.");
+        } else {
+            foreach ($query as $group_admin) {
+                $group_admins[] = $group_admin['username'];
+            }
+        }
+        
+        // get the group members
+        $this->select->from(array('g' => 'group_members'))
+        ->join(array(
+            'm' => 'members',
+        ), 'g.member_id = m.id', array(
+            'username'
+        ))->join(array(
+            'grp' => 'groups',
+        ), 'g.group_id = grp.id')
+        ->where(array('g.group_id' => $group_id));
+        
+        
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($this->select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        $group_members = array();
+        
+        
+        if ($query->count() < 0) {
+            throw new GroupsException("No members for the group were found.");
+        } else {
+            foreach ($query as $group_member) {
+                $group_members[] = $group_member['username'];
+            }
+        }
+        
+        // get the rest of the group info
+        $fetch = $this->gateway->select(array('id' => $group_id));
+        
+        $row = $fetch->current();
+        
+        if (!$row) {
+            throw new GroupsException("Error retrieving the group's information.");
+        }
+        
+        return array(
+            'admins'  => implode(", ", $group_admins),
+            'members' => implode(", ", $group_members),
+            'info' => $row,
+        );
     }
 }

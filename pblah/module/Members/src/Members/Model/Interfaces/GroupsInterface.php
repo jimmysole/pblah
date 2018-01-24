@@ -4,6 +4,7 @@ namespace Members\Model\Interfaces;
 
 use Members\Model\Filters\CreateGroup;
 use Members\Model\Filters\JoinGroup;
+use Members\Model\Exceptions\GroupsException;
 
 
 interface GroupsInterface
@@ -91,4 +92,14 @@ interface GroupsInterface
      * @return boolean
      */
     public function insertIntoGroupMembersOnline($id);
+    
+    
+    /**
+     * Gets all the group information
+     * 
+     * @param int $group_id
+     * @throws GroupsException
+     * @return array
+     */
+    public function getGroupInformation($group_id);
 }

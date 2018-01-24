@@ -52,20 +52,6 @@ class GroupsController extends AbstractActionController
     
     public function viewmoreAction()
     {
-        /*
-        $paginator = new Paginator(new DbTableGateway($this->getGroupsTable(), array('member_id' => $this->getGroupsService()->grabUserId())));
-        
-        $page = 1;
-        
-        if ($this->params()->fromRoute('page')) {
-            $page = $this->params()->fromRoute('page');
-        }
-        
-        $paginator->setCurrentPageNumber((int)$page);
-        $paginator->setItemCountPerPage(5);
-        
-        return new ViewModel(array('paginator' => $paginator));
-        */
         try {
             $view_model = new ViewModel();
             
@@ -87,9 +73,12 @@ class GroupsController extends AbstractActionController
         $view_model->setTerminal(true);
 
 
-        echo json_encode($this->getGroupsService()->listGroups());
-
-
+        try {
+            echo json_encode($this->getGroupsService()->getGroups());
+        } catch (GroupsException $e) {
+            echo json_encode($e->getMessage());  
+        }
+       
         return $view_model;
     }
     
@@ -102,8 +91,10 @@ class GroupsController extends AbstractActionController
         $view_model = new ViewModel();
         $view_model->setTerminal(true);
 
+        $id = $this->params()->fromRoute('id');
+        
         try {
-            echo json_encode($this->getGroupsService()->getGroupMemsOnline());
+            echo json_encode($this->getGroupsService()->getGroupMembersOnline($id));
         } catch (GroupMembersOnlineException $e) {
             echo json_encode($e->getMessage());
         }
