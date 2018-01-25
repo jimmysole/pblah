@@ -692,9 +692,34 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\PhotoAlbumInterface::deleteAlbum()
      */
-    public function deleteAlbum()
+    public function deleteAlbum(array $album)
     {
-        
+        // delete supplied albums
+        if (count($album, 1) > 0) {
+            foreach ($album as $key => $value) {
+                if (is_dir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/')) {
+                    // remove the files in the directory
+                    // then remove the directory itself
+                    foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/', 1), array('.', '..')) as $files) {
+                        unlink(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/' . $files);
+                    }
+                    
+                    if (rmdir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/')) {
+                        // directory removed
+                        // continue until all albums are gone
+                        continue;
+                    } else {
+                        throw new PhotoAlbumException("Error deleting your photo album, please try again.");
+                    }
+                } else {
+                    throw new PhotoAlbumException("Photo album does not exist.");
+                }
+            }
+            
+            return true;
+        } else {
+            throw new PhotoAlbumException("No album was supplied, please fix this and try again.");
+        }
     }
     
     
@@ -704,7 +729,28 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      */
     public function getAlbums()
     {
-        
+        if (is_dir(getcwd() . '/public/images/profile/' . $this->user . '/albums/')) {
+            // scan the albums directory
+            $files = array();
+            $album_name = array();
+            
+            foreach (glob(getcwd() . '/public/images/profile/' . $this->user . '/albums/*', GLOB_ONLYDIR) as $dir) {
+                $album_name = basename($dir);
+                
+                $files[$album_name] = glob($dir . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE);
+            }
+            
+            // make sure there are values returned
+            if (count($dir) > 0) {
+                // directories found
+                // return them
+                return $files[$album_name];
+            } else {
+                throw new PhotoAlbumException("Error locating your photo album, please try again.");
+            }
+        } else {
+            throw new PhotoAlbumException("Photo album does not exist.");
+        }
     }
     
     

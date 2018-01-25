@@ -66,10 +66,11 @@ interface PhotoAlbumInterface
     /**
      * Deletes a photo album
      * 
+     * @param array $album
      * @throws PhotoAlbumException
      * @return boolean
      */
-    public function deleteAlbum();
+    public function deleteAlbum(array $album);
     
     
     /**
