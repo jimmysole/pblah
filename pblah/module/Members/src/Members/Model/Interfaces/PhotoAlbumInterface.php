@@ -21,11 +21,12 @@ interface PhotoAlbumInterface
      * Adds photos to an album
      * 
      * @param string $first_album
+     * @param array $files
      * @param string $other_album
      * @throws PhotoAlbumException
      * @return boolean
      */
-    public function addPhotosToAlbum($first_album, $other_album = false);
+    public function addPhotosToAlbum($first_album, $files, $other_album = false);
 
     
     /**

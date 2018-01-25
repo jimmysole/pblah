@@ -560,11 +560,11 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\PhotoAlbumInterface::addPhotosToAlbum()
      */
-    public function addPhotosToAlbum($first_album, $other_album = false)
+    public function addPhotosToAlbum($first_album, $pfiles, $other_album = false)
     {
         $file_info = array();
         
-        if ($other_album !== false) {
+        if (false !== $other_album) {
             $replace = array();
             
             // check whether the other album exists
@@ -584,7 +584,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
             }
         } else {
             // just copy to the one album
-            foreach ($this->photo_album['photos'] as $key => $value) {
+            foreach ($pfiles['photos'] as $key => $value) {
                 $file = $value['name'];
                 $temp = $value['tmp_name'];
                 

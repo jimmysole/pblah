@@ -220,9 +220,10 @@ class ProfileController extends AbstractActionController
                 $params = $this->params()->fromPost();
                 $files = $this->params()->fromFiles();
                 
+                
                 if ($params['copy-from-album'] != "") {
                     $from_album = $params['copy-from-album'];
-                } else {
+                } else if ($params['copy-from-album'] == "") {
                     $from_album = false;
                 }
                 
