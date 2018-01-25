@@ -195,13 +195,12 @@ class EditPhotos
     {
         $this->imagick->setImageFormat('jpeg'); // set the format of the image to jpeg
         
-        if (!is_dir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->album_name . '/edited_photos')) {
-            mkdir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->album_name . '/edited_photos', 0777);
+        if (!is_dir(getcwd() . '/public/images/profile/' . $this->user . '/edited_photos')) {
+            mkdir(getcwd() . '/public/images/profile/' . $this->user . '/edited_photos', 0777);
         }
         
         // save the image
-        $this->imagick->writeImageFile(fopen(getcwd() . '/public/images/profile/' . $this->user . '/albums/'
-            . $this->album_name . '/edited_photos/' . date('Y-m-d') . '_' . rand() . '_' . $this->photo, 'w'));
+        $this->imagick->writeImageFile(fopen(getcwd() . '/public/images/profile/' . $this->user . '/edited_photos/' . date('Y-m-d') . '_' . rand() . '_' . $this->photo, 'w'));
         
         
         return true;

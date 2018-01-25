@@ -696,7 +696,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
     {
         // delete supplied albums
         if (count($album, 1) > 0) {
-            foreach ($album as $key => $value) {
+            foreach ($album['album'] as $key => $value) {
                 if (is_dir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/')) {
                     // remove the files in the directory
                     // then remove the directory itself
