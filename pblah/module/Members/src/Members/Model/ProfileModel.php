@@ -509,7 +509,6 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                 
                 // write the htaccess file
                 // to prevent hotlinking
-                // write the htaccess file
                 $server_name = str_replace(array('https', 'http', 'www'), '', $_SERVER['HTTP_HOST']);
                 
                 $data = "
@@ -522,12 +521,12 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                 
                 
                 // handle the photos now
-                if (count($this->photo_album, 1) > 1) {
+                if (count($album_photos, 1) > 1) {
                     // location tagging of album (if provided)
                     $write_location();
                     
                     // handle multiple photos
-                    foreach ($this->photo_album['photos'] as $key => $value) {
+                    foreach ($album_photos['photos'] as $key => $value) {
                         $file = $value['name'];
                         $temp = $value['tmp_name'];
                         
@@ -536,14 +535,14 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                     }
                     
                     return true;
-                } else if (count($this->photo_album, 1) == 1) {
+                } else if (count($album_photos, 1) == 1) {
                     // location tagging of album (if provided)
                     $write_location();
                     
                     // single photo
-                    $file_name = $this->photo_album['photos'][0]['name'];
+                    $file_name = $album_photos['photos'][0]['name'];
                     
-                    @move_uploaded_file($this->photo_album['photos'][0]['tmp_name'], 
+                    @move_uploaded_file($album_photos['photos'][0]['tmp_name'], 
                         getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date . '/' . $file_name);
                     
                     return true;

@@ -154,7 +154,7 @@ class ProfileController extends AbstractActionController
                $params = $this->params()->fromPost();
                $files = $this->params()->fromFiles();
                
-               if ($this->getProfileService()->makePhotoAlbum($params['album-name'], $files, $params['location'])) {
+               if ($this->getProfileService()->createAlbum($params['album-name'], $files, $params['location'])) {
                    $this->flashMessenger()->addSuccessMessage("Photo album was created successfully!");
                    
                    return $this->redirect()->toUrl('photo-album-created-success');
