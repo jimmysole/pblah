@@ -211,6 +211,12 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
     }
     
     
+    /**
+     * Gets the size of the image in pixels
+     * 
+     * @param string $photo
+     * @return array
+     */
     public function getPhotoSize($photo)
     {
         return $this->getImageSize($photo);
