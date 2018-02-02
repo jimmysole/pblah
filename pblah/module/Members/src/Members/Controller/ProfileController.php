@@ -33,7 +33,7 @@ class ProfileController extends AbstractActionController
         
         $params = $this->identity();
 
-        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums'));
+        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos'));
 
         if (count($dir) > 0) {
             $images = array();
