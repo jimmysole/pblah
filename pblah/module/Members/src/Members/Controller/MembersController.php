@@ -6,7 +6,6 @@ namespace Members\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 
 
-
 class MembersController extends AbstractActionController
 {
     protected $profile_service;

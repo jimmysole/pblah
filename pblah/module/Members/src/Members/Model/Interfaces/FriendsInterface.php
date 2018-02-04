@@ -3,6 +3,8 @@
 namespace Members\Model\Interfaces;
 
 
+use Members\Model\Exceptions\FriendsException;
+
 interface FriendsInterface
 {
     /**
@@ -30,28 +32,31 @@ interface FriendsInterface
     /**
      * Cancels a pending friend request
      * 
+     * @param int $friend_id
      * @throws FriendsException
      * @return boolean
      */
-    public function cancelFriendRequest();
+    public function cancelFriendRequest($friend_id);
     
     
     /**
      * Approves a pending friend request
      * 
+     * @param int $friend_id
      * @throws FriendsException
      * @return boolean
      */
-    public function approveFriendRequest();
+    public function approveFriendRequest($friend_id);
     
     
     /**
      * Denies a pending friend request
      * 
+     * @param int $friend_id
      * @throws FriendsException
      * @return boolean
      */
-    public function denyFriendRequest();
+    public function denyFriendRequest($friend_id);
     
     
     /**
@@ -82,4 +87,13 @@ interface FriendsInterface
      * @return void
      */
     public function messageFriend(MessagesInterface $messages, $to, array $message);
+    
+    
+    /**
+     * Gets the friends online for the user
+     * 
+     * @throws FriendsException
+     * @return array
+     */
+    public function getFriendsOnline();
 }

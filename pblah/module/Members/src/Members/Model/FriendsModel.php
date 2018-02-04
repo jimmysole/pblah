@@ -12,6 +12,7 @@ use Zend\Db\Sql\Sql;
 use Members\Model\Interfaces\FriendsInterface;
 use Members\Model\Interfaces\MessagesInterface;
 use Members\Model\Exceptions\FriendsException;
+use Zend\Db\Adapter\Driver\ConnectionInterface;
 
 
 
@@ -44,6 +45,12 @@ class FriendsModel implements FriendsInterface
     public $sql;
     
     /**
+     * @var ConnectionInterface
+     */
+    public $connection;
+    
+    
+    /**
      * @var array
      */
     public $browse_results = array();
@@ -52,6 +59,9 @@ class FriendsModel implements FriendsInterface
      * @var string
      */
     public $user;
+    
+    
+    
     
     
     /**
@@ -70,6 +80,8 @@ class FriendsModel implements FriendsInterface
         $this->delete = new Delete();
         
         $this->sql = new Sql($this->gateway->getAdapter());
+        
+        $this->connection = $this->sql->getAdapter()->getDriver()->getConnection();
         
         $this->user = $user;
     }
@@ -400,6 +412,32 @@ class FriendsModel implements FriendsInterface
     public function messageFriend(MessagesInterface $messages, $to, array $message)
     {
         
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\FriendsInterface::getFriendsOnline()
+     */
+    public function getFriendsOnline()
+    {
+        $query = $this->connection->execute("SELECT members.username AS friend_username
+            FROM friends AS f 
+            INNER JOIN members ON members.id = f.friend_id
+            WHERE f.user_id = " . $this->getUserId()['id'] . " AND f.online = 1");
+        
+        if ($query->count() > 0) {
+            // get the username of the friend(s) online
+            $friends_online = array();
+            
+            foreach ($query as $values) {
+                $friends_online[] = $values['friend_username'];
+            }
+            
+            return $friends_online;
+        } else {
+            throw new FriendsException("No friends are online.");
+        }
     }
     
     

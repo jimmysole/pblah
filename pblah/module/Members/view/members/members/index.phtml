@@ -34,6 +34,31 @@
 							alert("Error loading image");
 					   });
 					</script>
+					
+					<script type="text/javascript">
+					$(function() {
+						 function buildOnlineFriendList() {
+							$.getJSON("/members/friends/get-friends-online", function() {
+							}).done(function(msg) {
+								if (msg.friends == "" || msg.friends == undefined) {
+									$('#friends-online').html("No friends are online.");
+								} else {
+									var friendNames = msg.friends.join('<br />');
+									console.log(friendNames);
+									$('#friends-online').html(friendNames);
+								}
+							}).fail(function(msg) {
+								$('#friends-online').html(msg.message);
+							});
+						 }
+
+						 setInterval(function() {
+						  	buildOnlineFriendList();
+						 }, 5000);
+
+					     buildOnlineFriendList();
+					});
+				</script>
 				</p>
 
 				<hr>
@@ -481,11 +506,7 @@
 		<div class="w3-card-2 w3-round w3-white">
 			<div class="w3-container">
 				<p class="w3-center">Friends Online</p>
-				<p class="w3-left">
-					<?php for ($i=0; $i<10; $i++): ?>
-					Test<br>
-					<?php endfor; ?>
-				</p>
+				<p class="w3-left" id="friends-online"></p>
 			</div>
 		</div>
 	<!-- end right column -->
