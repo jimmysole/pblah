@@ -44,7 +44,6 @@
 									$('#friends-online').html("No friends are online.");
 								} else {
 									var friendNames = msg.friends.join('<br />');
-									console.log(friendNames);
 									$('#friends-online').html(friendNames);
 								}
 							}).fail(function(msg) {
