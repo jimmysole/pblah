@@ -442,6 +442,30 @@ class FriendsModel implements FriendsInterface
     
     
     /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\FriendsInterface::friendList()
+     */
+    public function friendList()
+    {
+        $query = $this->connection->execute("SELECT members.username AS friend_username FROM friends AS f
+            INNER JOIN members ON members.id = f.friend_id WHERE f.user_id = " . $this->getUserId()['id']);
+        
+        if ($query->count() > 0) {
+            // grab the usernames of the friends for the user
+            $friends = array();
+            
+            foreach ($query as $values) {
+                $friends[] = $values['friend_username'];
+            }
+            
+            return $friends;
+        } else {
+            throw new FriendsException("Looks like you don't have any friends, go make some!");
+        }
+    }
+    
+    
+    /**
      * Gets the user id
      * 
      * @return ResultSet|boolean

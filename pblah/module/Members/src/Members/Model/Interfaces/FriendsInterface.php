@@ -96,4 +96,13 @@ interface FriendsInterface
      * @return array
      */
     public function getFriendsOnline();
+    
+    
+    /**
+     * Gets the friend list for the user
+     * 
+     * @throws FriendsException
+     * @return array
+     */
+    public function friendList();
 }

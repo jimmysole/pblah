@@ -324,8 +324,18 @@
 				</button>
 				
 				<div id="side-4" class="w3-accordion-content w3-container">
-					<p id="friends">Friends Online</p>
+					<p id="friends"></p>
 				</div>
+				
+				<script type="text/javascript">
+					$.getJSON('/members/friends/get-friends', function() {
+					}).done(function(data) {
+						var friends = data.friend_list.join("<br />");
+						$('#friends').html(friends);
+					}).fail(function(msg) {
+						$('#friends').html(msg.message);
+					});
+				</script>
 			</div>
 		</div>
 		<br class="w3-clear">
