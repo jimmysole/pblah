@@ -329,6 +329,7 @@ class SetupModel
         // add the constraints
         $friends_table->addConstraint(new Constraint\PrimaryKey('id'));
         
+        
         // create the friend requests table
         $friend_requests_table = new Ddl\CreateTable('friend_requests');
         $friend_requests_table->addColumn(new Column\Integer('id', false, null, array('auto_increment' => true, 'unsigned' => true)));
@@ -337,6 +338,14 @@ class SetupModel
 
         // add the constraints
         $friend_requests_table->addConstraint(new Constraint\PrimaryKey('id'));
+        
+        
+        // create the friends online table
+        $friends_online_table = new Ddl\CreateTable('friends_online');
+        $friends_online_table->addColumn(new Column\Integer('user_id', false, null, array('unsigned' => true)));
+        
+        // add the constraints
+        $friends_online_table->addConstraint(new Constraint\PrimaryKey('user_id'));
         
         
         // make the tables
@@ -363,6 +372,7 @@ class SetupModel
             $status_table,
             $friends_table,
             $friend_requests_table,
+            $friends_online_table,
         ));
 
         return true;

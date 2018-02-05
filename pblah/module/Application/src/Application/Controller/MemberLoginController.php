@@ -39,7 +39,6 @@ class MemberLoginController extends AbstractActionController
         $request = $this->getRequest();
 
         if ($request->isPost()) {
-
             $login = new Login();
 
             $form->setInputFilter($login->getInputFilter());
@@ -47,6 +46,8 @@ class MemberLoginController extends AbstractActionController
 
             if ($form->isValid()) {
                 $login->exchangeArray($form->getData());
+                
+                
 
                 // first make a quick password_verify check
                 if (!$this->getLoginService()->verifyPassword($login)) {
@@ -73,6 +74,8 @@ class MemberLoginController extends AbstractActionController
                 }
 
                 if ($result->isValid()) {
+                    $this->getLoginService()->insertIntoFriendsOnline($login->username);
+                    
                     if ($login->remember_me == 1) {
                         try {
                             $this->getServiceLocator()->get('Application\Model\Storage\LoginAuthStorage')->rememberUser(1);
@@ -81,6 +84,8 @@ class MemberLoginController extends AbstractActionController
 
                             $this->getLoginService()->insertSession($login->username,
                                 $this->getLoginService()->verifyPassword($login)['pass'], session_id());
+                            
+                            //$this->getLoginService()->insertIntoGroupMembersOnline($login->username);
                         } catch (\Exception $e) {
                             echo $e->getMessage();
                         }
@@ -92,6 +97,8 @@ class MemberLoginController extends AbstractActionController
 
                             $this->getLoginService()->insertSession($login->username,
                                 $this->getLoginService()->verifyPassword($login)['pass'], session_id());
+                            
+                            //$this->getLoginService()->insertIntoGroupMembersOnline($login->username);
                         } catch (\Exception $e) {
                             echo $e->getMessage();
                         }

@@ -421,10 +421,8 @@ class FriendsModel implements FriendsInterface
      */
     public function getFriendsOnline()
     {
-        $query = $this->connection->execute("SELECT members.username AS friend_username
-            FROM friends AS f 
-            INNER JOIN members ON members.id = f.friend_id
-            WHERE f.user_id = " . $this->getUserId()['id'] . " AND f.online = 1");
+        $query = $this->connection->execute("SELECT members.username AS friend_username, friends_online.user_id FROM friends_online, friends, members
+            WHERE friends_online.user_id = friends.friend_id AND members.id = friends.friend_id AND friends.user_id = " . $this->getUserId()['id']);
         
         if ($query->count() > 0) {
             // get the username of the friend(s) online

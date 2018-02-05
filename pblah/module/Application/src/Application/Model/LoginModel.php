@@ -30,6 +30,7 @@ class LoginModel
 
     /**
      * Constructor method for LoginModel class
+     * 
      * @param TableGateway $gateway
      */
     public function __construct(TableGateway $gateway)
@@ -47,6 +48,7 @@ class LoginModel
 
     /**
      * Verifies a password
+     * 
      * @param Login $login
      * @return array|boolean
      */
@@ -84,6 +86,7 @@ class LoginModel
 
     /**
      * Checks if a session is already active
+     * 
      * @param mixed $username
      * @return boolean
      */
@@ -105,6 +108,7 @@ class LoginModel
 
     /**
      * Inserts session info into sessions table upon sucessful login
+     * 
      * @param mixed $username
      * @param mixed $password
      * @param mixed $session_id
@@ -131,6 +135,13 @@ class LoginModel
     }
 
 
+    /**
+     * Inserts session info into group members online table
+     * 
+     * @param string $username
+     * @throws \Exception
+     * @return boolean
+     */
     public function insertIntoGroupMembersOnline($username)
     {
         // select the user id from the members table
@@ -201,6 +212,55 @@ class LoginModel
             }
         } else {
             throw new \Exception("User was not located in the database.");
+        }
+    }
+    
+    
+    /**
+     * Inserts user id into the friends online table
+     * 
+     * @param string $username
+     * @throws \Exception
+     * @return boolean
+     */
+    public function insertIntoFriendsOnline($username)
+    {
+        // select the id from the members table
+        // and use it as the user_id for insert
+        // into friends_online table
+        $select = new Select('members');
+        
+        $select->columns(array('id'))
+        ->where(array('username' => $username));
+        
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($query->count() > 0) {
+            foreach ($query as $value) {
+                $user_id = $value['id'];
+            }
+            
+            // insert 
+            $insert = new Insert('friends_online');
+            
+            $insert->columns(array('user_id'))
+            ->values(array('user_id' => $user_id));
+            
+            $query = $this->sql->getAdapter()->query(
+                $this->sql->buildSqlString($insert),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            if ($query->count() > 0) {
+                return true;
+            } else {
+                throw new \Exception("Error setting your status on online for friends.");
+            }
+        } else {
+            throw new \Exception("Error retrieving member id.");
         }
     }
 }
