@@ -59,8 +59,17 @@ class LogoutModel
         
         $delete_from_online->where(array('member_id' => $id[0]));
         
+        $delete_from_friends_online = new Delete('friends_online');
+        
+        $delete_from_friends_online->where(array('user_id' => $id[0]));
+        
         $this->adapter->query(
             $this->sql->buildSqlString($delete_from_online),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        $this->adapter->query(
+            $this->sql->buildSqlString($delete_from_friends_online),
             Adapter::QUERY_MODE_EXECUTE
         );
         
