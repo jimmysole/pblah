@@ -472,7 +472,7 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
             // username found
             $group_creator = array();
             
-            foreach ($group_creator as $value) {
+            foreach ($query as $value) {
                 $group_creator[] = $value['username'];
             }
             
@@ -536,7 +536,7 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
                             
                             if ($query_admin->count() > 0 && $query_member->count() > 0) {
                                 // insert user into group members online table
-                                $this->insertIntoGroupMembersOnlineFromCreateGroupId($id);
+                                $this->insertIntoGroupMembersOnline($id);
                                 
                                 return true;
                             } else {
@@ -776,58 +776,38 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
     public function getGroupInformation($group_id)
     {
         // get the group admins
-        $this->select->from(array('ga' => 'group_admins'))
-        ->join(array(
-            'm' => 'members'
-        ), 'ga.user_id = m.id', array(
-            'username'
-        ))->join(array(
-            'g' => 'groups'
-        ), 'ga.group_id = g.id')
-        ->where(array('g.id' => $group_id));
-        
-        $query = $this->sql->getAdapter()->query(
-            $this->sql->buildSqlString($this->select),
-            Adapter::QUERY_MODE_EXECUTE
-        );
+        $query = $this->connection->execute("SELECT user_id, members.username FROM group_admins
+            INNER JOIN members ON members.id = user_id
+            INNER JOIN groups g ON group_id = g.id
+            WHERE g.id = " . $group_id);
         
         $group_admins = array();
         
-        
-        if ($query->count() < 0) {
-            throw new GroupsException("No admins for the group were found.");
-        } else {
+        if ($query->count() > 0) {
             foreach ($query as $group_admin) {
                 $group_admins[] = $group_admin['username'];
             }
+        } else {
+            // no admins
+            $group_admins[0] = "No admins exist for this group.";
         }
         
         // get the group members
-        $this->select->from(array('g' => 'group_members'))
-        ->join(array(
-            'm' => 'members',
-        ), 'g.member_id = m.id', array(
-            'username'
-        ))->join(array(
-            'grp' => 'groups',
-        ), 'g.group_id = grp.id')
-        ->where(array('g.group_id' => $group_id));
-        
-        
-        $query = $this->sql->getAdapter()->query(
-            $this->sql->buildSqlString($this->select),
-            Adapter::QUERY_MODE_EXECUTE
-        );
+        $query = $this->connection->execute("SELECT member_id, group_id, members.username FROM group_members
+            INNER JOIN members ON members.id = member_id
+            INNER JOIN groups g ON group_id = g.id
+            WHERE g.id = " . $group_id);
         
         $group_members = array();
         
-        
-        if ($query->count() < 0) {
-            throw new GroupsException("No members for the group were found.");
-        } else {
+        if ($query->count() > 0) {
+            
             foreach ($query as $group_member) {
                 $group_members[] = $group_member['username'];
             }
+        } else {
+            // no members
+            $group_members[0] = "No members exist in this group.";
         }
         
         // get the rest of the group info

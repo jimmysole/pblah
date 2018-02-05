@@ -109,7 +109,7 @@ class GroupsController extends AbstractActionController
             return $this->redirect()->toRoute('members/groups', array('action' => 'index'));
         }
 
-        if (!$this->getGroupsService()->getGroupInformation($id)) {
+        if (!$this->getGroupsService()->getGroupInformation(intval($id))) {
             return $this->redirect()->toRoute('members/groups', array('action' => 'index'));
         }
 
