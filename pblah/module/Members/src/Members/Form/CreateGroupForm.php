@@ -39,6 +39,24 @@ class CreateGroupForm extends Form
         
         
         $this->add(array(
+            'name' => 'group-description',
+            'type' => 'Zend\Form\Element\Text',
+            'options' => array(
+                'label' => 'Group Description',
+                'label_attributes' => array(
+                    'class' => 'w3-label w3-left',
+                ),
+            ),
+            
+            'attributes' => array(
+                'id'           => 'group-description',
+                'class'        => 'w3-input w3-border w3-round',
+                'autocomplete' => 'new-group-description', // google chrome hack
+            ),
+        ));
+        
+        
+        $this->add(array(
             'name' => 'join_authorization',
             'type' => 'Zend\Form\Element\Checkbox',
             'options' => array(

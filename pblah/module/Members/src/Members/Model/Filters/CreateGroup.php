@@ -20,6 +20,10 @@ class CreateGroup implements InputFilterAwareInterface
      */
     public $group_name;
     
+    /**
+     * @var string
+     */
+    public $group_description;
     
     /**
      * @var string
@@ -45,9 +49,10 @@ class CreateGroup implements InputFilterAwareInterface
      */
     public function exchangeArray($data)
     {
-        $this->group_name      = (!empty($data['group-name']))          ? $data['group-name']          : null;
-        $this->group_settings  = (!empty($data['join_authorization']))  ? $data['join_authorization']  : null;
-        $this->group_settings2 = (!empty($data['closed_to_public']))    ? $data['closed_to_public']    : null;
+        $this->group_name        = (!empty($data['group-name']))          ? $data['group-name']          : null;
+        $this->group_description = (!empty($data['group-description']))   ? $data['group-description']   : null;
+        $this->group_settings    = (!empty($data['join_authorization']))  ? $data['join_authorization']  : null;
+        $this->group_settings2   = (!empty($data['closed_to_public']))    ? $data['closed_to_public']    : null;
     }
     
     
@@ -86,6 +91,25 @@ class CreateGroup implements InputFilterAwareInterface
                             'encoding' => 'UTF-8',
                             'min'      => 10,
                             'max'      => 100,
+                        ),
+                    ),
+                ),
+            )));
+            
+            $input_filter->add($factory->createInput(array(
+                'name'      => 'group-description',
+                'required'  => false,
+                'filters'   => array(
+                    array('name' => StripTags::class),
+                ),
+                
+                'validators' => array(
+                    array(
+                        'name'    => StringLength::class,
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 15,
+                            'max'      => 600,
                         ),
                     ),
                 ),
