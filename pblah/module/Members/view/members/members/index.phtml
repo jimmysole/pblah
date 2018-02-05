@@ -178,12 +178,12 @@
 								url: "/members/events/get-events",
 								dataType: "json"
 							}).done(function(msg) {
-								if (msg.event_id == undefined) {
+								if (msg == undefined) {
 									$('#events').html("You have no events created or a part of.");
 									return false;
 								} else {
-									$.each(msg.event_id, function(i, item) {
-        								$('#events').append('<a href="<?php echo $this->url('members/events', array('action' => 'index')); ?>/event-home/' + msg.event_id[i] + '">' + msg.event_name[i] + '</a><br>');
+									$.each(msg, function(i, item) {
+        								$('#events').append('<a href="<?php echo $this->url('members/events', array('action' => 'index')); ?>/event-home/' + msg[i].event_id + '">' + msg[i].ename + '</a><br>');
 									});
 								}
 							}).fail(function(msg) {
@@ -514,9 +514,8 @@
 	<div class="w3-col m2">
 		<div class="w3-card-2 w3-round w3-white" style="max-height: 700px; overflow-y: scroll; overflow-x: hidden;" id="friend-list">
 			<div class="w3-container">
-				<p class="w3-center">Friends Online
+				<p class="w3-center">Friends Online</p>
 				<hr style="border: 1px solid; box-shadow: 0 0 5px 1px black inset;">
-				</p>
 				
 				<p class="w3-left" id="friends-online"></p>
 			</div>

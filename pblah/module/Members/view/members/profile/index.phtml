@@ -100,12 +100,12 @@
 								url: "/members/events/get-events",
 								dataType: "json"
 							}).done(function(msg) {
-								if (msg.event_id == undefined) {
+								if (msg == undefined) {
 									$('#events').html("You have no events created or a part of.");
 									return false;
 								} else {
-									$.each(msg.event_id, function(i, item) {
-        								$('#events').append('<a href="<?php echo $this->url('members/events', array('action' => 'index')); ?>/event-home/' + msg.event_id[i] + '">' + msg.event_name[i] + '</a><br>');
+									$.each(msg, function(i, item) {
+        								$('#events').append('<a href="<?php echo $this->url('members/events', array('action' => 'index')); ?>/event-home/' + msg[i].event_id + '">' + msg[i].ename + '</a><br>');
 									});
 								}
 							}).fail(function(msg) {
