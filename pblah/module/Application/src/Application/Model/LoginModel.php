@@ -58,13 +58,15 @@ class LoginModel
 
         $query = $adapter->execute("SELECT password FROM admins WHERE username = '" . $login->username . "'");
 
-        foreach ($query as $row) {
-            $admin_pass = $row['password'];
-        }
-
-        if (password_verify($login->password, $admin_pass)) {
-            // return admin pass
-            return array('admin' => true, 'pass' => $admin_pass);
+        if ($query->count() > 0) {
+            foreach ($query as $row) {
+                $admin_pass = $row['password'];
+            }
+            
+            if (password_verify($login->password, $admin_pass)) {
+                // return admin pass
+                return array('admin' => true, 'pass' => $admin_pass);
+            }
         } else {
             // try the members table if no admin was found
             $query = $adapter->execute("SELECT password FROM members WHERE username = '" . $login->username . "'");
