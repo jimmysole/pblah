@@ -490,7 +490,7 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
                 $this->insert->into('groups')
                 ->columns(array('group_name', 'group_creator', 'group_created_data'))
                 ->values(array('group_name' => $group->group_name, 'group_creator' => $group_creator[0],
-                    'group_created_date' => date('Y-m-d H:i:s')));
+                    'group_created_date' => date('Y-m-d H:i:s'), 'group_description' => $group->group_description));
                 
                 $query = $this->sql->getAdapter()->query(
                     $this->sql->buildSqlString($this->insert),
