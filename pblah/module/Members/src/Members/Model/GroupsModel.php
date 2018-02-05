@@ -147,7 +147,7 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
      */
     public function getAllGroups()
     {
-        $query = $this->connection->execute("SELECT id, group name, group_creator, group_created_date FROM groups
+        $query = $this->connection->execute("SELECT id, group_name, group_creator, group_created_date FROM groups
             WHERE id NOT IN (SELECT group_id FROM group_members WHERE member_id = " . $this->getUserId()['id'] . ")");
         
         if ($query->count() > 0) {
