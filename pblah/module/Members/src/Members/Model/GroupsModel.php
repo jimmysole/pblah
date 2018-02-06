@@ -284,9 +284,9 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
         
         // get the group based on $group_id
         $query = $this->connection->execute("SELECT groups.group_name, groups.id AS group_id FROM group_members
-            INNER JOIN members on group_members.member_id = member.id
+            INNER JOIN members ON members.id = group_members.member_id
             INNER JOIN groups ON group_members.group_id = groups.id
-            WHERE members.id = " . $this->getUserId()['id'] . " AND groups.id = " . $group_id);
+            WHERE group_members.member_id = " . $this->getUserId()['id'] . " AND groups.id = " . $group_id);
         
         if ($query->count() > 0) {
             // go ahead and delete the user from the group
