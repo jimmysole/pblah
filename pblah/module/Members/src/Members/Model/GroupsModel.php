@@ -196,10 +196,9 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
      */
     public function getMoreGroups()
     {
-        $query = $this->connection->execute("SELECT groups.id AS group_id, groups.group_name AS g_name FROM members
-            INNER JOIN members ON group_members.member_id = members.id
-            INNER JOIN groups ON group_members.group_id = groups.id
-            WHERE members.id = " . $this->getUserId['id'] . " ORDER BY groups.id");
+        $query = $this->connection->execute("SELECT group_members.member_id, groups.id AS group_id, groups.group_name AS g_name FROM group_members
+            INNER JOIN groups ON groups.id = group_members.group_id
+            WHERE group_members.member_id = " . $this->getUserId()['id'] . " ORDER BY groups.id");
         
         if ($query->count() > 0) {
             $group_holder = array();
