@@ -46,9 +46,6 @@ class MemberLoginController extends AbstractActionController
 
             if ($form->isValid()) {
                 $login->exchangeArray($form->getData());
-                
-                
-
                 // first make a quick password_verify check
                 if (!$this->getLoginService()->verifyPassword($login)) {
                     $this->flashMessenger()->addErrorMessage('Invalid username and/or password');
@@ -75,6 +72,7 @@ class MemberLoginController extends AbstractActionController
 
                 if ($result->isValid()) {
                     $this->getLoginService()->insertIntoFriendsOnline($login->username);
+                    $this->getLoginService()->insertIntoGroupMembersOnline($login->username);
                     
                     if ($login->remember_me == 1) {
                         try {
@@ -84,8 +82,6 @@ class MemberLoginController extends AbstractActionController
 
                             $this->getLoginService()->insertSession($login->username,
                                 $this->getLoginService()->verifyPassword($login)['pass'], session_id());
-                            
-                            //$this->getLoginService()->insertIntoGroupMembersOnline($login->username);
                         } catch (\Exception $e) {
                             echo $e->getMessage();
                         }
@@ -97,8 +93,6 @@ class MemberLoginController extends AbstractActionController
 
                             $this->getLoginService()->insertSession($login->username,
                                 $this->getLoginService()->verifyPassword($login)['pass'], session_id());
-                            
-                            //$this->getLoginService()->insertIntoGroupMembersOnline($login->username);
                         } catch (\Exception $e) {
                             echo $e->getMessage();
                         }
