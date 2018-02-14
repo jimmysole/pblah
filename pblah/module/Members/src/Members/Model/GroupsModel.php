@@ -19,7 +19,6 @@ use Members\Model\Interfaces\GroupsInterface;
 use Members\Model\Interfaces\GroupMembersOnlineInterface;
 use Members\Model\Exceptions\GroupsException;
 use Members\Model\Exceptions\GroupMembersOnlineException;
-use Members\Model\Filters\GroupsFilter;
 use Members\Model\Filters\Groups;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
