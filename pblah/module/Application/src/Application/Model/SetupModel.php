@@ -108,7 +108,6 @@ class SetupModel
         $profile_table->addColumn(new Column\Integer('age', false, null, array('unsigned' => true)));
         $profile_table->addColumn(new Column\Char('location', 150));
         $profile_table->addColumn(new Column\Text('bio'));
-        $profile_table->addColumn(new Column\Integer('friend_id', false, null, array('unsigned' => true)));
 
         // add the constraints
         $profile_table->addConstraint(new Constraint\UniqueKey('display_name'));
