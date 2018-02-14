@@ -18,7 +18,7 @@ class ListsGroupsController extends AbstractActionController
         
         $paginator->setCurrentPageNumber((int)$this->params()->fromRoute('page', 1));
         
-        $paginator->setItemCountPerPage(5);
+        $paginator->setItemCountPerPage(10);
         
         return new ViewModel(array('paginator' => $paginator));
     }
