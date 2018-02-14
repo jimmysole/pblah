@@ -48,7 +48,7 @@
 
 						<br>
 
-						<a href="<?php echo $this->url('members/groups', array('action' => 'view-groups')); ?>">Browse Groups</a>
+						<a href="<?php echo $this->url('members/lists-groups', array('action' => 'index')); ?>">Browse Groups</a>
 
 						<br>
 
@@ -127,7 +127,7 @@
                 endif;
 ?>
 				</table>
-				<?php echo $this->paginationControl($this->paginator, 'sliding', 'paginator.phtml', array('route' => 'paginator')); ?>
+				<?php echo $this->paginationControl($this->paginator, 'sliding', 'paginator.phtml', array('route' => 'members/lists-groups')); ?>
 				<br class="w3-clear">
 			</div>
 			

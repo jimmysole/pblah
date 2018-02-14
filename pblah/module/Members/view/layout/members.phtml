@@ -106,6 +106,28 @@
 
 				$('#multiplefileuploader').uploadFile(settings);
 			});
+
+			$(function() {
+			 	function buildOnlineFriendList() {
+					$.getJSON("/members/friends/get-friends-online", function() {
+					}).done(function(msg) {
+						if (msg.friends == "" || msg.friends == undefined) {
+							$('#friends-online').html("No friends are online.");
+						} else {
+							var friendNames = msg.friends.join('<br />');
+							$('#friends-online').html(friendNames);
+						}
+					}).fail(function(msg) {
+						$('#friends-online').html(msg.message);
+					});
+			 	}
+
+			 	setInterval(function() {
+			  		buildOnlineFriendList();
+			 	}, 5000);
+
+		     	buildOnlineFriendList();
+			});
 		</script>
     </head>
 

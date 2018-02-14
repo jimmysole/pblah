@@ -231,6 +231,17 @@
 				<div id="side-4" class="w3-accordion-content w3-container">
 					<p id="friends">Friends Online</p>
 				</div>
+				
+				
+				<script type="text/javascript">
+					$.getJSON('/members/friends/get-friends', function() {
+					}).done(function(data) {
+						var friends = data.friend_list.join("<br />");
+						$('#friends').html(friends);
+					}).fail(function(msg) {
+						$('#friends').html(msg.message);
+					});
+				</script>
 			</div>
 		</div>
 		<!-- End Left Column -->
@@ -273,4 +284,16 @@
 	</div>
 	<!-- end mid -->
 
+    <!-- right column -->
+	<div class="w3-col m2">
+		<div class="w3-card-2 w3-round w3-white" style="max-height: 700px; overflow-y: scroll; overflow-x: hidden;" id="friend-list">
+			<div class="w3-container">
+				<p class="w3-center">Friends Online</p>
+				<hr style="border: 1px solid; box-shadow: 0 0 5px 1px black inset;">
+				
+				<p class="w3-left" id="friends-online"></p>
+			</div>
+		</div>
+	<!-- end right column -->
+	</div>
 </div>

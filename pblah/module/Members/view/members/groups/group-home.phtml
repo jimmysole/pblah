@@ -47,7 +47,7 @@
 
 						<br>
 
-						<a href="<?php echo $this->url('members/groups', array('action' => 'view-groups')); ?>">Browse Groups</a>
+						<a href="<?php echo $this->url('members/lists-groups', array('action' => 'index')); ?>">Browse Groups</a>
 
 						<br>
 
@@ -114,7 +114,7 @@
 								<td style="text-overflow: ellipsis;"><?php echo $this->group_info['info']['group_description']; ?></td>
 								<td style="text-overflow: ellipsis;"><?php echo $this->group_info['admins']; ?></td>
 								<td style="text-overflow: ellipsis;"><?php echo $this->group_info['members']; ?></td>
-								<?php if ($this->group_info['members'] == 'No members found.'): ?>
+								<?php if ($this->group_info['members'] == 'No members exist in this group.'): ?>
 								<td></td>
 								<?php else: ?>
 								<td><a id="leave-group" href="<?php echo $this->url('members/groups', array('action' => 'leave-group', 'id' => $this->group_info['info']['id'])); ?>">
