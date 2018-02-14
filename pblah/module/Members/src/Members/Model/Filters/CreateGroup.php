@@ -98,7 +98,7 @@ class CreateGroup implements InputFilterAwareInterface
             
             $input_filter->add($factory->createInput(array(
                 'name'      => 'group-description',
-                'required'  => false,
+                'required'  => true,
                 'filters'   => array(
                     array('name' => StripTags::class),
                 ),

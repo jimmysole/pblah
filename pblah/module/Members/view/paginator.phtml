@@ -1,0 +1,36 @@
+<div class="w3-bar">
+<?php if ($this->pageCount): ?>
+		<!-- 1st page link -->
+		<?php if (isset($this->previous)): ?>
+			<a href="<?php echo $this->url($this->route, array('page' => $this->first)); ?>" class="w3-bar-item w3-button">First</a> 
+		<?php else: ?>
+			<span class="w3-button w3-disabled">First</span> 
+		<?php endif; ?>
+		
+		<!-- previous page link -->
+		<?php if (isset($this->previous)): ?>
+			<a href="<?php echo $this->url($this->route, array('page' => $this->previous)); ?>" class="w3-bar-item w3-button">Previous</a> 
+		<?php else: ?>
+			<span class="w3-button w3-disabled">Previous</span> 
+		<?php endif; ?>
+		
+		<!-- next page link -->
+		<?php if (isset($this->next)): ?>
+			<a href="<?php echo $this->url($this->route, array('page' => $this->next)); ?>" class="w3-bar-item w3-button">Next</a> 
+		<?php else: ?>
+			<span class="w3-button w3-disabled">Next</span> 
+		<?php endif; ?>
+		
+		<!-- last page link -->
+		<?php if (isset($this->next)): ?>
+			<a href="<?php echo $this->url($this->route, array('page' => $this->last)); ?>" class="w3-bar-item w3-button">Last</a>
+		<?php else: ?>
+			<span class="w3-button w3-disabled">Last</span>
+		<?php endif; ?>
+		
+		<p class="w3-right">
+	    	<?php echo $this->firstItemNumber; ?> - <?php echo $this->lastItemNumber; ?> of <?php echo $this->totalItemCount; ?>
+	    </p>
+<?php endif; ?>
+</div>
+  

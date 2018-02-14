@@ -46,7 +46,19 @@ class GroupsController extends AbstractActionController
     
     public function viewallaction()
     {
-        return new ViewModel(array('groups' => $this->getGroupsService()->getAllUserGroups()));
+        return new ViewModel(array('groups' => $this->getGroupsService()->getMoreGroups()));
+    }
+    
+    
+    public function viewallgroupsAction()
+    {
+        $paginator = $this->getGroupsService()->browseAllGroups();
+        
+        $paginator->setCurrentPageNumber((int)$this->params()->fromQuery('page', 1));
+        
+        $paginator->setItemCountPerPage(5);
+        
+        return new ViewModel(array('paginator' => $paginator));
     }
     
     
@@ -148,9 +160,9 @@ class GroupsController extends AbstractActionController
         $group_id = $this->params()->fromRoute('id');
 
         try {
-            echo json_encode($this->getGroupsService()->leaveGroup($group_id));
+            echo json_encode($this->getGroupsService()->leaveGroup(intval($group_id)));
         } catch (GroupsException $e) {
-            echo json_encode($e->getMessage());
+            echo json_encode(array('group_error' => $e->getMessage()));
         }
 
         return $view_model;
@@ -180,6 +192,7 @@ class GroupsController extends AbstractActionController
             $form->setInputFilter($create_group->getInputFilter());
             $form->setData($request->getPost());
             
+            //var_dump($request->getPost()); exit;
             if ($form->isValid()) {
                 $create_group->exchangeArray($form->getData());
                 

@@ -9,14 +9,15 @@ use Members\Form\Factory\EditPhotosFormFactory;
 return array(
     'controllers' => array(
         'invokables' => array(
-            'Members\Controller\Members'  => 'Members\Controller\MembersController',
-            'Members\Controller\Account'  => 'Members\Controller\AccountController',
-            'Members\Controller\Messages' => 'Members\Controller\MessagesController',
-            'Members\Controller\Profile'  => 'Members\Controller\ProfileController',
-            'Members\Controller\Groups'   => 'Members\Controller\GroupsController',
-            'Members\Controller\Events'   => 'Members\Controller\EventsController',
-            'Members\Controller\Status'   => 'Members\Controller\StatusController',
-            'Members\Controller\Friends'  => 'Members\Controller\FriendsController',
+            'Members\Controller\Members'        => 'Members\Controller\MembersController',
+            'Members\Controller\Account'        => 'Members\Controller\AccountController',
+            'Members\Controller\Messages'       => 'Members\Controller\MessagesController',
+            'Members\Controller\Profile'        => 'Members\Controller\ProfileController',
+            'Members\Controller\Groups'         => 'Members\Controller\GroupsController',
+            'Members\Controller\Events'         => 'Members\Controller\EventsController',
+            'Members\Controller\Status'         => 'Members\Controller\StatusController',
+            'Members\Controller\Friends'        => 'Members\Controller\FriendsController',
+            'Members\Controller\ListsGroups'    => 'Members\Controller\ListsGroupsController',
         ),
     ),
 
@@ -156,29 +157,23 @@ return array(
                         
                         'defaults' => array(
                             'controller' => 'Members\Controller\GroupAdmin',
-                            'index'      => 'index',
+                            'action'      => 'index',
                         ),
                     ),
                     
-                   
-                ),
-            ),
-            
-            
-            'paginator' => array(
-                'type' => 'Segment',
-                'options' => array(
-                    'route' => '/groups/view-more/[page/:page]',
-                    'constraints' => array(
-                        'page'     => '[0-9]*',
+                    'lists-groups' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/lists-groups[/page/:page]',
+                            
+                            'defaults' => array(
+                                'controller' => 'Members\Controller\ListsGroups',
+                                'action' => 'index',
+                            ),
+                        ),
                     ),
                 ),
-                
-                'defaults' => array(
-                    'controller' => 'Members\Controller\Groups',
-                    'action'     => 'view-more',
-                ),
-            ), 
+            ),
         ),
     ),
     

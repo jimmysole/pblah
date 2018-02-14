@@ -12,8 +12,8 @@
 						 function buildOnlineMemberList() {
 							$.ajax({
 								type: "GET",
-							    url: "/members/groups/get-group-members-online",
-							    dataType: "json"
+							    url: "/members/groups/get-group-members-online" ,
+							    dataType: "json",
 							}).done(function(msg) {
 								if (msg.display_name == "" || msg.display_name == undefined) {
 									$('#members-online').html("No group members are online.");
@@ -25,13 +25,13 @@
 							}).fail(function() {
 							   $('#members-online').html("Error retrieving group list.");
 							});
-						 }
+						  }
 
-						 setInterval(function() {
+						  setInterval(function() {
 						  	buildOnlineMemberList();
-						 }, 5000);
+						  }, 5000);
 
-					     buildOnlineMemberList();
+					      buildOnlineMemberList();
 					});
 				</script>
 			</div>
@@ -71,15 +71,11 @@
 	</div>
 	<!-- end left column -->
 
-
    <?php
-		  if (!is_array($this->groups)):
+		  if (count($this->paginator) <= 0):
    ?>
 	<div class="w3-responsive">
-		<p class="w3-center" id="no-groups">You aren't part of any groups!<br><br>
-			<a href="<?php echo $this->url('members/groups', array('action' => 'create-group')); ?>">Create A Group</a>
-			| <a href="<?php echo $this->url('members/lists-groups', array('action' => 'index')); ?>">Search Groups</a>
-		</p>
+		<p class="w3-center" id="no-groups">No groups were found.</p>
 	</div>
 
 	<script type="text/javascript">
@@ -96,9 +92,9 @@
 					<div class="w3-container w3-padding">
 						<h2
 							class="w3-center w3-white w3-border w3-border-white w3-round-xlarge"
-							style="text-shadow: 1px 1px 0 #000">Your groups (First 5)</h2>
+							style="text-shadow: 1px 1px 0 #000">All Groups</h2>
 
-						<p class="w3-left">To view more information about your group(s),
+						<p class="w3-left">To view more information about the group(s),
 							just click the group id number to the left of the table below.</p>
 					</div>
 				</div>
@@ -117,34 +113,26 @@
 					</thead>
 
 		<?php
-		        foreach ($this->groups as $value):
+		        foreach ($this->paginator as $value):
         ?>
 					<tr class="w3-hover-text-red w3-text-black">
 						<td><a
-							href="<?php echo $this->url('members/groups', array('action' => 'group-home', 'id' => $value['group_id'])); ?>">
-							<?php echo $value['group_id']; ?></a></td>
-						<td><?php echo $value['g_name']; ?></td>
+							href="<?php echo $this->url('members/groups', array('action' => 'group-home', 'id' => $value->id)); ?>">
+							<?php echo $value->id; ?></a></td>
+						<td><?php echo $value->group_name; ?></td>
 					</tr>
 <?php
                 endforeach;
 
-               
+                endif;
 ?>
 				</table>
+				<?php echo $this->paginationControl($this->paginator, 'sliding', 'paginator.phtml', array('route' => 'paginator')); ?>
+				<br class="w3-clear">
 			</div>
 			
-			<div class="w3-right w3-padding">
-				<a href="<?php echo $this->url('members/groups', array('action' => 'view-all')); ?>" class="w3-right">View More</a> 	
-			</div>
-			
-			<?php endif; ?>
 		</div>
 	</div>
 	<!-- end middle column -->
 </div>
 <!-- end page content -->
-
-
-
-
-

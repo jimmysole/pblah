@@ -102,4 +102,13 @@ interface GroupsInterface
      * @return array
      */
     public function getGroupInformation($group_id);
+    
+    
+    /**
+     * Searches and displays all groups that are publicly viewable
+     * 
+     * @throws GroupsException
+     * @return Paginator
+     */
+    public function browseAllGroups();
 }

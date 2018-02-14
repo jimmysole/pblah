@@ -9,6 +9,7 @@ use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Delete;
 use Zend\Db\Sql\Update;
 use Zend\Db\Adapter\Adapter;
+use Zend\Db\ResultSet\ResultSet;
 
 use Members\Model\Filters\CreateGroup;
 use Members\Model\Filters\JoinGroup;
@@ -18,6 +19,11 @@ use Members\Model\Interfaces\GroupsInterface;
 use Members\Model\Interfaces\GroupMembersOnlineInterface;
 use Members\Model\Exceptions\GroupsException;
 use Members\Model\Exceptions\GroupMembersOnlineException;
+use Members\Model\Filters\GroupsFilter;
+use Members\Model\Filters\Groups;
+use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Paginator;
+
 
 
 class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
@@ -288,31 +294,32 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
             WHERE group_members.member_id = " . $this->getUserId()['id'] . " AND groups.id = " . $group_id);
         
         if ($query->count() > 0) {
-            // go ahead and delete the user from the group
-            $this->delete->from('group_members')
+            // remove from group members online table
+            /*$this->delete->from('group_members_online')
             ->where(array('member_id' => $this->getUserId()['id'], 'group_id' => $group_id));
             
             $query = $this->sql->getAdapter()->query(
                 $this->sql->buildSqlString($this->delete),
                 Adapter::QUERY_MODE_EXECUTE
+            ); */
+            
+            // go ahead and delete the user from the group
+            // @todo why is it saying member_id is a unknown column...
+            $delete_member = $this->delete->from('group_members')
+            ->where(array('member_id' => $this->getUserId()['id'], 'group_id' => $group_id));
+            
+            $query = $this->sql->getAdapter()->query(
+                $this->sql->buildSqlString($delete_member),
+                Adapter::QUERY_MODE_EXECUTE
             );
             
             if ($query->count() > 0) {
-                // remove from group members online table
-                $this->delete->from('group_members_online')
-                ->where(array('member_id' => $this->getUserId()['id'], 'group_id' => $group_id));
-                
-                $query = $this->sql->getAdapter()->query(
-                    $this->sql->buildSqlString($this->delete),
-                    Adapter::QUERY_MODE_EXECUTE
-                );
-                
                 // delete from group admins table as well (if found)
-                $this->delete->from('group_admins')
+                $delete_admin = $this->delete->from('group_admins')
                 ->where(array('user_id' => $this->getUserId()['id'], 'group_id' => $group_id));
                 
                 $exec = $this->sql->getAdapter()->query(
-                    $this->sql->buildSqlString($this->delete),
+                    $this->sql->buildSqlString($delete_admin),
                     Adapter::QUERY_MODE_EXECUTE
                 );
                 
@@ -487,7 +494,7 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
                 // first, create the group
                 // then insert the settings by grapping the group id just created
                 $this->insert->into('groups')
-                ->columns(array('group_name', 'group_creator', 'group_created_data'))
+                ->columns(array('group_name', 'group_creator', 'group_created_date', 'group_description'))
                 ->values(array('group_name' => $group->group_name, 'group_creator' => $group_creator[0],
                     'group_created_date' => date('Y-m-d H:i:s'), 'group_description' => $group->group_description));
                 
@@ -579,7 +586,7 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
                             
                             if ($query_admin->count() > 0 && $query_member->count() > 0) {
                                 // insert user into group members online table
-                                $this->insertIntoGroupMembersOnlineFromCreateGroupId($id);
+                                $this->insertIntoGroupMembersOnline($id);
                                 
                                 return true;
                             } else {
@@ -623,7 +630,7 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
                             
                             if ($query_admin->count() > 0 && $query_member->count() > 0) {
                                 // insert user into group members online table
-                                $this->insertIntoGroupMembersOnlineFromCreateGroupId($id);
+                                $this->insertIntoGroupMembersOnline($id);
                                 
                                 return true;
                             } else {
@@ -640,8 +647,9 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
                 // no group settings passed
                 // just create the group without any settings in place
                 $this->insert->into('groups')
-                ->columns(array('group_name', 'group_creator', 'group_created_date'))
-                ->values(array('group_name' => $group->group_name, 'group_creator' => $group_creator[0], 'group_created_date' => date('Y-m-d H:i:s')));
+                ->columns(array('group_name', 'group_creator', 'group_created_date', 'group_description'))
+                ->values(array('group_name' => $group->group_name, 'group_creator' => $group_creator[0],
+                    'group_created_date' => date('Y-m-d H:i:s'), 'group_description' => $group->group_description));
                 
                 $query = $this->sql->getAdapter()->query(
                     $this->sql->buildSqlString($this->insert),
@@ -674,7 +682,7 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
                     
                     if ($query_admin->count() > 0 && $query_member->count() > 0) {
                         // insert user into group members online table
-                        $this->insertIntoGroupMembersOnlineFromCreateGroupId($id);
+                        $this->insertIntoGroupMembersOnline($id);
                         
                         return true;
                     } else {
@@ -823,5 +831,25 @@ class GroupsModel implements GroupsInterface, GroupMembersOnlineInterface
             'members' => implode(", ", $group_members),
             'info' => $row,
         );
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\GroupsInterface::browseAllGroups()
+     */
+    public function browseAllGroups()
+    {
+        $select = $this->select->from('groups');
+        
+        $result_set_prototype = new ResultSet();
+        
+        $result_set_prototype->setArrayObjectPrototype(new Groups());
+        
+        $paginator_adapter = new DbSelect($select, $this->gateway->getAdapter(), $result_set_prototype);
+        
+        $paginator = new Paginator($paginator_adapter);
+        
+        return $paginator;
     }
 }
