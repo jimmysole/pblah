@@ -371,7 +371,27 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      */
     public function profileViews()
     {
+        // return the number of profile views 
+        // from the profiles table by retrieving the views column
+        // based on profile id column
+        $this->select->columns(array('views'))
+        ->from('profiles')
+        ->where(array('profile_id' => $this->getUserId()['id']));
         
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($this->select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($query->count() > 0) {
+            foreach ($query as $row) {
+                $views = $row;
+            }
+            
+            return $views;
+        } else {
+            throw new ProfileException("Could not retrieve your profile views, please try again.");
+        }
     }
     
     
@@ -413,9 +433,10 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                 );
                 
                 if ($query->count() > 0) {
-                    // make the profile dir (for images)
+                    // make the profile dir (for images and videos)
                     mkdir(getcwd() . '/public/images/profile/' . $this->user);
                     mkdir(getcwd() . '/public/images/profile/' . $this->user . '/current');
+                    mkdir(getcwd() . '/public/images/profile/' . $this->user . '/videos');
                     
                     // make the htaccess file
                     // used to prevent hotlinking of images
@@ -424,7 +445,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                     $file_data = "RewriteEngine on
                                   RewriteCond %{HTTP_REFERER} !^$
                                   RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$domain [NC]
-                                  RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]";
+                                  RewriteRule \.(jpg|jpeg|png|gif|mp4)$ - [NC,F,L]";
                     
                     file_put_contents(getcwd() . '/public/images/profile/' . $this->user . '/.htaccess', $file_data);
                     
@@ -460,18 +481,6 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
         }
         
         return false;
-    }
-    
-    
-    public function makeProfilePrivate()
-    {
-        
-    }
-    
-    
-    public function makeProfilePublic()
-    {
-        
     }
     
     

@@ -67,6 +67,7 @@ class ProfileController extends AbstractActionController
                 if (!is_dir(getcwd() . '/public/images/profile/' . $this->identity())) {
                     mkdir(getcwd() . '/public/images/profile/' . $this->identity(), 0777);
                     mkdir(getcwd() . '/public/images/profile/' . $this->identity() . '/current');
+                    mkdir(getcwd() . '/public/images/profile/' . $this->identity() . '/videos');
                     
                     // make the htaccess file
                     $server = str_replace(array('https', 'http', 'www'), '', $_SERVER['SERVER_NAME']);
@@ -75,22 +76,27 @@ class ProfileController extends AbstractActionController
                         RewriteEngine on 
                         RewriteCond %{HTTP_REFERER} !^$ 
                         RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$server [NC]
-                        RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]";
+                        RewriteRule \.(jpg|jpeg|png|gif|mp4)$ - [NC,F,L]";
                     
                     file_put_contents(getcwd() . '/public/images/profile/' . $this->identity() . '/.htaccess', $data);
                    
-                    
-                    
                     if (!is_array($_FILES[$this->identity()]['name'])) {
-                        // single file
                         $file_name = $_FILES[$this->identity()]['name'];
                         
                         move_uploaded_file($_FILES[$this->identity()]['tmp_name'],
                             getcwd() . '/public/images/profile/' . $this->identity() . '/' . $_FILES[$this->identity()]['name']);
                         
                         $file_info[$file_name] = getcwd() . '/public/images/profile/' . $this->identity() . '/' . $file_name;
+                        
+                        foreach (@array_diff(scandir(getcwd() . '/public/images/profile/' . $this->identity() . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos')) as $files) {
+                            if (preg_match("/(.mp4)$/", $files)) {
+                                rename(getcwd() . '/public/images/profile/' . $this->identity() . '/' . $files,
+                                    getcwd() . '/public/images/profile/' . $this->identity() . '/videos/' . $files);
+                            }
+                        }
                     } else {
                         // multiple files
+                        // disallow for multiple video uploads at a time
                         $file_count = count($_FILES[$this->identity()]['name']);
                         
                         for ($i=0; $i<count($file_count); $i++) {
@@ -106,15 +112,23 @@ class ProfileController extends AbstractActionController
                     echo json_encode($file_info);
                 } else {
                     if (!is_array($_FILES[$this->identity()]['name'])) {
-                        // single file
+                        $file_name = $_FILES[$this->identity()]['name'];
                         $file_name = $_FILES[$this->identity()]['name'];
 
                         move_uploaded_file($_FILES[$this->identity()]['tmp_name'],
                             getcwd() . '/public/images/profile/' . $this->identity() . '/' . $_FILES[$this->identity()]['name']);
 
                         $file_info[$file_name] = getcwd() . '/public/images/profile/' . $this->identity() . '/' . $file_name;
+                        
+                        foreach (@array_diff(scandir(getcwd() . '/public/images/profile/' . $this->identity() . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos')) as $files) {
+                            if (preg_match("/(.mp4)$/", $files)) {
+                                rename(getcwd() . '/public/images/profile/' . $this->identity() . '/' . $files,
+                                    getcwd() . '/public/images/profile/' . $this->identity() . '/videos/' . $files);
+                            }
+                        }
                     } else {
                         // multiple files
+                        // disallow for multiple video uploads at a time
                         $file_count = count($_FILES[$this->identity()]['name']);
 
                         for ($i=0; $i<count($file_count); $i++) {
