@@ -103,22 +103,4 @@ interface ProfileInterface
      * @return array|boolean
      */
     public function getUserProfile();
-  
-    
-    /**
-     * Sets the user's profile to private
-     * 
-     * @throws ProfileException
-     * @return boolean
-     */
-    public function makeProfilePrivate();
-    
-    
-    /**
-     * Sets the user's profile to public
-     * 
-     * @throws ProfileException
-     * @return boolean
-     */
-    public function makeProfilePublic();
 }
