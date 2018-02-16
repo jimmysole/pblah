@@ -355,16 +355,25 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
     }
     
     
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::profileSettings()
+     */
     public function profileSettings(array $settings)
     {
         
     }
     
     
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ProfileInterface::profileViews()
+     */
     public function profileViews()
     {
         
     }
+    
     
     /**
      * {@inheritDoc}
@@ -464,6 +473,8 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
     {
         
     }
+    
+    
     
     
     //////////////////////////////////////////

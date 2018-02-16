@@ -4,6 +4,8 @@ namespace Members\Model\Interfaces;
 
 
 
+use Members\Model\Exceptions\ProfileException;
+
 interface ProfileInterface
 {
     /**

@@ -25,7 +25,7 @@
 							    	$("#members-online").html(displayNames);
 								}
 							}).fail(function() {
-							   		$('#members-online').html("Error retrieving group list.");
+							   	$('#members-online').html("Error retrieving group list.");
 							});
 						 }
 
@@ -155,17 +155,38 @@
 						</p>
 
 						<p class="w3-left">
-							&raquo; <a class="w3-hover-text-red w3-text-black"
-								href="<?php echo $this->url('members/profile', array('action' => 'upload-file')); ?>">Upload
-								File(s)</a> <br> &raquo; <a
-								class="w3-hover-text-red w3-text-black"
-								href="<?php echo $this->url('members/profile', array('action' => 'profile-views')); ?>">Profile
-								Views</a> <br> &raquo; <a
-								class="w3-hover-text-red w3-text-black"
-								href="<?php echo $this->url('members/profile', array('action' => 'make-photo-album')); ?>">Create
-								a Photo Album</a> <br> &raquo; <a
-								class="w3-hover-text-red w3-text-black"
-								href="<?php echo $this->url('members/profile', array('action' => 'view-photo-albums')); ?>">View Photo Album(s)</a>
+							&raquo; 
+							 <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'upload-file')); ?>">Upload
+								File(s)</a>
+							 
+							 <br> 
+							 
+							 &raquo; 
+							 <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'profile-views')); ?>">Profile
+								Views</a>
+							  
+							 <br>
+							 
+							 &raquo; 
+							 <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'make-photo-album')); ?>">Create
+								a Photo Album</a> 
+							  
+							 <br> 
+							 
+							 &raquo;
+							 <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => 'view-photo-albums')); ?>">View Photo Album(s)</a>
+							 
+							 <br>
+							 
+							 &raquo;
+							 <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => '')); ?>">Link</a>
+							 
+							 <br>
+							 
+							 &raquo;
+							 <a class="w3-hover-text-red w3-text-black" href="<?php echo $this->url('members/profile', array('action' => '')); ?>">Link</a>
+							 
+							 <br>
 						</p>
 					</div>
 				</div>
@@ -173,4 +194,17 @@
 		</div>
 	</div>
 	<!-- end mid col -->
+	
+	 <!-- right column -->
+	<div class="w3-col m2">
+		<div class="w3-card-2 w3-round w3-white" style="max-height: 700px; overflow-y: scroll; overflow-x: hidden;" id="friend-list">
+			<div class="w3-container">
+				<p class="w3-center">Friends Online</p>
+				<hr style="border: 1px solid; box-shadow: 0 0 5px 1px black inset;">
+				
+				<p class="w3-left" id="friends-online"></p>
+			</div>
+		</div>
+	<!-- end right column -->
+	</div>
 </div>
