@@ -207,13 +207,13 @@ class LoginModel
                 if ($insert_query->count() > 0) {
                     return true;
                 } else {
-                    throw new \Exception("Error setting member online for the group specified.");
+                    return false;
                 }
             } else {
-                throw new \Exception("User is not a part of any groups.");
+                return false;
             }
         } else {
-            throw new \Exception("User was not located in the database.");
+            return false;
         }
     }
     
@@ -222,7 +222,6 @@ class LoginModel
      * Inserts user id into the friends online table
      * 
      * @param string $username
-     * @throws \Exception
      * @return boolean
      */
     public function insertIntoFriendsOnline($username)
@@ -259,10 +258,10 @@ class LoginModel
             if ($query->count() > 0) {
                 return true;
             } else {
-                throw new \Exception("Error setting your status on online for friends.");
+                return false;
             }
         } else {
-            throw new \Exception("Error retrieving member id.");
+            return false;
         }
     }
 }

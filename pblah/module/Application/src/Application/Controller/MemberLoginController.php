@@ -71,9 +71,6 @@ class MemberLoginController extends AbstractActionController
                 }
 
                 if ($result->isValid()) {
-                    $this->getLoginService()->insertIntoFriendsOnline($login->username);
-                    $this->getLoginService()->insertIntoGroupMembersOnline($login->username);
-                    
                     if ($login->remember_me == 1) {
                         try {
                             $this->getServiceLocator()->get('Application\Model\Storage\LoginAuthStorage')->rememberUser(1);
@@ -82,6 +79,9 @@ class MemberLoginController extends AbstractActionController
 
                             $this->getLoginService()->insertSession($login->username,
                                 $this->getLoginService()->verifyPassword($login)['pass'], session_id());
+                            
+                            $this->getLoginService()->insertIntoFriendsOnline($login->username);
+                            $this->getLoginService()->insertIntoGroupMembersOnline($login->username);
                         } catch (\Exception $e) {
                             echo $e->getMessage();
                         }
@@ -93,6 +93,9 @@ class MemberLoginController extends AbstractActionController
 
                             $this->getLoginService()->insertSession($login->username,
                                 $this->getLoginService()->verifyPassword($login)['pass'], session_id());
+                            
+                            $this->getLoginService()->insertIntoFriendsOnline($login->username);
+                            $this->getLoginService()->insertIntoGroupMembersOnline($login->username);
                         } catch (\Exception $e) {
                             echo $e->getMessage();
                         }
