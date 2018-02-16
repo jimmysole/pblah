@@ -33,7 +33,9 @@ class ProfileController extends AbstractActionController
         
         $params = $this->identity();
 
-        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos'));
+        $layout = $this->layout();
+        
+        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos'));
 
         if (count($dir) > 0) {
             $images = array();
@@ -42,7 +44,7 @@ class ProfileController extends AbstractActionController
                 $images[] = "<img src=\"/images/profile/$params/$value\" class=\"w3-margin-bottom w3-round w3-border\" style=\"width: 100%; height: 88px;\">";
             }
 
-            $layout = $this->layout();
+            
 
             natsort($images);
 
@@ -53,6 +55,22 @@ class ProfileController extends AbstractActionController
             $layout = $this->layout();
             
             $layout->setVariable('my_images', $images);
+        }
+        
+        $video_dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/videos/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos'));
+        
+        if (count($video_dir) > 0) {
+            $videos = array();
+            
+            foreach ($video_dir as $video) {
+                $videos[] = "<video width=\"200\" height=\"100\">
+                    <source src=\"/images/profile/$params/videos/$video\" type=\"video/mp4\">
+                    </video>";
+            }
+            
+            natsort($videos);
+            
+            $layout->setVariable('my_videos', $videos);
         }
     }
 
@@ -83,8 +101,8 @@ class ProfileController extends AbstractActionController
                     if (!is_array($_FILES[$this->identity()]['name'])) {
                         $file_name = $_FILES[$this->identity()]['name'];
                         
-                        move_uploaded_file($_FILES[$this->identity()]['tmp_name'],
-                            getcwd() . '/public/images/profile/' . $this->identity() . '/' . $_FILES[$this->identity()]['name']);
+                        move_uploaded_file(trim($_FILES[$this->identity()]['tmp_name']),
+                            getcwd() . '/public/images/profile/' . $this->identity() . '/' . str_replace(' ', '', $_FILES[$this->identity()]['name']));
                         
                         $file_info[$file_name] = getcwd() . '/public/images/profile/' . $this->identity() . '/' . $file_name;
                         
@@ -113,10 +131,9 @@ class ProfileController extends AbstractActionController
                 } else {
                     if (!is_array($_FILES[$this->identity()]['name'])) {
                         $file_name = $_FILES[$this->identity()]['name'];
-                        $file_name = $_FILES[$this->identity()]['name'];
-
+                        
                         move_uploaded_file($_FILES[$this->identity()]['tmp_name'],
-                            getcwd() . '/public/images/profile/' . $this->identity() . '/' . $_FILES[$this->identity()]['name']);
+                            getcwd() . '/public/images/profile/' . $this->identity() . '/' . str_replace(' ', '', $_FILES[$this->identity()]['name']));
 
                         $file_info[$file_name] = getcwd() . '/public/images/profile/' . $this->identity() . '/' . $file_name;
                         

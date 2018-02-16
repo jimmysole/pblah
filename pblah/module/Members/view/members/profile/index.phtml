@@ -242,6 +242,78 @@
 						$('#friends').html(msg.message);
 					});
 				</script>
+				
+				<button onclick="expand('side-5');" class="w3-btn-block w3-theme-d2 w3-left-align">
+					<i class="fa fa-video-camera fa-fw w3-margin-right"></i> My Videos
+				</button>
+				
+				<div id="side-5" class="w3-accordion-content w3-container">
+					<div class="w3-row-padding" id="left-videos">
+					<br>
+						<?php
+						    if (count($this->layout()->my_videos) > 0):
+						        foreach ($this->layout()->my_videos as $vids):
+						?>
+						
+						<div class="w3-half">
+							<?php echo $vids; ?>
+						</div>
+
+						<?php
+						       endforeach;
+						    else:
+						?>
+						<p>Upload <a href="<?php echo $this->url('members/profile', array('action' => 'upload-file')); ?>">videos</a>!</p> 
+						<?php
+						       
+						    endif;
+						?>
+					</div>
+				</div>
+				
+				<script type="text/javascript">
+					// event handler on click video
+					$('#left-videos video').on('click', function() {
+						document.getElementById("v-modal").style.display = "block";
+
+						$('#clicked-video').html("<video class=\"w3-round w3-border\" width=\"250\" height=\"170\" id=\"other-video\" controls><source src=" + $('video source').attr('src') + " type=\"video/mp4\"></video>");
+					});
+					</script>
+				
+				<!-- video modal -->
+				<div class="w3-modal" id="v-modal">
+					<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 400px;">
+						<div class="w3-container">
+							<p class="w3-center w3-small" id="video-modal">
+								<span onclick="document.getElementById('v-modal').style.display = 'none'" class="w3-closebtn">&times;</span>
+								
+								<script type="text/javascript">
+									$('.w3-closebtn').on('click', function() {
+										$('video').trigger('pause');
+									});
+								</script>
+							</p>
+							
+							<div class="w3-row-padding w3-center" id="clicked-video"></div>
+
+							<br><br>
+
+							<script type="text/javascript">
+								var modal2 = document.getElementById('v-modal');
+
+								window.onclick = function(event) {
+									if (event.target == modal2) {
+										$('video').trigger('pause');
+										modal2.style.display = 'none';
+									}
+								}
+							</script>
+
+							<div class="w3-clear"></div>
+						</div>
+					</div>
+				</div>
+			    <!-- end video modal -->
 			</div>
 		</div>
 		<!-- End Left Column -->
