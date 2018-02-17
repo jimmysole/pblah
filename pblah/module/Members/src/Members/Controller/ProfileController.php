@@ -63,9 +63,9 @@ class ProfileController extends AbstractActionController
             $videos = array();
             
             foreach ($video_dir as $video) {
-                $videos[] = "<video width=\"200\" height=\"100\">
-                    <source src=\"/images/profile/$params/videos/$video\" type=\"video/mp4\">
-                    </video>";
+                $videos[] = "<video style=\"width: 100%; height: 100%;\" class=\"w3-margin-bottom w3-round w3-border\">
+                <source src=\"/images/profile/$params/videos/$video\" type=\"video/mp4\">
+                </video>";
             }
             
             natsort($videos);
