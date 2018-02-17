@@ -298,22 +298,27 @@
 
 							<br><br>
 
-							<script type="text/javascript">
-								var modal2 = document.getElementById('v-modal');
-
-								window.onclick = function(event) {
-									if (event.target == modal2) {
-										$('video').trigger('pause');
-										modal2.style.display = 'none';
-									}
-								}
-							</script>
-
 							<div class="w3-clear"></div>
 						</div>
 					</div>
 				</div>
 			    <!-- end video modal -->
+			    
+			    <script type="text/javascript">
+					var modal = document.getElementById('p-modal');
+					var modal2 = document.getElementById('v-modal');
+
+					window.onclick = function(event) {
+						if (event.target == modal2) {
+							$('video').trigger('pause');
+							modal2.style.display = 'none';
+						}
+											
+						if (event.target == modal) {
+							modal.style.display = 'none';
+						}
+					}
+				</script>
 			</div>
 		</div>
 		<!-- End Left Column -->
