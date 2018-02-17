@@ -335,13 +335,13 @@
 					$('#left-videos video').on('click', function() {
 						document.getElementById("v-modal").style.display = "block";
 
-						$('#clicked-video').html("<video class=\"w3-round w3-border\" width=\"300\" height=\"170\" id=\"other-video\" controls><source src=" + $('video source').attr('src') + " type=\"video/mp4\"></video>");
+						$('#clicked-video').html("<video class=\"w3-round w3-border\" style=\"width: 100%; height: 100%;\" id=\"other-video\" controls><source src=" + $('video source').attr('src') + " type=\"video/mp4\"></video>");
 					});
-					</script>
+				</script>
 				
 				<!-- video modal -->
 				<div class="w3-modal" id="v-modal">
-					<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 400px;">
+					<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 600px; height: 400px;">
 						<div class="w3-container">
 							<p class="w3-center w3-small" id="video-modal">
 								<span onclick="document.getElementById('v-modal').style.display = 'none'" class="w3-closebtn" id="close-video">&times;</span>
@@ -352,6 +352,8 @@
 									});
 								</script>
 							</p>
+							
+							<br><br>
 							
 							<div class="w3-row-padding w3-center" id="clicked-video"></div>
 
