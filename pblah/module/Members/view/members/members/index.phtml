@@ -277,11 +277,11 @@
 									</script>
 
 									<script type="text/javascript">
-										var modal2 = document.getElementById('p-modal');
+										var modal = document.getElementById('p-modal');
 
 										window.onclick = function(event) {
-											if (event.target == modal2) {
-												modal2.style.display = 'none';
+											if (event.target == modal) {
+												modal.style.display = 'none';
 											}
 										}
 									</script>
@@ -355,10 +355,10 @@
 					<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 400px;">
 						<div class="w3-container">
 							<p class="w3-center w3-small" id="video-modal">
-								<span onclick="document.getElementById('v-modal').style.display = 'none'" class="w3-closebtn">&times;</span>
+								<span onclick="document.getElementById('v-modal').style.display = 'none'" class="w3-closebtn" id="close-video">&times;</span>
 								
 								<script type="text/javascript">
-									$('.w3-closebtn').on('click', function() {
+									$('#close-video').on('click', function() {
 										$('video').trigger('pause');
 									});
 								</script>
