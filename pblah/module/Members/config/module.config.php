@@ -18,6 +18,7 @@ return array(
             'Members\Controller\Status'         => 'Members\Controller\StatusController',
             'Members\Controller\Friends'        => 'Members\Controller\FriendsController',
             'Members\Controller\ListsGroups'    => 'Members\Controller\ListsGroupsController',
+            'Members\Controller\Feed'           => 'Members\Controller\FeedController',
         ),
     ),
 
@@ -153,11 +154,11 @@ return array(
                             'constraints' => array(
                                 'id' => '[0-9]+',
                             ),
-                        ),
-                        
-                        'defaults' => array(
-                            'controller' => 'Members\Controller\GroupAdmin',
-                            'action'      => 'index',
+                            
+                            'defaults' => array(
+                                'controller' => 'Members\Controller\GroupAdmin',
+                                'action'     => 'index',
+                            ),
                         ),
                     ),
                     
@@ -169,6 +170,18 @@ return array(
                             'defaults' => array(
                                 'controller' => 'Members\Controller\ListsGroups',
                                 'action' => 'index',
+                            ),
+                        ),
+                    ),
+                    
+                    'feed' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route' => '/feed[/:action]',
+                            
+                            'defaults' => array(
+                                'controller' => 'Members\Controller\Feed',
+                                'action'     => 'index',
                             ),
                         ),
                     ),

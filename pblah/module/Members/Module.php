@@ -12,6 +12,7 @@ use Members\Model\GroupsModel;
 use Members\Model\EventsModel;
 use Members\Model\StatusModel;
 use Members\Model\FriendsModel;
+use Members\Model\FeedModel;
 
 class Module implements AutoloaderProviderInterface
 {
@@ -175,6 +176,18 @@ class Module implements AutoloaderProviderInterface
                 'FriendsService' => function ($sm) {
                     $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
                     return new TableGateway('friends', $db_adapter);
+                },
+                
+                'Members\Model\FeedModel' => function($sm) {
+                    $table_gateway = $sm->get('FeedService');
+                    $feed_model = new FeedModel($table_gateway, $sm->get('pblah-auth')->getIdentity());
+                    
+                    return $feed_model;
+                },
+                
+                'FeedService' => function($sm) {
+                    $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    return new TableGateway('status', $db_adapter);
                 },
             )
         );
