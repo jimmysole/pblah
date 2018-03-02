@@ -77,9 +77,11 @@ class FeedModel implements FeedInterface
                 $status_query = $this->gateway->select(array('id' => $friend_id));
                 
                 if ($status_query->count() > 0) {
+                    $status = array();
+                    
                     // get all the statuses
                     foreach ($status_query as $rows) {
-                        $status = $rows;    
+                        $status[] = $rows;    
                     }
                     
                     return $status;
