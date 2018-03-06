@@ -409,8 +409,47 @@
 						</script>
 
 						<p contenteditable="true" class="w3-border w3-padding" id="status">Status: </p>
+						
+						<p id="added-status-photos" class="w3-border w3-padding" style="display: none;"></p>
+						
+						<button type="button" class="w3-btn w3-theme" id="include-pic">
+							<i class="fa fa-plus"></i> Add Image
+						</button>
+						
+						<button type="button" class="w3-btn w3-theme w3-center" id="delete-include-pic" style="display: none;">
+							<i class="fa fa-minus"></i> Remove Image
+						</button>
+						
+						<script type="text/javascript">
+							var file;
+							
+							$('#include-pic').on('click', function() {
+								$('#include-pic').attr('style', 'display: none;');
+								
+								$('#delete-include-pic').attr('style', 'display: block;');
+								
+								$('#added-status-photos').attr('style', 'display: block; max-width: 400px;');
+	
+								$('#added-status-photos').html("<form method=\"post\" name=\"form-status-image\" enctype=\"multipart/form-data\" id=\"form-status-image\"><input type=\"file\" class=\"w3-input\" style=\"max-width: 400px;\" name=\"status-photo\" id=\"status-photo\"></form>");
 
-						<button type="button" class="w3-btn w3-theme" id="post-status" disabled>
+								$('#status-photo').on('change', function(e) {
+									file = e.target.files[0].name;
+									$('#status-msg').html("File selected: " + file);
+								});
+							});
+
+							$('#delete-include-pic').on('click', function() {
+								$('#status-photo').replaceWith($('#status-photo').val('').clone(true));
+								$('#added-status-photos').attr('style', 'display: none;');
+								$('#delete-include-pic').attr('style', 'display: none;');
+
+								$('#status-msg').html("");
+								$('#include-pic').attr('style', 'display: block;');
+							});
+						</script>
+						
+						
+						<button type="button" class="w3-btn w3-theme w3-right" id="post-status" disabled>
 							<i class="fa fa-pencil"></i> Post
 						</button>
 						
@@ -438,24 +477,56 @@
 							
 							$('#post-status').on('click', function() {
 								if ($('#status').html() != "Status: " && $('#status').html() != "") {
+									var status = $('#status').html();
+
+									var getstatus;
+									var getfile;
+									
+									var formData = new FormData();
+									
+									if (document.getElementById('status-photo') == null) {
+										formData.append("statustext", status);
+
+										getstatus = formData.get("statustext");
+									} else {
+										formData.append("statustext", status);
+										formData.append("userfile", document.getElementById('status-photo').files[0]);
+
+										var getstatus = formData.get("statustext");
+										var getfile = formData.get("userfile");
+									}
+									
+
+									$('#status-msg').html("");
+									
 									$.ajax({
 										type: "POST",
+										contentType: false,
+										processData: false,
 										url: "/members/status/post-status",
 										dataType: "json",
-										data: {
-											status: $('#status').html()
-										}
+										data: formData
 									}).done(function(msg) {
 										$('#status-msg').html(msg.success);
 										$('#status').html('Status: ');
 
+										$('#added-status-photos').attr('style', 'display: none;');
+										$('#delete-include-pic').attr('style', 'display: none;');
+
+										$('#include-pic').attr('style', 'display: block;');
+										
 										// update status text
 										$.getJSON('/members/status/get-status', function(stat) {
 											$('#current-status').html("Current Status: " + stat.status);
 										});
 									}).fail(function(msg) {
 										$('#status-msg').html(msg.fail);
-									});
+										
+										$('#added-status-photos').attr('style', 'display: none;');
+										$('#delete-include-pic').attr('style', 'display: none;');
+
+										$('#include-pic').attr('style', 'display: block;');
+									}); 
 								} else {
 									$('#status-msg').html("Please enter a valid status.");
 									return;
@@ -468,6 +539,14 @@
 		</div>
 
 		<!-- friends activity feed -->
+		<script type="text/javascript">
+			$.getJSON('/members/feed/get-status', function() {
+			}).done(function(response) {
+				
+			}).fail(function(response) {
+
+			});
+		</script>
 		<div class="w3-container w3-card-2 w3-white w3-round w3-margin">
 			<br> <img src="<?php echo $this->basePath(); ?>/images/avatar2.png" alt="Avatar"
 				class="w3-left w3-circle w3-margin-right" style="width: 60px"> <span

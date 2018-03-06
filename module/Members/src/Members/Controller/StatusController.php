@@ -28,10 +28,17 @@ class StatusController extends AbstractActionController
         
         if ($this->request->isPost()) {
             try {
-                $params = $this->params()->fromPost('status');
+                $status = $this->params()->fromPost('statustext');
+                $file = $this->params()->fromFiles('userfile');
                 
-                if ($this->getStatusService()->postStatus($params)) {
-                    echo json_encode(array('success' => 'Status updated'));
+                if (count($file) > 0) {
+                    if ($this->getStatusService()->postStatus($status, $file)) {
+                        echo json_encode(array('success' => 'Status updated'));
+                    } 
+                } else {
+                    if ($this->getStatusService()->postStatus($status)) {
+                        echo json_encode(array('success' => 'Status updated'));
+                    }
                 }
             } catch (StatusException $e) {
                 echo json_encode(array('fail' => $e->getMessage()));

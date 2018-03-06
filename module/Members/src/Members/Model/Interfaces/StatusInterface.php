@@ -2,17 +2,17 @@
 
 namespace Members\Model\Interfaces;
 
-
 interface StatusInterface
 {
     /**
      * Posts the current status for the user
-     *
+     * 
      * @param string $status
+     * @param array $image
      * @throws StatusException
-     * @return boolean
+     * @return bool
      */
-    public function postStatus($status);
+    public function postStatus($status, array $image = array());
     
     
     /**

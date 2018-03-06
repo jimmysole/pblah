@@ -56,7 +56,7 @@ class StatusModel implements StatusInterface
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\StatusInterface::postStatus()
      */
-    public function postStatus($status)
+    public function postStatus($status, array $image = array())
     {
         if (empty($status)) {
             throw new StatusException("Status text cannot be left empty.");
@@ -86,6 +86,29 @@ class StatusModel implements StatusInterface
                     $update = $this->gateway->update($update_data, array('id' => $row['id']));
                     
                     if ($update > 0) {
+                        if (count($image) > 0) {
+                            $store_images_dir = getcwd() . '/public/images/profile/' . $this->user . '/status';
+                            
+                            if (!is_dir($store_images_dir)) {
+                                $dir_created = mkdir($store_images_dir, 0755, true);
+                                
+                                if (false === $dir_created) {
+                                    throw new StatusException("You don't have privileges to create the directory '" . $store_images_dir . "' for storing images.");
+                                }
+                            }
+                            
+                            if (is_uploaded_file($image['tmp_name'])) {
+                                $image_moved = move_uploaded_file($image['tmp_name'], $store_images_dir . '/' . $image['name']);
+                                
+                                if (false === $image_moved) {
+                                    throw new StatusException("The uploaded image file cannot be moved.");
+                                }
+                                return true;
+                            } else {
+                                throw new StatusException("The uploaded image file is not found.");
+                            }
+                        } 
+                        
                         return true;
                     } else {
                         throw new StatusException("Error posting status.");
@@ -100,6 +123,31 @@ class StatusModel implements StatusInterface
                     $insert = $this->gateway->insert($insert_data);
                     
                     if ($insert > 0) {
+                        // put image into status folder
+                        if (count($image) > 0) {
+                            $store_images_dir = getcwd() . '/public/images/profile/' . $this->user . '/status';
+                            
+                            if (!is_dir($store_images_dir)) {
+                                $dir_created = mkdir($store_images_dir, 0755, true);
+                                
+                                if (false === $dir_created) {
+                                    throw new StatusException("You don't have privileges to create the directory '" . $store_images_dir . "' for storing images.");
+                                }
+                            }
+                            
+                            if (is_uploaded_file($image['tmp_name'])) {
+                                $image_moved = move_uploaded_file($image['tmp_name'], $store_images_dir . '/' . $image['name']);
+                                
+                                if (false === $image_moved) {
+                                    throw new StatusException("The uploaded image file cannot be moved.");
+                                }
+                                return true;
+                            } else {
+                                throw new StatusException("The uploaded image file is not found.");
+                            }
+                        } 
+                        
+                        // no image
                         return true;
                     } else {
                         throw new StatusException("Error posting status.");
