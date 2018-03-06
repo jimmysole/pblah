@@ -16,6 +16,12 @@ class FeedController extends AbstractActionController
     }
     
     
+    public function getstatusAction()
+    {
+        
+    }
+    
+    
     public function getStatusService()
     {
         if (!$this->status_service) {
