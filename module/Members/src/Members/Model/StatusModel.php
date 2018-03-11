@@ -90,7 +90,7 @@ class StatusModel implements StatusInterface
                             $store_images_dir = getcwd() . '/public/images/profile/' . $this->user . '/status';
                             
                             if (!is_dir($store_images_dir)) {
-                                $dir_created = mkdir($store_images_dir, 0755, true);
+                                $dir_created = mkdir($store_images_dir, 0777, true);
                                 
                                 if (false === $dir_created) {
                                     throw new StatusException("You don't have privileges to create the directory '" . $store_images_dir . "' for storing images.");
@@ -128,7 +128,7 @@ class StatusModel implements StatusInterface
                             $store_images_dir = getcwd() . '/public/images/profile/' . $this->user . '/status';
                             
                             if (!is_dir($store_images_dir)) {
-                                $dir_created = mkdir($store_images_dir, 0755, true);
+                                $dir_created = mkdir($store_images_dir, 0777, true);
                                 
                                 if (false === $dir_created) {
                                     throw new StatusException("You don't have privileges to create the directory '" . $store_images_dir . "' for storing images.");
