@@ -111,7 +111,7 @@ class StatusModel implements StatusInterface
                                 
                                 $imagick->setFormat('jpeg');
                                 
-                                $imagick->writeImageFile(fopen($store_images_dir . '/enhanced_' . $image['name'], 'w'));
+                                $imagick->writeImageFile(fopen($store_images_dir . '/' . $image['name'], 'w'));
                                 
                                 return true;
                             } else {
