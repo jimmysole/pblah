@@ -103,6 +103,16 @@ class StatusModel implements StatusInterface
                                 if (false === $image_moved) {
                                     throw new StatusException("The uploaded image file cannot be moved.");
                                 }
+                                
+                                // enhance the image with imagick
+                                $imagick = new \Imagick($store_images_dir . '/' . $image['name']);
+                                
+                                $imagick->enhanceImage();
+                                
+                                $imagick->setFormat('jpeg');
+                                
+                                $imagick->writeImageFile(fopen($store_images_dir . '/enhanced_' . $image['name'], 'w'));
+                                
                                 return true;
                             } else {
                                 throw new StatusException("The uploaded image file is not found.");
