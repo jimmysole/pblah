@@ -128,6 +128,25 @@
 
 		     	buildOnlineFriendList();
 			});
+
+			
+			function buildFriendStatus() {
+		 		$.getJSON('/members/feed/get-friend-status', function(data) {
+					$.each(data, function(i, item) {
+						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin').find('h4').html(data[i].username);
+						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin').find('p').html(data[i].status);
+						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin').find('img').attr('src', data[i].images);
+					});
+				}).fail(function(response) {
+					console.log(response);
+				});
+
+			    
+		 	}
+
+		 	setInterval(function() {
+				buildFriendStatus();
+		 	}, 1000);
 		</script>
     </head>
 

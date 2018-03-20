@@ -540,15 +540,7 @@
 
 		<!-- friends activity feed -->
 		<script type="text/javascript">
-			$.getJSON('/members/feed/get-friend-status', function(data) {
-				$.each(data, function(i, item) {
-					$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin').find('h4').html(data[i].username);
-					$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin').find('p').html(data[i].status);
-					$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin').find('img').attr('src', data[i].images);
-				});
-			}).fail(function(response) {
-				console.log(response);
-			});
+			buildFriendStatus();
 		</script>
 		
 		<div class="w3-container w3-card-2 w3-white w3-round w3-margin">
@@ -558,7 +550,7 @@
 
 			<div class="w3-row-padding" style="margin: 0 -16px">
 				<div class="w3-half">
-					<img src="" style="width: 100%" alt="<?php echo "Image"; ?>" class="w3-margin-bottom">
+					<img src="" style="width: 100%; height: 200px;" alt="<?php echo "Image"; ?>" class="w3-margin-bottom w3-round w3-border">
 				</div>
 			</div>
 
