@@ -540,8 +540,23 @@
 
 		<!-- friends activity feed -->
 		<script type="text/javascript">
+			buildSelfStatus();
 			buildFriendStatus();
 		</script>
+		
+		<!-- always have this first (sticky) for the user status -->
+		<div class="w3-container w3-card-2 w3-white w3-round w3-margin">
+			<h4></h4>
+			
+			<p></p>
+			
+			<div class="w3-row-padding" style="margin: 0 -16px;">
+				<div class="w3-half">
+					<img src="" style="width: 100%; height: 200px;" alt="<?php echo $this->identity() . "'s image"; ?>" class="w3-margin-bottom w3-round w3-border">
+				</div>
+			</div>
+		</div>
+		
 		
 		<div class="w3-container w3-card-2 w3-white w3-round w3-margin">
 			<h4></h4>
