@@ -20,7 +20,7 @@ class FeedController extends AbstractActionController
     }
     
     
-    public function getfriendstatusAction()
+    public function listownstatusAction()
     {
         $layout = $this->layout();
         $layout->setTerminal(true);
@@ -29,15 +29,13 @@ class FeedController extends AbstractActionController
         $view_model->setTerminal(true);
         
         try {
-            echo json_encode(array('feed' => $this->getStatusService()->listFriendsStatus()));
+            echo json_encode(array('feed' => $this->getStatusService()->listIndividualStatus()));
         } catch (FeedException $e) {
-            echo json_encode(array('fail' => $e->getMessage()));
+            echo json_encode(array('fail' => $e->getMessage())); 
         }
         
         return $view_model;
     }
-    
-    
     
     
     

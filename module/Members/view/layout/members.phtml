@@ -35,6 +35,7 @@
                 font-family: "Open Sans", sans-serif;
             }
             
+            
             .w3-accordion-content a {
             	padding: 0px 0px;
             	display: inline;
@@ -129,40 +130,17 @@
 		     	buildOnlineFriendList();
 			});
 
-			
-			function buildFriendStatus() {
-		 		$.getJSON('/members/feed/get-friend-status', function(data) {
-		 			var notFirstElement = $('.w3-container.w3-card-2.w3-white.w3-round.w3-margin:not(first)')
-			 		
-					$.each(data, function(i, item) {
-						var element = notFirstElement.eq(i);
-						
-						element.find('h4').html(i);
-						element.find('p').html(data[i].status);
-						element.find('img').attr('src', data[i].images);
-					});
-				}).fail(function(response) {
-					console.log(response.fail);
-				}); 
-		 	}
-
-
 		 	function buildSelfStatus() {
 				$.getJSON('/members/feed/list-own-status', function(data) {
 					$.each(data, function(i, item) {
-						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin:first').find('h4').html(data[i].username);
-						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin:first').find('p').html(data[i].status);
-						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin:first').find('img').attr('src', data[i].images);
+						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.user-status').find('.own-status-user').html(data[i].username);
+						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.user-status').find('.own-status').html(data[i].status);
+						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.user-status').find('img').attr('src', data[i].images);
 					});
 				}).fail(function(response) {
 					console.log(response.fail);
 				});
 		 	}
-
-		 	setInterval(function() {
-				buildFriendStatus();
-		 	}, 1000);
-
 		</script>
     </head>
 

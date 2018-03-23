@@ -2,6 +2,7 @@
 
 namespace Members\Model\Interfaces;
 
+
 interface FeedInterface
 {
     /**
@@ -22,4 +23,13 @@ interface FeedInterface
      * @return bool
      */
     public function hideFriendsStatus($friend_id);
+    
+    
+    /**
+     * Gets the current user's status
+     * 
+     * @throws FeedException
+     * @return array|string
+     */
+    public function listIndividualStatus();
 }

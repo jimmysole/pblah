@@ -58,83 +58,26 @@ class FeedModel implements FeedInterface
      */
     public function listFriendsStatus()
     {
-        $user_id = $this->getUserId()['id'];
         
-        // get the friend ids based on user id
-        // and then compare the friend id to the id in status table
-        $friend_query = new Select('friends');
+        // get the friend statuses of the logged in user
+        $connection = $this->sql->getAdapter()->getDriver()->getConnection();
         
-        $friend_query->columns(array('friend_id'))
-        ->where(array('user_id' => $user_id));  
+        $query = $connection->execute("SELECT status.id, status, members.username FROM status
+            INNER JOIN friends ON friends.friend_id = status.id 
+            INNER JOIN members ON members.id = status.id
+            WHERE friends.user_id = " . $this->getUserId()['id']);
         
-        $query = $this->sql->getAdapter()->query(
-            $this->sql->buildSqlString($friend_query),
-            Adapter::QUERY_MODE_EXECUTE
-        );
-            
         if ($query->count() > 0) {
-            $friend_id = array();
+            $status_holder = array();
             
-            foreach ($query as $result) {
-                $friend_id[] = $result['friend_id'];
+            foreach ($query as $key => $value) {
+                $status_holder[$key] = $value;
             }
             
-            
-            $status = new Select('status');
-            
-            $status->columns(array('status'))
-            ->where(array('id' => $friend_id)); 
-            
-            $status_query = $this->sql->getAdapter()->query(
-                $this->sql->buildSqlString($status),
-                Adapter::QUERY_MODE_EXECUTE
-            );
-                
-            if ($status_query->count() > 0) {
-                // check if a image was used
-                $members = new Select('members');
-                
-                $members->columns(array('username'))
-                ->where(array('id' => $friend_id));
-                
-                $image_query = $this->sql->getAdapter()->query(
-                    $this->sql->buildSqlString($members),
-                    Adapter::QUERY_MODE_EXECUTE
-                );
-                
-                $images = array();
-                
-                if ($image_query->count() > 0) {
-                    foreach ($image_query as $value) {
-                        $status_dir = '/images/profile/' . $value['username'] . '/status/';
-                        
-                        $real_dir = getcwd() .  '/public/' . $status_dir;
-                        
-                        if (is_dir($real_dir)) {
-                            // retrieve the image inside the status directory
-                            foreach (array_diff(scandir($real_dir, 1), array('.', '..')) as $values) {
-                                $images[] = $status_dir . $values;
-                            }
-                        }
-                    }
-                } else {
-                    throw new FeedException("The user does not exist in the user table.");
-                }
-                
-                $status = array();
-                    
-                // get all the statuses
-                foreach ($status_query as $rows) {
-                    $status[] = $rows['status'];    
-                }
-                    
-                return array('username' => ucfirst($value['username']), 'status' => $status, 'images' => $images); 
-            } else {
-                throw new FeedException("No status was found for your friends.");
-            }
-         } else {
-            throw new FeedException(sprintf("Could not locate any friends for %s", $this->user));
-         }
+            return $status_holder;
+        } else {
+            throw new FeedException("No status were found.");
+        }
     }
     
     
@@ -145,6 +88,65 @@ class FeedModel implements FeedInterface
     public function hideFriendsStatus($friend_id)
     {
         
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\FeedInterface::listIndividualStatus()
+     */
+    public function listIndividualStatus()
+    {
+        // @todo fix multiple images for statuses
+        $user_id = $this->getUserId()['id'];
+        
+        // base the status user id on $user_id
+        // retrieved from $this->getUserId()
+        $select = new Select('members');
+        
+        $select->columns(array('*'))
+        ->where(array('id' => $user_id));
+        
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($query->count() > 0) {
+            foreach ($query as $value) {
+                $status_dir = '/images/profile/' . $value['username'] . '/status/';
+                
+                $real_dir = getcwd() .  '/public/' . $status_dir;
+                
+                if (is_dir($real_dir)) {
+                    // retrieve the image inside the status directory
+                    foreach (array_diff(scandir($real_dir, 1), array('.', '..')) as $values) {
+                        $images[] = $status_dir . $values;
+                    }
+                }
+            }
+            
+            // get the status
+            $status_query = new Select('status');
+            
+            $status_query->columns(array('status'))
+            ->where(array('id' => $user_id));
+            
+            $query = $this->sql->getAdapter()->query(
+                $this->sql->buildSqlString($status_query),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            $status = null;
+            
+            foreach ($query as $row) {
+                $status = $row['status'];
+            }
+            
+            return array('username' => ucfirst($value['username']), 'status' => $status, 'images' => $images);
+        } else {
+            throw new FeedException(sprintf("Could not locate %s", $this->user));
+        }
     }
     
     

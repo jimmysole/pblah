@@ -4,6 +4,10 @@
 namespace Members\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+
+use Members\Model\Exceptions\FeedException;
+
 
 
 class MembersController extends AbstractActionController
@@ -18,6 +22,8 @@ class MembersController extends AbstractActionController
         if (!$this->getProfileService()->checkIfProfileSet()) {
             return $this->redirect()->toRoute('members/profile', array('action' => 'create-profile'));
         }
+        
+        $view_model = new ViewModel();
         
         $params = $this->identity();
         
@@ -58,6 +64,14 @@ class MembersController extends AbstractActionController
             
             $layout->setVariable('my_videos', $videos);
         }
+        
+        try {
+            $view_model->setVariable('feed', $this->getStatusService()->listFriendsStatus());
+        } catch (FeedException $e) {
+            $view_model->setVariable('feed', $e->getMessage());
+        }
+        
+        return $view_model;
     }
     
     public function getProfileService()
@@ -77,5 +91,15 @@ class MembersController extends AbstractActionController
         }
 
         return $this->groups_service;
+    }
+    
+    
+    public function getStatusService()
+    {
+        if (!$this->status_service) {
+            $this->status_service = $this->getServiceLocator()->get('Members\Model\FeedModel');
+        }
+        
+        return $this->status_service;
     }
 }

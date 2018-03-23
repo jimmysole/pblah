@@ -58,6 +58,7 @@ class StatusModel implements StatusInterface
      */
     public function postStatus($status, array $image = array())
     {
+        // @todo make status_id in db unique entries
         if (empty($status)) {
             throw new StatusException("Status text cannot be left empty.");
         } else {

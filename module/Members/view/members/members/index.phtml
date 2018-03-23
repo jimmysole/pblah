@@ -541,14 +541,17 @@
 		<!-- friends activity feed -->
 		<script type="text/javascript">
 			buildSelfStatus();
-			buildFriendStatus();
 		</script>
 		
 		<!-- always have this first (sticky) for the user status -->
-		<div class="w3-container w3-card-2 w3-white w3-round w3-margin">
-			<h4></h4>
+		<div class="w3-container w3-card-2 w3-white w3-round w3-margin user-status">
+			<p class="w3-right w3-small">
+				<span class="w3-closebtn" id="close-status">&times;</span>
+			</p>
 			
-			<p></p>
+			<h4 class="own-status-user"></h4>
+			
+			<p class="own-status"></p>
 			
 			<div class="w3-row-padding" style="margin: 0 -16px;">
 				<div class="w3-half">
@@ -557,25 +560,43 @@
 			</div>
 		</div>
 		
+		<script type="text/javascript">
+			$('#close-status').on('click', function() {
+				$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.user-status').attr('style', 'display: none;');
+			});
+		</script>
 		
-		<div class="w3-container w3-card-2 w3-white w3-round w3-margin">
-			<h4></h4>
+		<?php 
+		  if (count($this->feed) > 0):
+		     foreach ($this->feed as $value):  ?>
+				<div class="w3-container w3-card-2 w3-white w3-round w3-margin">
+					<p class="w3-right w3-small">
+						<span class="w3-closebtn friend-close">&times;</span>
+					</p>
+				
+					<h4 class="friends-status-user"><?php echo ucwords($value['username']); ?></h4>
 			
-			<p></p>
+					<p class="friends-status-text"><?php echo $value['status']; ?></p>
 
-			<div class="w3-row-padding" style="margin: 0 -16px">
-				<div class="w3-half">
-					<img src="" style="width: 100%; height: 200px;" alt="<?php echo "Image"; ?>" class="w3-margin-bottom w3-round w3-border">
+					<button type="button" class="w3-btn w3-theme-d1 w3-margin-bottom">
+						<i class="fa fa-thumbs-up"></i> Like
+					</button>
+				
+					<button type="button" class="w3-btn w3-theme-d2 w3-margin-bottom">
+						<i class="fa fa-comment"></i> Comment
+					</button>
 				</div>
-			</div>
-
-			<button type="button" class="w3-btn w3-theme-d1 w3-margin-bottom">
-				<i class="fa fa-thumbs-up"></i> Like
-			</button>
-			<button type="button" class="w3-btn w3-theme-d2 w3-margin-bottom">
-				<i class="fa fa-comment"></i> Comment
-			</button>
-		</div>
+		
+				<script type="text/javascript">
+					$('.w3-closebtn.friend-close').on('click', function() {
+						$(this).closest('div').attr('style', 'display: none;');
+					});
+				</script>
+			<?php 
+			  endforeach;
+			?>
+		<?php else: ?>
+		<?php endif; ?>
 		<!-- End Middle Column -->
 	</div>
 	
