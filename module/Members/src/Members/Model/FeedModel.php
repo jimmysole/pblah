@@ -113,8 +113,12 @@ class FeedModel implements FeedInterface
         );
         
         if ($query->count() > 0) {
+            $select = $this->gateway->select(array('id' => $user_id));
+            
+            $rowset = $select->current();
+            
             foreach ($query as $value) {
-                $status_dir = '/images/profile/' . $value['username'] . '/status/';
+                $status_dir = '/images/profile/' . $value['username'] . '/status/' . $rowset['time_status'] . '/';
                 
                 $real_dir = getcwd() .  '/public/' . $status_dir;
                 

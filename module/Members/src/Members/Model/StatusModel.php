@@ -58,7 +58,6 @@ class StatusModel implements StatusInterface
      */
     public function postStatus($status, array $image = array())
     {
-        // @todo make status_id in db unique entries
         if (empty($status)) {
             throw new StatusException("Status text cannot be left empty.");
         } else {
@@ -81,20 +80,25 @@ class StatusModel implements StatusInterface
                 if ($select->count() > 0) {
                     // update status
                     $update_data = array(
-                        'status' => $status,
+                        'status'      => $status,
+                        'time_status' => time(),
                     );
                     
                     $update = $this->gateway->update($update_data, array('id' => $row['id']));
                     
                     if ($update > 0) {
+                        $select = $this->gateway->select(array('id' => $row['id']));
+                        
+                        $rowset = $select->current();
+                        
                         if (count($image) > 0) {
-                            $store_images_dir = getcwd() . '/public/images/profile/' . $this->user . '/status';
+                            $store_images_dir = getcwd() . '/public/images/profile/' . $this->user . '/status/' . $rowset['time_status'];
                             
                             if (!is_dir($store_images_dir)) {
                                 $dir_created = mkdir($store_images_dir, 0777, true);
                                 
                                 if (false === $dir_created) {
-                                    throw new StatusException("You don't have privileges to create the directory '" . $store_images_dir . "' for storing images.");
+                                    throw new StatusException("You don't have the privileges to create the directory '" . $store_images_dir . "' for storing images.");
                                 }
                             }
                             
@@ -102,7 +106,7 @@ class StatusModel implements StatusInterface
                                 $image_moved = move_uploaded_file($image['tmp_name'], $store_images_dir . '/' . $image['name']);
                                 
                                 if (false === $image_moved) {
-                                    throw new StatusException("The uploaded image file cannot be moved.");
+                                    throw new StatusException("The uploaded image file could not be moved.");
                                 }
                                 
                                 // enhance the image with imagick
@@ -116,7 +120,7 @@ class StatusModel implements StatusInterface
                                 
                                 return true;
                             } else {
-                                throw new StatusException("The uploaded image file is not found.");
+                                throw new StatusException("The uploaded image file was not found.");
                             }
                         } 
                         
@@ -127,22 +131,27 @@ class StatusModel implements StatusInterface
                 } else {
                     // insert status
                     $insert_data = array(
-                        'id'     => $row['id'],
-                        'status' => $row['status'],
+                        'id'          => $row['id'],
+                        'status'      => $row['status'],
+                        'time_status' => time(),
                     );
                     
                     $insert = $this->gateway->insert($insert_data);
                     
                     if ($insert > 0) {
+                        $select_time = $this->gateway->select(array('id' => $row['id']));
+                        
+                        $rowset = $select_time->current();
+                        
                         // put image into status folder
                         if (count($image) > 0) {
-                            $store_images_dir = getcwd() . '/public/images/profile/' . $this->user . '/status';
+                            $store_images_dir = getcwd() . '/public/images/profile/' . $this->user . '/status/' . $rowset['time_status'];
                             
                             if (!is_dir($store_images_dir)) {
                                 $dir_created = mkdir($store_images_dir, 0777, true);
                                 
                                 if (false === $dir_created) {
-                                    throw new StatusException("You don't have privileges to create the directory '" . $store_images_dir . "' for storing images.");
+                                    throw new StatusException("You don't have the privileges to create the directory '" . $store_images_dir . "' for storing images.");
                                 }
                             }
                             
@@ -150,11 +159,21 @@ class StatusModel implements StatusInterface
                                 $image_moved = move_uploaded_file($image['tmp_name'], $store_images_dir . '/' . $image['name']);
                                 
                                 if (false === $image_moved) {
-                                    throw new StatusException("The uploaded image file cannot be moved.");
+                                    throw new StatusException("The uploaded image file could not be moved.");
                                 }
+                                
+                                // enhance the image with imagick
+                                $imagick = new \Imagick($store_images_dir . '/' . $image['name']);
+                                
+                                $imagick->enhanceImage();
+                                
+                                $imagick->setFormat('jpeg');
+                                
+                                $imagick->writeImageFile(fopen($store_images_dir . '/' . $image['name'], 'w'));
+                                
                                 return true;
                             } else {
-                                throw new StatusException("The uploaded image file is not found.");
+                                throw new StatusException("The uploaded image file was not found.");
                             }
                         } 
                         
