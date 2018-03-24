@@ -97,7 +97,6 @@ class FeedModel implements FeedInterface
      */
     public function listIndividualStatus()
     {
-        // @todo fix multiple images for statuses
         $user_id = $this->getUserId()['id'];
         
         // base the status user id on $user_id
