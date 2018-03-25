@@ -62,7 +62,7 @@ class FeedModel implements FeedInterface
         // get the friend statuses of the logged in user
         $connection = $this->sql->getAdapter()->getDriver()->getConnection();
         
-        $query = $connection->execute("SELECT status.id, status, members.username FROM status
+        $query = $connection->execute("SELECT status.id, status, time_status, members.username FROM status
             INNER JOIN friends ON friends.friend_id = status.id 
             INNER JOIN members ON members.id = status.id
             WHERE friends.user_id = " . $this->getUserId()['id']);
@@ -74,9 +74,22 @@ class FeedModel implements FeedInterface
                 $status_holder[$key] = $value;
             }
             
+            for ($i = 0; $i<count($status_holder); $i++) {
+                $status_dir = '/images/profile/' . $status_holder[$i]['username'] . '/status/' . $status_holder[$i]['time_status'] . '/';
+                
+                $real_dir = getcwd() . '/public/' . $status_dir;
+                
+                if (is_dir($real_dir)) {
+                    foreach (array_diff(scandir($real_dir, 1), array('.', '..')) as $images) {
+                        // add the images to the $status_holder array
+                        array_merge($status_holder, array('images' => $images));
+                    }
+                } 
+            }
+               
             return $status_holder;
         } else {
-            throw new FeedException("No status were found.");
+            throw new FeedException("No friend statuses were found.");
         }
     }
     
