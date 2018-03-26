@@ -72,21 +72,18 @@ class FeedModel implements FeedInterface
             
             foreach ($query as $key => $value) {
                 $status_holder[$key] = $value;
-            }
-            
-            for ($i = 0; $i<count($status_holder); $i++) {
-                $status_dir = '/images/profile/' . $status_holder[$i]['username'] . '/status/' . $status_holder[$i]['time_status'] . '/';
+                
+                $status_dir = '/images/profile/' . $status_holder[$key]['username'] . '/status/' . $status_holder[$key]['time_status'] . '/';
                 
                 $real_dir = getcwd() . '/public/' . $status_dir;
                 
                 if (is_dir($real_dir)) {
-                    foreach (array_diff(scandir($real_dir, 1), array('.', '..')) as $images) {
-                        // add the images to the $status_holder array
-                        array_merge($status_holder, array('images' => $images));
-                    }
+                    $images = array_diff(scandir($real_dir, 1), array('.', '..'));
+                    
+                    array_splice($status_holder, 4, 0, array('images' => $images));
                 } 
             }
-               
+            
             return $status_holder;
         } else {
             throw new FeedException("No friend statuses were found.");

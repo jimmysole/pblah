@@ -578,7 +578,7 @@
 			
 					<p class="friends-status-text"><?php echo $value['status']; ?></p>
 					
-					<?php if (array_key_exists('images', $value)): ?>
+					<?php if (array_key_exists('images', $this->feed)): ?>
 					<p class="friends-images">
 						<img src="<?php echo $value['images']; ?>" style="width: 100%; height: 200px;" alt="<?php echo $value['username'] . "'s image"; ?>" class="w3-margin-bottom w3-round w3-border">
 					</p>
