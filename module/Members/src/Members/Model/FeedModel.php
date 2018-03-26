@@ -74,15 +74,15 @@ class FeedModel implements FeedInterface
                 $status_holder[$key] = $value;
                 
                 $status_dir = '/images/profile/' . $status_holder[$key]['username'] . '/status/' . $status_holder[$key]['time_status'] . '/';
-                
-                $real_dir = getcwd() . '/public/' . $status_dir;
-                
-                if (is_dir($real_dir)) {
-                    $images = array_diff(scandir($real_dir, 1), array('.', '..'));
-                    
-                    array_splice($status_holder, 4, 0, array('images' => $images));
-                } 
             }
+            
+            $real_dir = getcwd() . '/public/' . $status_dir;
+            
+            if (is_dir($real_dir)) {
+                $images = array_diff(scandir($real_dir, 1), array('.', '..'));
+                
+                array_splice($status_holder, 4, 0, array('images' => $images));
+            } 
             
             return $status_holder;
         } else {
