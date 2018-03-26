@@ -58,7 +58,6 @@ class FeedModel implements FeedInterface
      */
     public function listFriendsStatus()
     {
-        
         // get the friend statuses of the logged in user
         $connection = $this->sql->getAdapter()->getDriver()->getConnection();
         
@@ -74,15 +73,16 @@ class FeedModel implements FeedInterface
                 $status_holder[$key] = $value;
                 
                 $status_dir = '/images/profile/' . $status_holder[$key]['username'] . '/status/' . $status_holder[$key]['time_status'] . '/';
-            }
             
-            $real_dir = getcwd() . '/public/' . $status_dir;
-            
-            if (is_dir($real_dir)) {
-                $images = array_diff(scandir($real_dir, 1), array('.', '..'));
+                $real_dir = getcwd() . '/public/' . $status_dir;
                 
-                array_splice($status_holder, 4, 0, array('images' => $images));
-            } 
+                if (is_dir($real_dir)) {
+                    $images = array_diff(scandir($real_dir, 1), array('.', '..'));
+                    $status_holder[$key]['images'] = $images;
+                } else {
+                    $status_holder[$key]['images'] = '';
+                }
+            }
             
             return $status_holder;
         } else {
