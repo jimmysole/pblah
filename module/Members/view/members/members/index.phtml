@@ -519,6 +519,8 @@
 										$.getJSON('/members/status/get-status', function(stat) {
 											$('#current-status').html("Current Status: " + stat.status);
 										});
+
+										buildSelfStatus();
 									}).fail(function(msg) {
 										$('#status-msg').html(msg.fail);
 										
