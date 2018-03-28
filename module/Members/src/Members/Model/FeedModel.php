@@ -93,16 +93,6 @@ class FeedModel implements FeedInterface
     
     /**
      * {@inheritDoc}
-     * @see \Members\Model\Interfaces\FeedInterface::hideFriendsStatus()
-     */
-    public function hideFriendsStatus($friend_id)
-    {
-        
-    }
-    
-    
-    /**
-     * {@inheritDoc}
      * @see \Members\Model\Interfaces\FeedInterface::listIndividualStatus()
      */
     public function listIndividualStatus()
