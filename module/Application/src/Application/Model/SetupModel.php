@@ -349,6 +349,18 @@ class SetupModel
         $friends_online_table->addConstraint(new Constraint\PrimaryKey('user_id'));
         
         
+        // create the chat table
+        $chat_table = new Ddl\CreateTable('chat');
+        $chat_table->addColumn(new Column\Integer('id', false, null, array('auto_increment' => true, 'unsigned' => true)));
+        $chat_table->addColumn(new Column\Char('who', 15));
+        $chat_table->addColumn(new Column\Char('from', 15));
+        $chat_table->addColumn(new Column\Text('messages'));
+        $chat_table->addColumn(new Column\Integer('chat_date', false, null, array('unsigned' => true)));
+        
+        // add the constraints
+        $chat_table->addConstraint(new Constraint\PrimaryKey('id'));
+        
+        
         // make the tables
         $this->query(array(
             $admin_table,
@@ -374,6 +386,7 @@ class SetupModel
             $friends_table,
             $friend_requests_table,
             $friends_online_table,
+            $chat_table
         ));
 
         return true;
