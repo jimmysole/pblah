@@ -13,6 +13,7 @@ use Members\Model\EventsModel;
 use Members\Model\StatusModel;
 use Members\Model\FriendsModel;
 use Members\Model\FeedModel;
+use Members\Model\ChatModel;
 
 class Module implements AutoloaderProviderInterface
 {
@@ -189,6 +190,18 @@ class Module implements AutoloaderProviderInterface
                     $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
                     return new TableGateway('status', $db_adapter);
                 },
+                
+                'Members\Model\ChatModel' => function($sm) {
+                    $table_gateway = $sm->get('ChatService');
+                    $chat_model = new ChatModel($table_gateway, $sm->get('pblah-auth')->getIdentity());
+                    
+                    return $chat_model;
+                },
+                
+                'ChatService' => function($sm) {
+                    $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    return new TableGateway('chat', $db_adapter);
+                }
             )
         );
     }

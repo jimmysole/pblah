@@ -19,6 +19,7 @@ return array(
             'Members\Controller\Friends'        => 'Members\Controller\FriendsController',
             'Members\Controller\ListsGroups'    => 'Members\Controller\ListsGroupsController',
             'Members\Controller\Feed'           => 'Members\Controller\FeedController',
+            'Members\Controller\Chat'           => 'Members\Controller\ChatController',
         ),
     ),
 
@@ -181,6 +182,18 @@ return array(
                             
                             'defaults' => array(
                                 'controller' => 'Members\Controller\Feed',
+                                'action'     => 'index',
+                            ),
+                        ),
+                    ),
+                    
+                    'chat' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/chat[/:action][/:id]',
+                            
+                            'defaults' => array(
+                                'controller' => 'Members\Controller\Chat',
                                 'action'     => 'index',
                             ),
                         ),
