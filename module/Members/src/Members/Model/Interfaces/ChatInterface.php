@@ -16,12 +16,11 @@ interface ChatInterface
     
     /**
      * Sends a message to the user
-     * @param string $message
-     * @param array $emojis
+     * @param array $message
      * @throws ChatException
-     * @return $this
+     * @return ChatInterface
      */
-    public function sendMessage($message, array $emojis = array());
+    public function sendMessage(array $message);
     
     
     /**

@@ -5,6 +5,7 @@ namespace Members\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
+
 class ChatController extends AbstractActionController
 {
     public function indexAction()
@@ -30,7 +31,6 @@ class ChatController extends AbstractActionController
         } else {
             $images[] = "<img src=\"/images/profile/avatar2.png\" class=\"w3-margin-bottom w3-round w3-border\" style=\"width: 100%; height: 88px;\">";
             
-            $layout = $this->layout();
             
             $layout->setVariable('my_images', $images);
         }
@@ -51,4 +51,7 @@ class ChatController extends AbstractActionController
             $layout->setVariable('my_videos', $videos);
         }
     }
+    
+    
+    
 }
