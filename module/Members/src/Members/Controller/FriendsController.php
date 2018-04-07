@@ -54,6 +54,24 @@ class FriendsController extends AbstractActionController
     }
     
     
+    public function buildchatAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        try {
+            echo json_encode($this->getFriendsService()->populateChatList());
+        } catch (FriendsException $e) {
+            echo json_encode(array('message' => $e->getMessage()));
+        }
+        
+        return $view_model;
+    }
+    
+    
     public function getFriendsService()
     {
         if (!$this->friends_service) {

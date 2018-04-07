@@ -125,11 +125,29 @@
 					});
 			 	}
 
+			 	function buildChatFriendList() {
+					$.getJSON("/members/friends/build-chat", function(data) {
+						$.each(data, function(key, value) {
+							$('#chat-friends').append($('<option/>', {
+								value: key,
+								text: value
+							}));
+						});
+					});
+				}
+
 			 	setInterval(function() {
 			  		buildOnlineFriendList();
 			 	}, 5000);
 
+			 	//setInterval(function() {
+				//	buildChatFriendList();
+			 	//}, 5000);
+
+			 	
 		     	buildOnlineFriendList();
+
+		     	buildChatFriendList();
 			});
 
 		 	function buildSelfStatus() {

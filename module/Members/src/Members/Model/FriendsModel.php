@@ -441,6 +441,32 @@ class FriendsModel implements FriendsInterface
     
     /**
      * {@inheritDoc}
+     * @see \Members\Model\Interfaces\FriendsInterface::populateChatList()
+     */
+    public function populateChatList()
+    {
+        $query = $this->connection->execute("SELECT members.username AS chat_username, friends_online.user_id AS chat_user_id FROM friends_online, friends, members
+            WHERE friends_online.user_id = friends.friend_id AND members.id = friends.friend_id AND friends.user_id = " . $this->getUserId()['id']);
+        
+        if ($query->count() > 0) {
+            // get the usernames of the friends
+            $chat_id = array();
+            $chat_friends = array();
+            
+            foreach ($query as $rows) {
+                $chat_id[] = $rows['chat_user_id'];
+                $chat_friends[] = $rows['chat_username'];
+            }
+            
+            return array_combine($chat_id, $chat_friends);
+        } else {
+            throw new FriendsException("Could not build chat list, probably because no one friends are on.");
+        }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
      * @see \Members\Model\Interfaces\FriendsInterface::friendList()
      */
     public function friendList()

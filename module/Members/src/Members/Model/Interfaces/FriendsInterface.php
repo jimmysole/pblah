@@ -3,8 +3,6 @@
 namespace Members\Model\Interfaces;
 
 
-use Members\Model\Exceptions\FriendsException;
-
 interface FriendsInterface
 {
     /**
@@ -105,4 +103,13 @@ interface FriendsInterface
      * @return array
      */
     public function friendList();
+    
+    
+    /**
+     * Populates the chat list for the user
+     * 
+     * @throws FriendsException
+     * @return array
+     */
+    public function populateChatList();
 }
