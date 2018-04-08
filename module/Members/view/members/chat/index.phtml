@@ -394,17 +394,74 @@
 					<div class="w3-container w3-padding">
 						<h6 class="w3-opacity">Start a chat session! Select one of your friends that are online from the list below.</h6>
 						
-						<p class="w3-left" id="no-friends" style="display: none;"></p>
-						
 						<br>
 						
 						<select id="chat-friends" class="w3-select" name="chat-friends">
+							<option>Choose a Friend</option>
 						</select>
+						
+					
 					</div>
 				</div>
 			</div>
 		</div>
+		
+		<div class="w3-container w3-card-2 w3-white w3-round w3-margin chat-section" style="display: none;">
+			<p class="w3-right w3-small">
+				<span class="w3-closebtn" id="end-chat">&times;</span>
+			</p>
+			
+			<h4 class="chat-to"></h4>
+			
+			<br>
+			
+			<div class="w3-container w3-border" style="overflow-y: scroll;">
+				<p class="w3-left" id="chat-send-to">
+				   
+				</p>
+			</div>
+			
+			<br>
+			
+			<div class="w3-container w3-border" style="overflow-y: scroll;">
+				<p class="w3-left">
+					<?php echo $this->identity(); ?>
+				</p>
+			</div>
+			
+			<br>
+			
+			<div class="w3-container w3-right">
+				<p class="w3-right w3-small" style="font-weight: bold;">
+					<textarea class="w3-input w3-border w3-round" style="width: 300px; height: 150px; resize: none;"></textarea>
+					<br>
+					<button class="w3-button w3-right w3-theme-d2 w3-round">Send Message</button>
+				</p>
+			</div>
+			<br>
+		</div>
 		<!-- End Middle Column -->
+		
+		<script type="text/javascript">
+			$('#chat-friends').on('change', function() {
+				// check if the chat window was closed
+				if ($('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style')) {
+					$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: block;');
+				}
+				
+				var id = $(this).val();
+				var text = $('option:selected', this).text();
+
+				$('.chat-to').html("Chat session with " + text);
+
+				$('#chat-send-to').html(text);
+			});
+
+			$('#end-chat').on('click', function() {
+				// todo - delete chat from database
+				$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: none;');
+			});
+		</script>
 	</div>
 	
 	<!-- right column -->

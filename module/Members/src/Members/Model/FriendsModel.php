@@ -455,7 +455,7 @@ class FriendsModel implements FriendsInterface
             
             foreach ($query as $rows) {
                 $chat_id[] = $rows['chat_user_id'];
-                $chat_friends[] = $rows['chat_username'];
+                $chat_friends[] = ucwords($rows['chat_username']);
             }
             
             return array_combine($chat_id, $chat_friends);
