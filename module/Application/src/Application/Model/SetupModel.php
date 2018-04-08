@@ -353,8 +353,9 @@ class SetupModel
         $chat_table = new Ddl\CreateTable('chat');
         $chat_table->addColumn(new Column\Integer('id', false, null, array('auto_increment' => true, 'unsigned' => true)));
         $chat_table->addColumn(new Column\Char('who', 15));
+        $chat_table->addColumn(new Column\Text('who_message'));
         $chat_table->addColumn(new Column\Char('from', 15));
-        $chat_table->addColumn(new Column\Text('messages'));
+        $chat_table->addColumn(new Column\Text('from_message'));
         $chat_table->addColumn(new Column\Integer('chat_date', false, null, array('unsigned' => true)));
         $chat_table->addColumn(new Column\Integer('chat_end_date', false, null, array('unsigned' => true)));
         
