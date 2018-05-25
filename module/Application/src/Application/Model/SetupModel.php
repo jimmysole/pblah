@@ -356,8 +356,8 @@ class SetupModel
         $chat_table->addColumn(new Column\Text('who_message'));
         $chat_table->addColumn(new Column\Char('from', 15));
         $chat_table->addColumn(new Column\Text('from_message'));
-        $chat_table->addColumn(new Column\Integer('chat_date', false, null, array('unsigned' => true)));
-        $chat_table->addColumn(new Column\Integer('chat_end_date', false, null, array('unsigned' => true)));
+        $chat_table->addColumn(new Column\Datetime('chat_date', false, null));
+        $chat_table->addColumn(new Column\Datetime('chat_end_date', false, null));
         
         // add the constraints
         $chat_table->addConstraint(new Constraint\PrimaryKey('id'));
