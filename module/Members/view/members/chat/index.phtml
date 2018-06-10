@@ -424,7 +424,7 @@
 			<br>
 			
 			<div class="w3-container w3-border" style="overflow-y: scroll;">
-				<p class="w3-left">
+				<p class="w3-left" id="user-message">
 					<?php echo $this->identity(); ?>
 				</p>
 			</div>
@@ -433,11 +433,21 @@
 			
 			<div class="w3-container w3-right">
 				<p class="w3-right w3-small" style="font-weight: bold;">
-					<textarea class="w3-input w3-border w3-round" style="width: 300px; height: 150px; resize: none;"></textarea>
+					<textarea class="w3-input w3-border w3-round" style="width: 300px; height: 150px; resize: none;" id="message"></textarea>
 					<br>
-					<button class="w3-button w3-right w3-theme-d2 w3-round">Send Message</button>
+					<button class="w3-button w3-left w3-theme-d2 w3-round" id="start-chat">Start Chat</button>
+					<button class="w3-button w3-right w3-theme-d2 w3-round" id="send-message">Send Message</button>
 				</p>
 			</div>
+			
+			<br>
+			
+			<div class="w3-container w3-right">
+				<p class="w3-right w3-small warning" style="font-weight: bold;">
+					
+				</p>
+			</div>
+			
 			<br>
 		</div>
 		<!-- End Middle Column -->
@@ -455,11 +465,42 @@
 				$('.chat-to').html("Chat session with " + text);
 
 				$('#chat-send-to').html(text);
+
+				$('#send-message').attr('disabled', true);
+
+				$('#message').attr('disabled', true);
 			});
 
 			$('#end-chat').on('click', function() {
 				// todo - delete chat from database
 				$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: none;');
+			});
+
+			
+			
+			$('#start-chat').on('click', function() {
+				var sendToWho = document.getElementById('chat-send-to').innerHTML;
+				
+				$.post('/members/chat/start-chat', { startWho: sendToWho.toLowerCase() })
+					.done(function() {
+						$('#start-chat').attr('disabled', true);
+						$('#message').attr('disabled', false);
+						$('#send-message').attr('disabled', false);
+					}).fail(function(data) {
+						$('.w3-right.w3-small.warning').html(data);
+					});
+			});
+
+			$('#send-message').on('click', function() {
+				var sendToWho = document.getElementById('chat-send-to').innerHTML;
+				
+				$.post('/members/chat/send-message', { who: sendToWho.toLowerCase(), message: $('#message').val() })
+			    	.done(function(data) {
+						$('#user-message').append("<br>" + $('#message').val() + "<br>");
+						$('#message').val("");
+					}).fail(function() {
+						$('#user-message').html("Error sending your message, please try again.");
+					});
 			});
 		</script>
 	</div>

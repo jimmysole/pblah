@@ -95,32 +95,67 @@ class ChatModel implements ChatInterface
                 
                 $online = new Select('friends_online');
                 
-                $select->columns(array('user_id'))
+                $online->columns(array('user_id'))
                 ->where(array('user_id' => $id));
                 
                 $query = $this->sql->getAdapter()->query(
-                    $this->sql->buildSqlString($select),
+                    $this->sql->buildSqlString($online),
                     Adapter::QUERY_MODE_EXECUTE
                 );
+                
                 
                 if ($query->count() > 0) {
                     // friend is online 
                     // start the chat session
                     // by inserting who, from, and the chat_date in the database table chat
                     // messages will be empty until messages are sent
-                    $insert_data = array(
-                        'who'       => $this->who,
-                        'from'      => $this->getUserInfo()['username'],
-                        'messages'  => '',
-                        'chat_date' => time(),
+                    // unless a chat session already exists
+                    // in the case, update the date only
+                    $select_from_chat = new Select('chat');
+                    
+                    $select_from_chat->columns(array('id'))
+                    ->where(array('who' => $this->who, 'from' => $this->getUserInfo()['username']))
+                    ->limit(1);
+                    
+                    $query = $this->sql->getAdapter()->query(
+                        $this->sql->buildSqlString($select_from_chat),
+                        Adapter::QUERY_MODE_EXECUTE
                     );
                     
-                    $insert = $this->gateway->insert($insert_data);
-                    
-                    if ($insert > 0) {
-                        return $this;
+                    if ($query->count() > 0) {
+                        foreach ($query as $chat_id) {
+                            $get_id = $chat_id;
+                        }
+                        
+                        // update the date only
+                        $update_data = array(
+                            'chat_date' => date('Y-m-d H:i:s')                          
+                        );
+                        
+                        $update = $this->gateway->update($update_data, array('id' => $get_id));
+                        
+                        if ($update > 0) {
+                            return $this;
+                        } else {
+                            throw new ChatException("Error starting the chat session, please try again.");
+                        }
                     } else {
-                        throw new ChatException("Error starting the chat session, please try again.");
+                        // no records found
+                        // start a new chat session
+                        $insert_data = array(
+                            'who'           => $this->who,
+                            'from'          => $this->getUserInfo()['username'],
+                            'from_message'  => '',
+                            'chat_date'     => date('Y-m-d H:i:s'),
+                        );
+                        
+                        $insert = $this->gateway->insert($insert_data);
+                        
+                        if ($insert > 0) {
+                            return $this;
+                        } else {
+                            throw new ChatException("Error starting the chat session, please try again.");
+                        }
                     }
                 } else {
                     throw new ChatException("Friend is not online.");
@@ -138,16 +173,17 @@ class ChatModel implements ChatInterface
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\ChatInterface::sendMessage()
      */
-    public function sendMessage(array $message)
+    public function sendMessage($who, $message)
     {
-        $this->message = !count($message) > 0 ? function() use ($message) { return implode("\r\r", $message); } : null;
+        $to            = !empty($who)     ? $who     : null;
+        $this->message = !empty($message) ? $message : null;
         
         // update the message field in the chat field
         $update_data = array(
-            'messages' => $this->message,
+            'from_message' => $this->message,
         );
         
-        $update = $this->gateway->update($update_data, array('who' => $this->who, 'from' => $this->getUserInfo()['username']));
+        $update = $this->gateway->update($update_data, array('who' => $to, 'from' => $this->getUserInfo()['username']));
         
         if ($update > 0) {
             return $this;
@@ -161,18 +197,42 @@ class ChatModel implements ChatInterface
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\ChatInterface::endChat()
      */
-    public function endChat()
+    public function endChat($who)
     {
         $update_data = array(
-            'chat_end_date' => time()
+            'chat_end_date' => date('Y-m-d H:i:s')
         );
         
-        $update = $this->gateway->update($update_data, array('who' => $this->who, 'from' => $this->getUserInfo()['username']));
+        $update = $this->gateway->update($update_data, array('who' => $who, 'from' => $this->getUserInfo()['username']));
         
         if ($update > 0) {
             return true;
         } else {
             throw new ChatException("Error ending your chat session.");
+        }
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\ChatInterface::respondTo()
+     */
+    public function respondTo($to, $message)
+    {
+        $send_to = !empty($to) ? $to : null;
+        
+        $send_message = !empty($message) ? $message : null;
+        
+        $update_data = array(
+            'who_message' => $send_message,
+        );
+        
+        $update = $this->gateway->update($update_data, array('from' => $send_to));
+        
+        if ($update > 0) {
+            return true;
+        } else {
+            throw new ChatException("Error sending your reply.");
         }
     }
     

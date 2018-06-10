@@ -5,9 +5,16 @@ namespace Members\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
+use Members\Model\ChatModel;
+use Members\Model\Exceptions\ChatException;
+
+
 
 class ChatController extends AbstractActionController
 {
+    public $chat_service;
+    
+    
     public function indexAction()
     {
         $view_model = new ViewModel();
@@ -53,5 +60,58 @@ class ChatController extends AbstractActionController
     }
     
     
+    public function startchatAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        $params = $this->params()->fromPost('startWho');
+        
+        try {
+            if ($this->getChatService()->startChat($params) instanceof ChatModel) {
+                // ok to go
+            } else {
+                throw new ChatException("An error occurred while attempt to start the chat session, please try again.");
+            }
+        } catch (ChatException $e) {
+            echo $e->getMessage();
+        }
+        
+        return $view_model;
+    }
     
+    public function sendmessageAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        $who = $this->params()->fromPost('who');
+        $message = $this->params()->fromPost('message');
+        
+        try {
+            $this->getChatService()->sendMessage($who, $message);
+        } catch (ChatException $e) {
+            echo $e->getMessage();
+        }
+        
+        return $view_model;
+    }
+    
+    
+    
+    
+    public function getChatService()
+    {
+        if (!$this->chat_service) {
+            $this->chat_service = $this->getServiceLocator()->get('Members\Model\ChatModel');
+        }
+        
+        return $this->chat_service;
+    }
 }
