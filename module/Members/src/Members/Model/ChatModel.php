@@ -33,7 +33,7 @@ class ChatModel implements ChatInterface
     
     
     /**
-     * @var array
+     * @var string
      */
     public $message;
     
@@ -124,7 +124,7 @@ class ChatModel implements ChatInterface
                     
                     if ($query->count() > 0) {
                         foreach ($query as $chat_id) {
-                            $get_id = $chat_id;
+                            $get_id = $chat_id['id'];
                         }
                         
                         // update the date only
@@ -263,5 +263,15 @@ class ChatModel implements ChatInterface
         }
         
         return false;
+    }
+    
+    
+    /**
+     * Clear up objects 
+     */
+    public function __destruct()
+    {
+        $this->who = null;
+        $this->message = null;
     }
 }
