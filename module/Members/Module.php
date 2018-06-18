@@ -93,13 +93,13 @@ class Module implements AutoloaderProviderInterface
         
         $request = $e->getRequest();
         
-        if (! $request instanceof Http\Request || $request->isXmlHttpRequest()) {
+        if (!$request instanceof Http\Request || $request->isXmlHttpRequest()) {
             return $e;
         }
         
         $matches = $e->getRouteMatch();
         
-        if (! $matches) {
+        if (!$matches) {
             return $e;
         }
         
