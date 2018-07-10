@@ -237,6 +237,20 @@ class ChatModel implements ChatInterface
     }
     
     
+    public function listChatMessages($user)
+    {
+        $get_messages = $this->gateway->select(['who' => strtolower($user), 'from' => $this->getUserInfo()['username']]);
+        
+        $msg = [];
+        
+        foreach ($get_messages as $messages) {
+            $msg[] = $messages;
+        }
+        
+        return json_encode($msg);
+    }
+    
+    
     
     /**
      * Gets the logged in user info

@@ -426,6 +426,7 @@
 			<div class="w3-container w3-border" style="overflow-y: scroll;">
 				<p class="w3-left" id="user-message">
 					<?php echo $this->identity(); ?>
+					<br>
 				</p>
 			</div>
 			
@@ -466,14 +467,53 @@
 
 				$('#chat-send-to').html(text);
 
-				$('#send-message').attr('disabled', true);
-
-				$('#message').attr('disabled', true);
+				// see if there is any chats that already exist
+				// if so, enable send-message button
+				// if not, disable
+				// check if data is defined
+				// if not, bail
+				$.getJSON("/members/chat/get-messages", { user: text, format: "json"})
+				.done(function(data) {
+					if (jQuery.isEmptyObject(data)) {
+						// no chat was found
+						// just display the user's identity
+						$('#user-message').html("<?php echo $this->identity(); ?>" + "<br>");
+					} else {
+						// clear text before each new option selected
+						// so no message is carried over from a different chat with another user
+						$('#user-message').html("");
+						
+						$('#user-message').prepend("<?php echo $this->identity(); ?>" + "<br>");
+						
+						$.each(data, function(i, item) {
+							$('#user-message').append(data[i].from_message + "<br>");
+							$('#chat-send-to').append("<br>" + data[i].who_message + "<br>");
+						});
+						
+						$('#send-message').attr('disabled', false);
+						$('#start-chat').attr('disabled', true);
+						$('#message').attr('disabled', false);
+					}
+				}).fail(function(data) {
+					console.log(data);
+				});
 			});
 
 			$('#end-chat').on('click', function() {
-				// todo - delete chat from database
-				$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: none;');
+				var receipent = document.getElementById('chat-send-to').innerHTML;
+				
+				if (confirm("Are you sure you want to remove this chat?")) {
+					$.post('/members/chat/end-chat', { friend: receipent.toLowerCase() })
+						.done(function() {
+							$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: none;');	
+							$('#user-message').val("");
+							$('#message').attr('disabled', false);
+						}).fail(function(data) {
+							$('.w3-right.w3-small.warning').html(data);
+						});
+				} else {
+					return;
+				}
 			});
 
 			
@@ -496,10 +536,13 @@
 				
 				$.post('/members/chat/send-message', { who: sendToWho.toLowerCase(), message: $('#message').val() })
 			    	.done(function(data) {
+				    	// going to have to fix this
+				    	// perhaps a get call to load the messages
+				    	// or just use the append
 						$('#user-message').append("<br>" + $('#message').val() + "<br>");
 						$('#message').val("");
 					}).fail(function() {
-						$('#user-message').html("Error sending your message, please try again.");
+						$('.w3-right.w3-small.warning').html("Error sending your message, please try again.");
 					});
 			});
 		</script>
