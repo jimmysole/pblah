@@ -444,7 +444,7 @@
 			<br>
 			
 			<div class="w3-container w3-right">
-				<p class="w3-right w3-small warning" style="font-weight: bold;">
+				<p class="w3-left w3-small warning" style="font-weight: bold;">
 					
 				</p>
 			</div>
@@ -454,6 +454,8 @@
 		<!-- End Middle Column -->
 		
 		<script type="text/javascript">
+			var text;
+			
 			$('#chat-friends').on('change', function() {
 				// check if the chat window was closed
 				if ($('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style')) {
@@ -461,10 +463,11 @@
 				}
 				
 				var id = $(this).val();
-				var text = $('option:selected', this).text();
+				text = $('option:selected', this).text();
 
 				$('.chat-to').html("Chat session with " + text);
 
+				
 				$('#chat-send-to').html(text);
 
 				// see if there is any chats that already exist
@@ -527,13 +530,13 @@
 						$('#message').attr('disabled', false);
 						$('#send-message').attr('disabled', false);
 					}).fail(function(data) {
-						$('.w3-right.w3-small.warning').html(data);
+						$('.w3-left.w3-small.warning').html(data);
 					});
 			});
 
 			$('#send-message').on('click', function() {
-				var sendToWho = document.getElementById('chat-send-to').innerHTML;
-				
+				var sendToWho = text;
+
 				$.post('/members/chat/send-message', { who: sendToWho.toLowerCase(), message: $('#message').val() })
 			    	.done(function(data) {
 				    	// going to have to fix this
@@ -542,7 +545,7 @@
 						$('#user-message').append("<br>" + $('#message').val() + "<br>");
 						$('#message').val("");
 					}).fail(function() {
-						$('.w3-right.w3-small.warning').html("Error sending your message, please try again.");
+						$('.w3-left.w3-small.warning').html("Error sending your message, please try again.");
 					});
 			});
 		</script>
