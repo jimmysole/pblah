@@ -516,7 +516,7 @@
 							$('#user-message').val("");
 							$('#message').attr('disabled', false);
 						}).fail(function(data) {
-							$('#chat-error').html(data);
+							$('#chat-error-text').html(data);
 						});
 				} else {
 					return;
@@ -534,7 +534,7 @@
 						$('#message').attr('disabled', false);
 						$('#send-message').attr('disabled', false);
 					}).fail(function(data) {
-						$('#chat-error').html(data);
+						$('#chat-error-text').html(data);
 					});
 			});
 
