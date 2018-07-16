@@ -432,6 +432,18 @@
 			
 			<br>
 			
+			<div class="w3-container w3-padding">
+				<div id="chat-error" class="w3-panel w3-red w3-card-2" style="display: none;">
+					<span class="w3-button w3-red w3-large w3-right w3-hover-red" onclick="this.parentElement.style.display='none';">
+						&times;
+					</span>
+				
+					<p id="chat-error-text"></p>
+				</div>
+			</div>
+			
+			
+			
 			<div class="w3-container w3-right">
 				<p class="w3-right w3-small" style="font-weight: bold;">
 					<textarea class="w3-input w3-border w3-round" style="width: 300px; height: 150px; resize: none;" id="message"></textarea>
@@ -442,12 +454,6 @@
 			</div>
 			
 			<br>
-			
-			<div class="w3-container w3-right">
-				<p class="w3-left w3-small warning" style="font-weight: bold;">
-					
-				</p>
-			</div>
 			
 			<br>
 		</div>
@@ -512,7 +518,7 @@
 							$('#user-message').val("");
 							$('#message').attr('disabled', false);
 						}).fail(function(data) {
-							$('.w3-right.w3-small.warning').html(data);
+							$('#chat-error').html(data);
 						});
 				} else {
 					return;
@@ -530,12 +536,18 @@
 						$('#message').attr('disabled', false);
 						$('#send-message').attr('disabled', false);
 					}).fail(function(data) {
-						$('.w3-left.w3-small.warning').html(data);
+						$('#chat-error').html(data);
 					});
 			});
 
 			$('#send-message').on('click', function() {
 				var sendToWho = text;
+
+				if ($('#message').val() == "") {
+					$('#chat-error').attr('style', 'display: block;');
+					$('#chat-error-text').html("Message cannot be left blank.");
+					return false;
+				}
 
 				$.post('/members/chat/send-message', { who: sendToWho.toLowerCase(), message: $('#message').val() })
 			    	.done(function(data) {
@@ -545,7 +557,7 @@
 						$('#user-message').append("<br>" + $('#message').val() + "<br>");
 						$('#message').val("");
 					}).fail(function() {
-						$('.w3-left.w3-small.warning').html("Error sending your message, please try again.");
+						$('#chat-error-text').html("Error sending your message, please try again.");
 					});
 			});
 		</script>
