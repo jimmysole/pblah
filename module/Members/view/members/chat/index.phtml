@@ -507,7 +507,7 @@
 			});
 
 			$('#end-chat').on('click', function() {
-				var receipent = document.getElementById('chat-send-to').innerHTML;
+				var receipent = text;
 				
 				if (confirm("Are you sure you want to remove this chat?")) {
 					$.post('/members/chat/end-chat', { friend: receipent.toLowerCase() })
@@ -526,7 +526,7 @@
 			
 			
 			$('#start-chat').on('click', function() {
-				var sendToWho = document.getElementById('chat-send-to').innerHTML;
+				var sendToWho = text;
 				
 				$.post('/members/chat/start-chat', { startWho: sendToWho.toLowerCase() })
 					.done(function() {
