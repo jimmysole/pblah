@@ -414,21 +414,21 @@
 			<h4 class="chat-to"></h4>
 			
 			<br>
-			
+			<!-- rework this to include both chat send to and the user -->
 			<div class="w3-container w3-border" style="overflow-y: scroll;">
-				<p class="w3-left" id="chat-send-to">
+				<p class="w3-left" id="chat-section">
 				   
 				</p>
 			</div>
 			
 			<br>
-			
+			<!-- 
 			<div class="w3-container w3-border" style="overflow-y: scroll;">
 				<p class="w3-left" id="user-message">
-					<?php echo $this->identity(); ?>
+					<?php //echo $this->identity(); ?>
 					<br>
 				</p>
-			</div>
+			</div> -->
 			
 			<br>
 			
@@ -436,7 +436,6 @@
 				<p class="w3-right w3-small" style="font-weight: bold;">
 					<textarea class="w3-input w3-border w3-round" style="width: 300px; height: 150px; resize: none;" id="message"></textarea>
 					<br>
-					<button class="w3-button w3-left w3-theme-d2 w3-round" id="start-chat">Start Chat</button>
 					<button class="w3-button w3-right w3-theme-d2 w3-round" id="send-message">Send Message</button>
 				</p>
 			</div>
@@ -506,6 +505,7 @@
 				});
 			});
 
+			
 			$('#end-chat').on('click', function() {
 				var receipent = text;
 				
@@ -524,7 +524,6 @@
 			});
 
 			
-			
 			$('#start-chat').on('click', function() {
 				var sendToWho = text;
 				
@@ -536,7 +535,14 @@
 					}).fail(function(data) {
 						$('#chat-error-text').html(data);
 					});
-			});
+
+				// keep reloading the user messages who is been chatted with?
+				// see if any new messages exist?
+				// how? perhaps make an active field?
+				// or check if the end date is empty?
+				// rawwwwwwwwwwwwwwwwwwwwwwrrr
+				
+			}); 
 
 			$('#send-message').on('click', function() {
 				var sendToWho = text;
@@ -549,9 +555,6 @@
 
 				$.post('/members/chat/send-message', { who: sendToWho.toLowerCase(), message: $('#message').val() })
 			    	.done(function(data) {
-				    	// going to have to fix this
-				    	// perhaps a get call to load the messages
-				    	// or just use the append
 						$('#user-message').append("<br>" + $('#message').val() + "<br>");
 						$('#message').val("");
 					}).fail(function() {

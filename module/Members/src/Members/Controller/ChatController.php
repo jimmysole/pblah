@@ -83,6 +83,28 @@ class ChatController extends AbstractActionController
         return $view_model;
     }
     
+    
+    public function updateChat() 
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        $function = $this->params()->fromPost('function');
+        $state = $this->params()->fromPost('state');
+        
+        try {
+            $this->getChatService()->updateChat($function, $state);
+        } catch (ChatException $e) {
+            echo $e->getMessage();
+        }
+        
+        return $view_model;
+    }
+    
+    
     public function sendmessageAction()
     {
         $layout = $this->layout();
