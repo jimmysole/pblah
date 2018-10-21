@@ -416,19 +416,19 @@
 			<br>
 			<!-- rework this to include both chat send to and the user -->
 			<div class="w3-container w3-border" style="overflow-y: scroll;">
-				<p class="w3-left" id="chat-section">
+				<p class="w3-left" id="chat-send-to">
 				   
 				</p>
 			</div>
 			
 			<br>
-			<!-- 
+			
 			<div class="w3-container w3-border" style="overflow-y: scroll;">
 				<p class="w3-left" id="user-message">
-					<?php //echo $this->identity(); ?>
+					<?php echo $this->identity(); ?>
 					<br>
 				</p>
-			</div> -->
+			</div> 
 			
 			<br>
 			
@@ -436,6 +436,8 @@
 				<p class="w3-right w3-small" style="font-weight: bold;">
 					<textarea class="w3-input w3-border w3-round" style="width: 300px; height: 150px; resize: none;" id="message"></textarea>
 					<br>
+					<button class="w3-button w3-left w3-theme-d2 w3-round" id="start-chat">Start Chat</button>
+					
 					<button class="w3-button w3-right w3-theme-d2 w3-round" id="send-message">Send Message</button>
 				</p>
 			</div>
@@ -484,6 +486,10 @@
 						// no chat was found
 						// just display the user's identity
 						$('#user-message').html("<?php echo $this->identity(); ?>" + "<br>");
+
+						$('#send-message').attr('disabled', false);
+						$('#start-chat').attr('disabled', false);
+						$('#message').attr('disabled', false);
 					} else {
 						// clear text before each new option selected
 						// so no message is carried over from a different chat with another user

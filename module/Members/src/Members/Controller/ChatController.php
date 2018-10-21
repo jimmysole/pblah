@@ -92,11 +92,8 @@ class ChatController extends AbstractActionController
         $view_model = new ViewModel();
         $view_model->setTerminal(true);
         
-        $function = $this->params()->fromPost('function');
-        $state = $this->params()->fromPost('state');
-        
         try {
-            $this->getChatService()->updateChat($function, $state);
+            $this->getChatService()->updateChat($user);
         } catch (ChatException $e) {
             echo $e->getMessage();
         }

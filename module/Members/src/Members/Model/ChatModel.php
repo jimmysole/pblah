@@ -50,12 +50,6 @@ class ChatModel implements ChatInterface
     public $select;
     
     
-    /**
-     * @var resource
-     */
-    public $file;
-     
-    
     
     /**
      * Constructor method for ChatModel class
@@ -80,7 +74,9 @@ class ChatModel implements ChatInterface
      */
     public function startChat($who)
     {   
-        if (null !== $this->who) {
+        if (null !== $who) {
+            $this->who = $who;
+            
             // fetch the user id in the friends_online table
             $user = new Select('members');
             
@@ -139,11 +135,6 @@ class ChatModel implements ChatInterface
                         $update = $this->gateway->update($update_data, array('id' => $get_id));
                         
                         if ($update > 0) {
-                            // make the file
-                            $chat_file_name = getcwd() . './data/chat/chat_session-' . $this->who . '-' . $this->from . '_' . time();
-                            
-                            $this->file = @fopen($chat_file_name, "a");
-                            
                             return $this;
                         } else {
                             throw new ChatException("Error starting the chat session, please try again.");
@@ -161,11 +152,6 @@ class ChatModel implements ChatInterface
                         $insert = $this->gateway->insert($insert_data);
                         
                         if ($insert > 0) {
-                            // create the chat file
-                            $chat_file_name = getcwd() . './data/chat/chat-session' . $this->who . '-' . $this->from . '_' . time();
-                            
-                            $this->file = @fopen($chat_file_name, "a");
-                            
                             return $this;
                         } else {
                             throw new ChatException("Error starting the chat session, please try again.");
@@ -200,9 +186,6 @@ class ChatModel implements ChatInterface
         $update = $this->gateway->update($update_data, array('who' => $to, 'from' => $this->getUserInfo()['username']));
         
         if ($update > 0) {
-            // update the file
-            fwrite($this->file, 'a');
-            
             return $this;
         } else {
             throw new ChatException("Error sending your message, please try again.");
@@ -223,8 +206,6 @@ class ChatModel implements ChatInterface
         $update = $this->gateway->update($update_data, array('who' => $who, 'from' => $this->getUserInfo()['username']));
         
         if ($update > 0) {
-            fclose($this->file);
-            
             return true;
         } else {
             throw new ChatException("Error ending your chat session.");
@@ -270,52 +251,9 @@ class ChatModel implements ChatInterface
     }
     
     
-    public function updateChat($function, $state) 
+    public function updateChat($user) 
     {
-        $log = array();
         
-        if ($function == 'update') {
-            if (file_exists($this->file)) {
-                $get_file_lines = file($this->file);
-            }
-            
-            $get_count = count($get_file_lines);
-            
-            if ($state == $get_count) {
-                $log['state'] = $state;
-                $log['text'] = false;
-            } else {
-                $text = [];
-                
-                $log['state'] = $state + count($get_file_lines) - $state;
-                
-                foreach ($get_file_lines as $num => $line) {
-                    if ($num >= $state) {
-                        $text[] = $line = str_replace("\n", "", $line);
-                    }
-                }
-                
-                $log['text'] = $text;
-            }
-        }
-        
-        return json_encode($log);
-    }
-    
-    
-    public function getStateOfChatSesion($function) 
-    {
-        $log = array();
-        
-        if ($function == 'getChatState') {
-            if (file_exists($this->file)) {
-                $file_lines = count($this->file);
-            }
-            
-            $log['state'] = count($file_lines);
-        }
-        
-        return json_encode($log);
     }
     
     
