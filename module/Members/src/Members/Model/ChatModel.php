@@ -129,7 +129,8 @@ class ChatModel implements ChatInterface
                         
                         // update the date only
                         $update_data = array(
-                            'chat_date' => date('Y-m-d H:i:s')                          
+                            'chat_date' => date('Y-m-d H:i:s'),
+                            'active' => 1,
                         );
                         
                         $update = $this->gateway->update($update_data, array('id' => $get_id));
@@ -147,6 +148,7 @@ class ChatModel implements ChatInterface
                             'from'          => $this->getUserInfo()['username'],
                             'from_message'  => '',
                             'chat_date'     => date('Y-m-d H:i:s'),
+                            'active'        => 1,
                         );
                         
                         $insert = $this->gateway->insert($insert_data);
@@ -200,7 +202,8 @@ class ChatModel implements ChatInterface
     public function endChat($who)
     {
         $update_data = array(
-            'chat_end_date' => date('Y-m-d H:i:s')
+            'chat_end_date' => date('Y-m-d H:i:s'),
+            'active' => 0,
         );
         
         $update = $this->gateway->update($update_data, array('who' => $who, 'from' => $this->getUserInfo()['username']));
@@ -239,7 +242,7 @@ class ChatModel implements ChatInterface
     
     public function listChatMessages($user)
     {
-        $get_messages = $this->gateway->select(['who' => strtolower($user), 'from' => $this->getUserInfo()['username']]);
+        $get_messages = $this->gateway->select(['who' => strtolower($user), 'from' => $this->getUserInfo()['username'], 'active' => 1]);
         
         $msg = [];
         
