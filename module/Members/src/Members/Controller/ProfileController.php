@@ -166,6 +166,12 @@ class ProfileController extends AbstractActionController
     
     
     
+    public function vieweditedimagesAction()
+    {
+        return new ViewModel(array('files' => $this->getProfileService()->viewEditedPhotos()));
+    }
+    
+    
     
     
     public function makephotoalbumAction()
@@ -313,8 +319,6 @@ class ProfileController extends AbstractActionController
         if ($this->request->isPost()) {
             try {
                 $params = $this->getRequest()->getPost()->toArray();
-                
-                var_dump($params);
                 
                 $this->getProfileService()->deleteAlbum($params);
             } catch (PhotoAlbumException $e) {

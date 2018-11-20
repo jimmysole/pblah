@@ -584,6 +584,26 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
     
     /**
      * {@inheritDoc}
+     * @see \Members\Model\Interfaces\PhotoAlbumInterface::viewEditedPhotos()
+     */
+    public function viewEditedPhotos()
+    {
+        $photos = array();
+        
+        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/edited_photos/', 1), array('.', '..')) as $edited_photos) {
+            if (count($edited_photos, 1) > 0) {
+                $photos[] = $edited_photos;
+            } else {
+                $photos[] = null;
+            }
+        }
+        
+        return array('photos' => $photos);
+    }
+    
+    
+    /**
+     * {@inheritDoc}
      * @see \Members\Model\Interfaces\PhotoAlbumInterface::addPhotosToAlbum()
      */
     public function addPhotosToAlbum($first_album, $pfiles, $other_album = false)

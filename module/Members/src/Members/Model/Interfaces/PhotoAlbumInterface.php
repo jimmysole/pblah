@@ -81,4 +81,13 @@ interface PhotoAlbumInterface
      * @return array
      */
     public function getAlbums();
+    
+    
+    /**
+     * Gets the list of all the edited photos for a user
+     * 
+     * @throws PhotoAlbumException
+     * @return array
+     */
+    public function viewEditedPhotos();
 }
