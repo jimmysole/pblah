@@ -509,6 +509,8 @@
 				}).fail(function(data) {
 					console.log(data);
 				});
+
+				setTimeout(getChatMessages(), 1000);
 			});
 
 			
@@ -541,13 +543,6 @@
 					}).fail(function(data) {
 						$('#chat-error-text').html(data);
 					});
-
-				// keep reloading the user messages who is been chatted with?
-				// see if any new messages exist?
-				// how? perhaps make an active field?
-				// or check if the end date is empty?
-				// rawwwwwwwwwwwwwwwwwwwwwwrrr
-				
 			}); 
 
 			$('#send-message').on('click', function() {
