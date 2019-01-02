@@ -27,7 +27,8 @@ class FriendsController extends AbstractActionController
         $view_model->setTerminal(true);
         
         try {
-            echo json_encode(array('friends' => $this->getFriendsService()->getFriendsOnline()));
+            echo json_encode($this->getFriendsService()->getFriendsOnline());
+           //var_dump($this->getFriendsService()->getFriendsOnline());
         } catch (FriendsException $e) {
             echo json_encode(array('message' => $e->getMessage()));
         }

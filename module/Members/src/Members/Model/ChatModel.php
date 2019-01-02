@@ -50,6 +50,17 @@ class ChatModel implements ChatInterface
     public $select;
     
     
+    /**
+     * @var array
+     */
+    public $chat_logger = [];
+    
+    
+    /**
+     * @var string
+     */
+    private $state;
+    
     
     /**
      * Constructor method for ChatModel class
@@ -136,6 +147,8 @@ class ChatModel implements ChatInterface
                         $update = $this->gateway->update($update_data, array('id' => $get_id));
                         
                         if ($update > 0) {
+                            $create_chat_file = @fopen("./data/chat/" . $this->who . '-' . $this->getUserInfo()['username'] . '.txt', 'a');
+                            
                             return $this;
                         } else {
                             throw new ChatException("Error starting the chat session, please try again.");
@@ -143,20 +156,28 @@ class ChatModel implements ChatInterface
                     } else {
                         // no records found
                         // start a new chat session
+                        // create the file
                         $insert_data = array(
                             'who'           => $this->who,
                             'from'          => $this->getUserInfo()['username'],
-                            'from_message'  => '',
                             'chat_date'     => date('Y-m-d H:i:s'),
                             'active'        => 1,
                         );
                         
-                        $insert = $this->gateway->insert($insert_data);
+                        $create_chat_file = @fopen("./data/chat/" . $this->who . '-' . $this->getUserInfo()['username'] . '.txt', 'a');
                         
-                        if ($insert > 0) {
-                            return $this;
+                        if (is_resource($create_chat_file)) {
+                            // chat file created
+                            // move on to inserting
+                            $insert = $this->gateway->insert($insert_data);
+                            
+                            if ($insert > 0) {
+                                return $this;
+                            } else {
+                                throw new ChatException("Error starting the chat session, please try again.");
+                            }
                         } else {
-                            throw new ChatException("Error starting the chat session, please try again.");
+                            throw new ChatException("Error creating the chat file, please try again.");
                         }
                     }
                 } else {
@@ -171,27 +192,62 @@ class ChatModel implements ChatInterface
     }
     
     
+    public function getState($file)
+    {
+        if (file_exists($file)) {
+            $flines = file($file);
+        }
+        
+        return count($flines);
+    }
+    
+    
     /**
      * {@inheritDoc}
-     * @see \Members\Model\Interfaces\ChatInterface::sendMessage()
+     * @see \Members\Model\Interfaces\ChatInterface::processChat()
      */
-    public function sendMessage($who, $message)
+    public function processChat($function, $state, $file, array $details = array())
     {
-        $to            = !empty($who)     ? $who     : null;
-        $this->message = !empty($message) ? $message : null;
-        
-        // update the message field in the chat field
-        $update_data = array(
-            'from_message' => $this->message,
-        );
-        
-        $update = $this->gateway->update($update_data, array('who' => $to, 'from' => $this->getUserInfo()['username']));
-        
-        if ($update > 0) {
-            return $this;
+        if ($function == 'getState') {
+            $this->chat_logger['state'] = $this->getState("./data/chat/" . $file);
+        } else if ($function == 'update') {
+            if (file_exists("./data/chat/" . $file)) {
+                $flines = file("./data/chat/" . $file);
+                
+                if ($state == $this->getState("./data/chat/" . $file)) {
+                    $this->chat_logger['state'] = $state;
+                    $this->chat_logger['text']  = false;
+                } else {
+                    $text = [];
+                        
+                    $this->chat_logger['state'] = $state + count($flines) - $state;
+                        
+                    foreach ($flines as $num => $line) {
+                        if ($num >= $state) {
+                            $text[] = $line = str_replace("\n", "", $line);
+                        }
+                    }
+                        
+                    $this->chat_logger['text'] = $text;
+                }
+            } else {
+                throw new ChatException("Error retrieving the updated status of the chat session.");
+            }
+        } else if ($function == 'send') {
+            if (count($details) > 0) {
+                if ($details['message'] != "\n") {
+                    fwrite(fopen("./data/chat/" . $file, 'a'),
+                        "<span class=\"w3-tag w3-padding w3-round-medium w3-theme-d2\">" . $this->getUserInfo()['username'] . "</span>" 
+                        . " " . $details['message'] = str_replace("\n", " ", $details['message']) . "\n");
+                }
+            } else {
+                throw new ChatException("Cannot send an empty message.");
+            }
         } else {
-            throw new ChatException("Error sending your message, please try again.");
+            throw new ChatException("Invalid function given.");
         }
+        
+        echo json_encode($this->chat_logger);
     }
     
     
@@ -215,49 +271,6 @@ class ChatModel implements ChatInterface
         }
     }
     
-    
-    /**
-     * {@inheritDoc}
-     * @see \Members\Model\Interfaces\ChatInterface::respondTo()
-     */
-    public function respondTo($to, $message)
-    {
-        $send_to = !empty($to) ? $to : null;
-        
-        $send_message = !empty($message) ? $message : null;
-        
-        $update_data = array(
-            'who_message' => $send_message,
-        );
-        
-        $update = $this->gateway->update($update_data, array('from' => $send_to));
-        
-        if ($update > 0) {
-            return true;
-        } else {
-            throw new ChatException("Error sending your reply.");
-        }
-    }
-    
-    
-    public function listChatMessages($user)
-    {
-        $get_messages = $this->gateway->select(['who' => strtolower($user), 'from' => $this->getUserInfo()['username'], 'active' => 1]);
-        
-        $msg = [];
-        
-        foreach ($get_messages as $messages) {
-            $msg[] = $messages;
-        }
-        
-        return json_encode($msg);
-    }
-    
-    
-    public function updateChat($user) 
-    {
-        
-    }
     
     
     

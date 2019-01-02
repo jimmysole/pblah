@@ -13,17 +13,6 @@ interface ChatInterface
      */
     public function startChat($who);
     
-    
-    /**
-     * Sends a message to the user
-     * @param string $who
-     * @param string $message
-     * @throws ChatException
-     * @return ChatInterface
-     */
-    public function sendMessage($who, $message);
-    
-    
     /**
      * Ends a chat session
      * @param string $who
@@ -32,13 +21,14 @@ interface ChatInterface
      */
     public function endChat($who);
     
-    
     /**
-     * Sends a reply to the user
-     * @param string $who
-     * @param string $message
+     * Handles the chat functionality
+     * @param string $function
+     * @param string $state
+     * @param string $file
+     * @param array $details
      * @throws ChatException
-     * @return ChatInterface
+     * @return bool
      */
-    public function respondTo($who, $message);
+    public function processChat($function, $state, $file, array $details = array());
 }

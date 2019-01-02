@@ -392,15 +392,7 @@
 			<div class="w3-col m12">
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding">
-						<h6 class="w3-opacity">Start a chat session! Select one of your friends that are online from the list below.</h6>
-						
-						<br>
-						
-						<select id="chat-friends" class="w3-select" name="chat-friends">
-							<option>Choose a Friend</option>
-						</select>
-						
-					
+						<h6 class="w3-opacity" id="chat-start-text">Start Chatting! Click on one of your friends that are online to the right.</h6>
 					</div>
 				</div>
 			</div>
@@ -411,33 +403,24 @@
 				<span class="w3-closebtn" id="end-chat">&times;</span>
 			</p>
 			
-			<h4 class="chat-to"></h4>
-			
 			<br>
-			<!-- rework this to include both chat send to and the user -->
-			<div class="w3-container w3-border" style="overflow-y: scroll;">
-				<p class="w3-left" id="chat-send-to">
-				   
-				</p>
-			</div>
-			
+			<br>
+			<br>
 			<br>
 			
-			<div class="w3-container w3-border" style="overflow-y: scroll;">
-				<p class="w3-left" id="user-message">
-					<?php echo $this->identity(); ?>
-					<br>
-				</p>
+			<div class="w3-container w3-border" style="overflow-y: scroll;" id="chat-area">
+				
 			</div> 
 			
+			<br>
+			<br>
+			<br>
 			<br>
 			
 			<div class="w3-container w3-right">
 				<p class="w3-right w3-small" style="font-weight: bold;">
 					<textarea class="w3-input w3-border w3-round" style="width: 300px; height: 150px; resize: none;" id="message"></textarea>
 					<br>
-					<button class="w3-button w3-left w3-theme-d2 w3-round" id="start-chat">Start Chat</button>
-					
 					<button class="w3-button w3-right w3-theme-d2 w3-round" id="send-message">Send Message</button>
 				</p>
 			</div>
@@ -459,108 +442,19 @@
 		<!-- End Middle Column -->
 		
 		<script type="text/javascript">
-			var text;
-			
-			$('#chat-friends').on('change', function() {
-				// check if the chat window was closed
-				if ($('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style')) {
-					$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: block;');
-				}
-				
-				var id = $(this).val();
-				text = $('option:selected', this).text();
-
-				$('.chat-to').html("Chat session with " + text);
-
-				
-				$('#chat-send-to').html(text);
-
-				// see if there is any chats that already exist
-				// if so, enable send-message button
-				// if not, disable
-				// check if data is defined
-				// if not, bail
-				$.getJSON("/members/chat/get-messages", { user: text, format: "json"})
-				.done(function(data) {
-					if (jQuery.isEmptyObject(data)) {
-						// no chat was found
-						// just display the user's identity
-						$('#user-message').html("<?php echo $this->identity(); ?>" + "<br>");
-
-						$('#send-message').attr('disabled', false);
-						$('#start-chat').attr('disabled', false);
-						$('#message').attr('disabled', false);
-					} else {
-						// clear text before each new option selected
-						// so no message is carried over from a different chat with another user
-						$('#user-message').html("");
-						
-						$('#user-message').prepend("<?php echo $this->identity(); ?>" + "<br>");
-						
-						$.each(data, function(i, item) {
-							$('#user-message').append(data[i].from_message + "<br>");
-							$('#chat-send-to').append("<br>" + data[i].who_message + "<br>");
-						});
-						
-						$('#send-message').attr('disabled', false);
-						$('#start-chat').attr('disabled', true);
-						$('#message').attr('disabled', false);
-					}
-				}).fail(function(data) {
-					console.log(data);
-				});
-
-				setTimeout(getChatMessages(), 1000);
-			});
-
-			
 			$('#end-chat').on('click', function() {
-				var receipent = text;
+				var receipent = friend;
 				
 				if (confirm("Are you sure you want to remove this chat?")) {
-					$.post('/members/chat/end-chat', { friend: receipent.toLowerCase() })
+					$.post('/members/chat/end-chat', { friend: receipent })
 						.done(function() {
-							$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: none;');	
-							$('#user-message').val("");
-							$('#message').attr('disabled', false);
+							$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: none;');
 						}).fail(function(data) {
 							$('#chat-error-text').html(data);
 						});
 				} else {
 					return;
 				}
-			});
-
-			
-			$('#start-chat').on('click', function() {
-				var sendToWho = text;
-				
-				$.post('/members/chat/start-chat', { startWho: sendToWho.toLowerCase() })
-					.done(function() {
-						$('#start-chat').attr('disabled', true);
-						$('#message').attr('disabled', false);
-						$('#send-message').attr('disabled', false);
-					}).fail(function(data) {
-						$('#chat-error-text').html(data);
-					});
-			}); 
-
-			$('#send-message').on('click', function() {
-				var sendToWho = text;
-
-				if ($('#message').val() == "") {
-					$('#chat-error').attr('style', 'display: block;');
-					$('#chat-error-text').html("Message cannot be left blank.");
-					return false;
-				}
-
-				$.post('/members/chat/send-message', { who: sendToWho.toLowerCase(), message: $('#message').val() })
-			    	.done(function(data) {
-						$('#user-message').append("<br>" + $('#message').val() + "<br>");
-						$('#message').val("");
-					}).fail(function() {
-						$('#chat-error-text').html("Error sending your message, please try again.");
-					});
 			});
 		</script>
 	</div>
@@ -573,6 +467,38 @@
 				<hr style="border: 1px solid; box-shadow: 0 0 5px 1px black inset;">
 				
 				<p class="w3-left" id="friends-online"></p>
+				
+				<script type="text/javascript">
+					var friend;
+				
+					$('#friends-online').on('click', 'a', function(event) {
+						// make an ajax call to /members/chat/start-chat
+						// where it will create a text file
+						// in the format of friend-user
+						event.preventDefault();
+
+						$('#chat-start-text').html("Chat Session With " + $(this).text());
+
+						friend = $(this).text();
+
+						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: block');
+
+						$.post('/members/chat/start-chat', { startWho: $(this).text() })
+						.done(function() {
+							chat.getState(friend + "-<?php echo $this->identity(); ?>" + ".txt");
+							chat.update(friend + "-<?php echo $this->identity(); ?>" + ".txt");
+						});
+					});
+
+
+					$('#send-message').on('click', function() {
+						chat.send($('#message').val(), friend + "-<?php echo $this->identity(); ?>" + ".txt");
+
+						setInterval(chat.update(friend + "-<?php echo $this->identity; ?>" + ".txt"), 1500);
+					});
+
+					
+				</script>
 			</div>
 		</div>
 	<!-- end right column -->

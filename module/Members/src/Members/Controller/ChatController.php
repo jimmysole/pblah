@@ -84,62 +84,36 @@ class ChatController extends AbstractActionController
     }
     
     
-    public function updateChat() 
+    public function processchatAction()
     {
         $layout = $this->layout();
         $layout->setTerminal(true);
         
+        
         $view_model = new ViewModel();
         $view_model->setTerminal(true);
         
-        $user = $this->params()->fromPost('user');
+        
+        $function = $this->params()->fromPost('function');
+        $file     = $this->params()->fromPost('file');
+        $state    = $this->params()->fromPost('state'); 
+        $message  = $this->params()->fromPost('message');
+        
         
         try {
-            $this->getChatService()->updateChat($user);
+            if ($function == 'getState') {
+                $this->getChatService()->processChat('getState', $state, $file, array());
+            } else if ($function == 'update') {
+                $this->getChatService()->processChat('update', $state, $file, array());
+            } else if ($function == 'send') {
+                $this->getChatService()->processChat('send', $state, $file, array('message' => $message));
+            }
         } catch (ChatException $e) {
             echo $e->getMessage();
-        }
+        } 
         
         return $view_model;
     }
-    
-    
-    public function sendmessageAction()
-    {
-        $layout = $this->layout();
-        $layout->setTerminal(true);
-        
-        $view_model = new ViewModel();
-        $view_model->setTerminal(true);
-        
-        $who = $this->params()->fromPost('who');
-        $message = $this->params()->fromPost('message');
-        
-        try {
-            $this->getChatService()->sendMessage($who, $message);
-        } catch (ChatException $e) {
-            echo $e->getMessage();
-        }
-        
-        return $view_model;
-    }
-    
-    
-    public function getmessagesAction()
-    {
-        $layout = $this->layout();
-        $layout->setTerminal(true);
-        
-        $view_model = new ViewModel();
-        $view_model->setTerminal(true);
-        
-        $params = $this->params()->fromQuery('user');
-        
-        echo $this->getChatService()->listChatMessages($params);
-        
-        return $view_model;
-    }
-    
     
     public function endchatAction()
     {
