@@ -486,15 +486,13 @@
 						$.post('/members/chat/start-chat', { startWho: $(this).text() })
 						.done(function() {
 							chat.getState(friend + "-<?php echo $this->identity(); ?>" + ".txt");
-							chat.update(friend + "-<?php echo $this->identity(); ?>" + ".txt");
 						});
 					});
 
 
 					$('#send-message').on('click', function() {
 						chat.send($('#message').val(), friend + "-<?php echo $this->identity(); ?>" + ".txt");
-
-						setInterval(chat.update(friend + "-<?php echo $this->identity; ?>" + ".txt"), 1500);
+						chat.update(friend + "-<?php echo $this->identity(); ?>" + ".txt");
 					});
 
 					
