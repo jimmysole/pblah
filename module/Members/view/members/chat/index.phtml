@@ -483,6 +483,9 @@
 
 						$('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section').attr('style', 'display: block');
 
+						// clear any chat from a previous user
+						$('#chat-area').html("");
+						
 						$.post('/members/chat/start-chat', { startWho: $(this).text() })
 						.done(function() {
 							chat.getState(friend + "-<?php echo $this->identity(); ?>" + ".txt");
