@@ -1,4 +1,4 @@
-Copyright (c) 2016, Jimmy Sole
+Copyright (c) 2019, Jimmy Sole
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
