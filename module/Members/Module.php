@@ -14,6 +14,9 @@ use Members\Model\StatusModel;
 use Members\Model\FriendsModel;
 use Members\Model\FeedModel;
 use Members\Model\ChatModel;
+use Members\Model\MessagesModel;
+use Zend\Db\ResultSet\ResultSet;
+use Members\Model\Filters\Messages;
 
 class Module implements AutoloaderProviderInterface
 {
@@ -201,6 +204,18 @@ class Module implements AutoloaderProviderInterface
                 'ChatService' => function($sm) {
                     $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
                     return new TableGateway('chat', $db_adapter);
+                },
+                
+                'Members\Model\MessagesModel' => function($sm) {
+                    $table_gateway = $sm->get('MessagesService');
+                    $members_model = new MessagesModel($table_gateway, $sm->get('pblah-auth')->getIdentity());
+                },
+                
+                'MessagesService' => function($sm) {
+                    $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $result_set_prototype = new ResultSet();
+                    $result_set_prototype->setArrayObjectPrototype(new Messages());
+                    return new TableGateway('messages', $db_adapter, null, $result_set_prototype);
                 }
             )
         );
