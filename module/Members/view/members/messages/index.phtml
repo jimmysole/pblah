@@ -403,6 +403,14 @@
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding">
 					List Messages
+					<script type="text/javascript">
+						$.getJSON('/members/messages/get-messages')
+						.done(function(result) {
+
+						}).fail(function(result) {
+
+						});
+					</script>
 					</div>
 				</div>
 			</div>

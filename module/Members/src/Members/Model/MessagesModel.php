@@ -7,6 +7,7 @@ use Members\Model\Interfaces\MessagesInterface;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
+use Members\Model\Exceptions\MessagesException;
 
 
 class MessagesModel implements MessagesInterface
@@ -57,5 +58,27 @@ class MessagesModel implements MessagesInterface
     public function sendMessage($to, array $message)
     {
         
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     * @see \Members\Model\Interfaces\MessagesInterface::getMessages()
+     */
+    public function getMessages()
+    {
+        $select = $this->gateway->select(array('from' => $this->user));
+        
+        if ($select->count() > 0) {
+            $messages_holder = [];
+            
+            foreach ($select as $messages) {
+                $messages_holder[] = $messages;
+            }
+            
+            return $messages_holder;
+        } else {
+            throw new MessagesException("No messages currently are in your inbox.");
+        }
     }
 }

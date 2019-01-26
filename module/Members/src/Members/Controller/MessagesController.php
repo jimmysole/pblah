@@ -2,11 +2,16 @@
 namespace Members\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-
 use Zend\View\Model\ViewModel;
+
+use Members\Model\Exceptions\MessagesException;
+
 
 class MessagesController extends AbstractActionController
 {
+    protected $messages_service;
+    
+    
     public function indexAction()
     {
         $view_model = new ViewModel();
@@ -51,4 +56,32 @@ class MessagesController extends AbstractActionController
         }
     }
 
+    
+    public function getmessagesAction()
+    {
+        $layout = $this->layout();
+        $layout->setTerminal(true);
+        
+        
+        $view_model = new ViewModel();
+        $view_model->setTerminal(true);
+        
+        try {
+            echo json_encode($this->getMessagesService()->getMessages());
+        } catch (MessagesException $e) {
+            echo json_encode(array('error' => $e->getMessage()));
+        }
+        
+        return $view_model;
+    }
+    
+    
+    public function getMessagesService()
+    {
+        if (!$this->messages_service) {
+            $this->messages_service = $this->getServiceLocator()->get('Members\Model\MessagesModel');
+        }
+        
+        return $this->messages_service;
+    }
 }

@@ -215,7 +215,7 @@ class Module implements AutoloaderProviderInterface
                     $db_adapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $result_set_prototype = new ResultSet();
                     $result_set_prototype->setArrayObjectPrototype(new Messages());
-                    return new TableGateway('messages', $db_adapter, null, $result_set_prototype);
+                    return new TableGateway('private_messages', $db_adapter, null, $result_set_prototype);
                 }
             )
         );

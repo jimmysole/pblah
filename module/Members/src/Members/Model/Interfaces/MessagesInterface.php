@@ -14,4 +14,12 @@ interface MessagesInterface
      * @return boolean
      */
     public function sendMessage($to, array $message);
+    
+    
+    /**
+     * Gets messages for the user
+     * @throws MessagesException
+     * @return array
+     */
+    public function getMessages();
 }
