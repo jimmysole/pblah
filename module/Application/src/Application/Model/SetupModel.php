@@ -252,8 +252,10 @@ class SetupModel
         // create the private messages table
         $private_messages = new Ddl\CreateTable('private_messages');
         $private_messages->addColumn(new Column\Integer('id', false, null, array('auto_increment' => true, 'unsigned' => true)));
+        $private_messages->addColumn(new Column\Integer('user_id', false, null, array('unsigned' => true)));
         $private_messages->addColumn(new Column\Text('to'));
         $private_messages->addColumn(new Column\Char('from', 15));
+        $private_messages->addColumn(new Column\Char('subject', 150));
         $private_messages->addColumn(new Column\Text('message'));
         $private_messages->addColumn(new Column\Datetime('date_received'));
         $private_messages->addColumn(new Column\Integer('active', true, null));
