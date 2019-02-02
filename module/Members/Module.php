@@ -209,6 +209,8 @@ class Module implements AutoloaderProviderInterface
                 'Members\Model\MessagesModel' => function($sm) {
                     $table_gateway = $sm->get('MessagesService');
                     $members_model = new MessagesModel($table_gateway, $sm->get('pblah-auth')->getIdentity());
+                    
+                    return $members_model;
                 },
                 
                 'MessagesService' => function($sm) {

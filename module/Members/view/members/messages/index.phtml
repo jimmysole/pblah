@@ -402,13 +402,35 @@
 			<div class="w3-col m12">
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding">
-					List Messages
+					<table class="w3-table-all" id="msg-table" style="display: none;">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>Subject</th>
+								<th>Message</th>
+								<th>Date Sent</th>
+								<th></th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							<tr></tr>
+						</tbody>
+					</table>
+					
 					<script type="text/javascript">
 						$.getJSON('/members/messages/get-messages')
 						.done(function(result) {
-
+							$('#msg-table').attr('style', '');
+							$('#msg-table').attr('style', 'width: 100%;');
+							
+							$.each(result, function(i, item) {
+								$('#msg-table').find('tbody tr').append('<td>' + result[i].pmsg_from + '</td><td>' +
+									result[i].pmsg_subject + '</td><td>' + result[i].pmsg_message + '</td>' + 
+									'<td>' + result[i].pmsg_drec + '</td>' + '<td>' + '<input type="checkbox" class="w3-check"></td>');
+							});
 						}).fail(function(result) {
-
+							console.log(result.error);
 						});
 					</script>
 					</div>

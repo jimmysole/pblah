@@ -81,6 +81,35 @@ class Messages implements InputFilterAwareInterface
             
             
             $input_filter->add($factory->createInput(array(
+                'name'     => 'from',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => StripTags::class),
+                ),
+                
+                'validators' => array(
+                    array(
+                        'name' => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 3,
+                            'max'      => 15,
+                        ),
+                    ),
+                ),
+            )));
+            
+            
+            $input_filter->add($factory->createInput(array(
+                'name'     => 'date_received',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => StripTags::class),
+                ),
+            )));
+            
+            
+            $input_filter->add($factory->createInput(array(
                 'name'     => 'message',
                 'required' => true,
                 'filters'  => array(
