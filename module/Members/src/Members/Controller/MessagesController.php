@@ -54,6 +54,14 @@ class MessagesController extends AbstractActionController
             
             $layout->setVariable('my_videos', $videos);
         }
+        
+        $paginator = $this->getMessagesService()->getAllMessages();
+        
+        $paginator->setCurrentPageNumber((int)$this->params()->fromRoute('page', 1));
+        
+        $paginator->setItemCountPerPage(5);
+        
+        return new ViewModel(array('paginator' => $paginator));
     }
 
     

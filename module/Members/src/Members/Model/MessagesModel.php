@@ -12,6 +12,10 @@ use Zend\Db\Adapter\Adapter;
 
 use Members\Model\Exceptions\MessagesException;
 use Members\Model\Interfaces\MessagesInterface;
+use Zend\Db\ResultSet\ResultSet;
+use Members\Model\Filters\Messages;
+use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Paginator;
 
 
 class MessagesModel implements MessagesInterface
@@ -78,7 +82,7 @@ class MessagesModel implements MessagesInterface
             private_messages.subject AS pmsg_subject, private_messages.message AS pmsg_message, private_messages.date_received AS pmsg_drec
             FROM private_messages
             INNER JOIN members ON private_messages.user_id = members.id
-            WHERE members.id = " . $this->getUserId()['id']);
+            WHERE members.id = " . $this->getUserId()['id'] . " LIMIT 5");
         
        
         
@@ -116,5 +120,23 @@ class MessagesModel implements MessagesInterface
         }
         
         return false;
+    }
+    
+    
+    public function getAllMessages() 
+    {
+        $select = new Select();
+        
+        $select->from('private_messages')->where(array('user_id' => $this->getUserId()['id']));
+        
+        $result_set_prototype = new ResultSet();
+        
+        $result_set_prototype->setArrayObjectPrototype(new Messages());
+        
+        $paginator_adapter = new DbSelect($select, $this->gateway->getAdapter(), $result_set_prototype);
+        
+        $paginator = new Paginator($paginator_adapter);
+        
+        return $paginator;
     }
 }

@@ -88,13 +88,26 @@ return array(
                     'messages' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route' => '/messages[/:action]',
+                            'route' => '/messages[/page/:page]',
                             'defaults' => array(
                                 'controller' => 'Members\Controller\Messages',
                                 'action'     => 'index',
                             ),
                         ),
                     ),
+                    
+                    /*
+                    'list-messages' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/list-messages[/page/:page]',
+                            
+                            'defaults' => array(
+                                'controller' => 'Members\Controller\ListMessages',
+                                'action' => 'index',
+                            ),
+                        ),
+                    ), */
 
                     'profile' => array(
                         'type'    => 'Segment',

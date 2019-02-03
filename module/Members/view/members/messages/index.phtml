@@ -402,23 +402,49 @@
 			<div class="w3-col m12">
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding">
-					<table class="w3-table-all" id="msg-table" style="display: none;">
+					<table class="w3-table-all" id="msg-table">
 						<thead>
 							<tr>
 								<th>From</th>
 								<th>Subject</th>
 								<th>Message</th>
 								<th>Date Sent</th>
-								<th></th>
 							</tr>
 						</thead>
 						
-						<tbody>
-							<tr></tr>
-						</tbody>
+						
+						<?php 
+							  foreach ($this->paginator as $value):
+						?>
+							<tr class="w3-hover-text-red w3-text-black">
+								<td>
+									<?php echo $value->from; ?>	
+								</td>
+								
+								<td>
+									<?php echo $value->subject; ?>
+								</td>
+								
+								<td>
+									<?php echo $value->message; ?>
+								</td>
+
+								<td>
+									<?php echo $value->date_sent; ?>
+								</td>	
+								
+								<td>
+									<input type="checkbox" class="w3-check">
+								</td>							
+							</tr>
+						<?php endforeach; ?>
 					</table>
 					
+					<?php echo $this->paginationControl($this->paginator, 'sliding', 'paginator.phtml', array('route' => 'members/messages')); ?>
+					<br class="w3-clear">
+					
 					<script type="text/javascript">
+					/*
 						$.getJSON('/members/messages/get-messages')
 						.done(function(result) {
 							$('#msg-table').attr('style', '');
@@ -431,7 +457,7 @@
 							});
 						}).fail(function(result) {
 							console.log(result.error);
-						});
+						}); */
 					</script>
 					</div>
 				</div>

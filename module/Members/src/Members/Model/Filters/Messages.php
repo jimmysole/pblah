@@ -14,6 +14,13 @@ use Zend\Validator\StringLength;
 
 class Messages implements InputFilterAwareInterface
 {
+    
+    /**
+     * @var string
+     */
+    public $from;
+    
+    
     /**
      * @var string
      */
@@ -27,6 +34,12 @@ class Messages implements InputFilterAwareInterface
     
     
     /**
+     * @var string
+     */
+    public $date_sent;
+    
+    
+    /**
      * @var InputFilter|null
      */
     protected $input_filter;
@@ -34,8 +47,10 @@ class Messages implements InputFilterAwareInterface
     
     public function exchangeArray($data)
     {
-        $this->subject = (!empty($data['subject'])) ? $data['subject'] : null;
-        $this->message = (!empty($data['message'])) ? $data['message'] : null;
+        $this->from      = (!empty($data['from']))          ? $data['from']          : null;
+        $this->subject   = (!empty($data['subject']))       ? $data['subject']       : null;
+        $this->message   = (!empty($data['message']))       ? $data['message']       : null;
+        $this->date_sent = (!empty($data['date_received'])) ? $data['date_received'] : null;
     }
     
     
