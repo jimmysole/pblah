@@ -379,6 +379,59 @@
 						}
 					}
 				</script>
+				
+				
+				
+				<!-- send message modal -->
+				<div class="w3-modal" id="send-msg-modal">
+					<div class="w3-modal-content w3-card-4 w3-theme-d2 w3-round" style="width: 800px; height: 500px;">
+						<div class="w3-container">
+							<p class="w3-center w3-small" id="send-message-modal">
+								Send Message
+								<span onclick="document.getElementById('send-msg-modal').style.display = 'none'" class="w3-closebtn" id="close-send-msg">&times;</span>
+							</p>
+							
+							<br><br>
+							
+							<div class="w3-row-padding" id="send-message-fields">
+								<label><b>To</b></label>
+								<select class="w3-select" name="members" id="members">
+									<option value="" disabled selected>Choose a user</option>
+									<?php foreach ($this->members as $value): ?>
+										<option value="<?php echo $value['username']; ?>"><?php echo $value['username']; ?></option>
+									<?php endforeach; ?>
+								</select>
+								<br><br>
+								<label><b>Subject</b></label>
+								<input type="text" class="w3-input w3-border">
+								<br>
+								<label><b>Message</b></label>
+								<textarea class="w3-input w3-border" style="resize: none;"></textarea>
+								<br>
+							</div>
+							
+							<div class="w3-row-padding w3-right">
+								<button class="w3-btn w3-white w3-round">Send Message</button>
+							</div>
+							
+							<br><br>
+							
+							<p class="w3-center">success/error message will go here</p>
+							
+							<div class="w3-clear"></div>
+						</div>
+					</div>
+				</div>
+				<!-- end send message modal -->
+				<script type="text/javascript">
+					var modal = document.getElementById('send-msg-modal');                                                                                                                                                                                                                                                                                                                                                             
+
+					window.onclick = function(event) {				
+						if (event.target == modal) {
+							modal.style.display = 'none';
+						}
+					}
+				</script>
 			</div>
 		</div>
 		<br class="w3-clear">
@@ -392,7 +445,17 @@
 			<div class="w3-col m12">
 				<div class="w3-card-2 w3-round w3-white">
 					<div class="w3-container w3-padding">
-						<h6 class="w3-opacity" id="chat-start-text">Your Messages</h6>
+						<h6 class="w3-opacity"><a href="<?php echo $this->url('members/send-message', array('action' => 'index')); ?>" id="smg">
+						Send Message</a></h6>
+						
+						<script type="text/javascript">
+							// event handler for on click send messages link
+							$('#smg').on('click', function(e) {
+								e.preventDefault();
+
+								document.getElementById("send-msg-modal").style.display = "block";
+							});
+						</script>
 					</div>
 				</div>
 			</div>

@@ -16,6 +16,7 @@ use Zend\Db\ResultSet\ResultSet;
 use Members\Model\Filters\Messages;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
+use Zend\Db\Sql\Insert;
 
 
 class MessagesModel implements MessagesInterface
@@ -39,6 +40,24 @@ class MessagesModel implements MessagesInterface
      * @var Select
      */
     public $select;
+    
+    
+    /**
+     * @var string
+     */
+    public $to;
+    
+    
+    /**
+     * @var string
+     */
+    public $subject;
+    
+    
+    /**
+     * @var string
+     */
+    public $message;
       
     
     /**
@@ -63,39 +82,49 @@ class MessagesModel implements MessagesInterface
      * {@inheritDoc}
      * @see \Members\Model\Interfaces\MessagesInterface::sendMessage()
      */
-    public function sendMessage($to, array $message)
+    public function sendMessage($to, $subject, $message)
     {
+        $this->to      = (!empty($to))      ? $to      : null;
+        $this->subject = (!empty($subject)) ? $subject : "No Subject";
+        $this->message = (!empty($message)) ? $message : null;
         
-    }
-    
-    
-    /**
-     * {@inheritDoc}
-     * @see \Members\Model\Interfaces\MessagesInterface::getMessages()
-     */
-    public function getMessages()
-    {
+        // check the members table to see if user exists
+        $select = new Select();
         
-        $connection = $this->sql->getAdapter()->getDriver()->getConnection();
+        $select->from('members')
+        ->columns(array('username', 'id'))
+        ->where(array('username' => $this->to));
         
-        $query = $connection->execute("SELECT private_messages.to AS pmsg_to, private_messages.from AS pmsg_from,
-            private_messages.subject AS pmsg_subject, private_messages.message AS pmsg_message, private_messages.date_received AS pmsg_drec
-            FROM private_messages
-            INNER JOIN members ON private_messages.user_id = members.id
-            WHERE members.id = " . $this->getUserId()['id'] . " LIMIT 5");
-        
-       
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
         
         if ($query->count() > 0) {
-            $messages_holder = [];
-            
-            foreach ($query as $key => $messages) {
-                $messages_holder = array_merge_recursive($messages_holder, array($key => $messages));
+            // user was found
+            // insert into private messages table now
+            foreach ($query as $result) {
+                $row = $result;
             }
             
-            return $messages_holder;
+            $insert = new Insert();
+            
+            $insert->into('private_messages')
+            ->columns(array('user_id', 'to', 'from', 'subject', 'message', 'date_received'))
+            ->values(array($row['user_id'], $row['to'], $this->user, $this->subject, $this->message, date('Y-m-d H:i:s')));
+            
+            $query = $this->sql->getAdapter()->query(
+                $this->sql->buildSqlString($insert),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            if ($query->count() > 0) {
+                return true;
+            } else {
+                throw new MessagesException("Error sending your message");
+            }
         } else {
-            throw new MessagesException("No messages currently are in your inbox.");
+            throw new MessagesException("User does not exist.");
         }
     }
     
@@ -120,6 +149,31 @@ class MessagesModel implements MessagesInterface
         }
         
         return false;
+    }
+    
+    
+    public function getMembers()
+    {
+        $select = new Select();
+        
+        $select->from('members')->columns(array('username'));
+        
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($query->count() > 0) {
+            $rows = array();
+            
+            foreach ($query as $result) {
+                $rows[] = $result;
+            }
+            
+            return $rows;
+        } else {
+            return false;
+        }
     }
     
     

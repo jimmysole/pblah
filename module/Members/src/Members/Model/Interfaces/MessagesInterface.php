@@ -9,17 +9,11 @@ interface MessagesInterface
      * Sends a private message to a user from a user
      * 
      * @param string $to
-     * @param array $message
+     * @param string $subject
+     * @param string $message
      * @throws MessagesException
      * @return boolean
      */
-    public function sendMessage($to, array $message);
+    public function sendMessage($to, $subject, $message);
     
-    
-    /**
-     * Gets messages for the user
-     * @throws MessagesException
-     * @return array
-     */
-    public function getMessages();
 }

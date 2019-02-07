@@ -20,6 +20,7 @@ return array(
             'Members\Controller\ListsGroups'    => 'Members\Controller\ListsGroupsController',
             'Members\Controller\Feed'           => 'Members\Controller\FeedController',
             'Members\Controller\Chat'           => 'Members\Controller\ChatController',
+            'Members\Controller\SendMessage'    => 'Members\Controller\SendMessageController',
         ),
     ),
 
@@ -91,6 +92,17 @@ return array(
                             'route' => '/messages[/page/:page]',
                             'defaults' => array(
                                 'controller' => 'Members\Controller\Messages',
+                                'action'     => 'index',
+                            ),
+                        ),
+                    ),
+                    
+                    'send-message' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/send-message',
+                            'defaults' => array(
+                                'controller' => 'Members\Controller\SendMessage',
                                 'action'     => 'index',
                             ),
                         ),
