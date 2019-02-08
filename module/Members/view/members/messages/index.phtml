@@ -472,14 +472,37 @@
 								<th>Subject</th>
 								<th>Message</th>
 								<th>Date Sent</th>
-								<th></th>
+								<th>Mark As Read</th>
 							</tr>
 						</thead>
 						
 						
 						<?php 
 							  foreach ($this->paginator as $value):
+                                  if ($value->active == 1):
 						?>
+								  <tr class="w3-hover-text-red w3-text-black">
+								  	  <td>
+								  	      <b><?php echo $value->from; ?></b>
+								  	  </td>
+								  	  
+								  	  <td>
+								  	      <b><?php echo $value->subject; ?></b>
+								  	  </td>
+								  	  
+								  	  <td>
+								  	      <b><?php echo $value->message; ?></b>
+								  	  </td>
+								  	  
+								  	  <td>
+								  	      <b><?php echo $value->date_sent; ?></b>
+								  	  </td>
+								  	  
+								  	  <td>
+										 <input type="checkbox" class="w3-check">
+									  </td>
+								  </tr>
+						<?php else: ?>
 							<tr class="w3-hover-text-red w3-text-black">
 								<td>
 									<?php echo $value->from; ?>	
@@ -501,7 +524,10 @@
 									<input type="checkbox" class="w3-check">
 								</td>							
 							</tr>
-						<?php endforeach; ?>
+						<?php 
+						      endif;
+						      endforeach;
+						?>
 					</table>
 					
 					<?php echo $this->paginationControl($this->paginator, 'sliding', 'paginator.phtml', array('route' => 'members/messages')); ?>

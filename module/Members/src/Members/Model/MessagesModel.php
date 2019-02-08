@@ -110,8 +110,8 @@ class MessagesModel implements MessagesInterface
             $insert = new Insert();
             
             $insert->into('private_messages')
-            ->columns(array('user_id', 'to', 'from', 'subject', 'message', 'date_received'))
-            ->values(array($row['user_id'], $row['to'], $this->user, $this->subject, $this->message, date('Y-m-d H:i:s')));
+            ->columns(array('user_id', 'to', 'from', 'subject', 'message', 'date_received', 'active'))
+            ->values(array($row['user_id'], $row['to'], $this->user, $this->subject, $this->message, date('Y-m-d H:i:s'), 1));
             
             $query = $this->sql->getAdapter()->query(
                 $this->sql->buildSqlString($insert),

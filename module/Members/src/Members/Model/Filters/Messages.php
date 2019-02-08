@@ -40,6 +40,12 @@ class Messages implements InputFilterAwareInterface
     
     
     /**
+     * @var int
+     */
+    public $active;
+    
+    
+    /**
      * @var InputFilter|null
      */
     protected $input_filter;
@@ -51,6 +57,7 @@ class Messages implements InputFilterAwareInterface
         $this->subject   = (!empty($data['subject']))       ? $data['subject']       : null;
         $this->message   = (!empty($data['message']))       ? $data['message']       : null;
         $this->date_sent = (!empty($data['date_received'])) ? $data['date_received'] : null;
+        $this->active    = (!empty($data['active']))        ? $data['active']        : null;
     }
     
     
