@@ -158,7 +158,7 @@ class MessagesModel implements MessagesInterface
     {
         $select = new Select();
         
-        $select->from('members')->columns(array('username'));
+        $select->from('members')->columns(array('username'))->where('id != ' . $this->getUserId()['id']);
         
         $query = $this->sql->getAdapter()->query(
             $this->sql->buildSqlString($select),
