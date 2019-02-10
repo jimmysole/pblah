@@ -423,10 +423,10 @@
 							<script type="text/javascript">
 								$('#send-msg-button').on('click', function() {
 									$.post('/members/send-message', { to: $('#members option:selected').val(), subject: $('#subject').val(), message: $('#message').val() }, function(data) {
-										if (jQuery.isEmptyObject(data)) {
-											$('#send-message-result').html("Error sending your message");
-										} else {
+										if (data.success != undefined) {
 											$('#send-message-result').html(data.success);
+										} else {
+											$('#send-message-result').html(data.error);
 										} 
 									}, "json");
 								});
