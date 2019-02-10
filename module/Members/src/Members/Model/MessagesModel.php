@@ -92,7 +92,7 @@ class MessagesModel implements MessagesInterface
         $select = new Select();
         
         $select->from('members')
-        ->columns(array('username', 'id'))
+        ->columns(array('id', 'username'))
         ->where(array('username' => $this->to));
         
         $query = $this->sql->getAdapter()->query(
@@ -111,7 +111,9 @@ class MessagesModel implements MessagesInterface
             
             $insert->into('private_messages')
             ->columns(array('user_id', 'to', 'from', 'subject', 'message', 'date_received', 'active'))
-            ->values(array($row['user_id'], $row['to'], $this->user, $this->subject, $this->message, date('Y-m-d H:i:s'), 1));
+            ->values(array('user_id' => $row['id'], 'to' => $row['username'],
+                'from' => $this->user, 'subject' => $this->subject, 'message' => $this->message, 
+                'date_received' => date('Y-m-d H:i:s'), 'active' => 1));
             
             $query = $this->sql->getAdapter()->query(
                 $this->sql->buildSqlString($insert),

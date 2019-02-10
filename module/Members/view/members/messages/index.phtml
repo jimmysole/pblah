@@ -403,22 +403,34 @@
 								</select>
 								<br><br>
 								<label><b>Subject</b></label>
-								<input type="text" class="w3-input w3-border">
+								<input type="text" class="w3-input w3-border" id="subject">
 								<br>
 								<label><b>Message</b></label>
-								<textarea class="w3-input w3-border" style="resize: none;"></textarea>
+								<textarea class="w3-input w3-border" style="resize: none;" id="message"></textarea>
 								<br>
 							</div>
 							
 							<div class="w3-row-padding w3-right">
-								<button class="w3-btn w3-white w3-round">Send Message</button>
+								<button class="w3-btn w3-white w3-round" id="send-msg-button">Send Message</button>
 							</div>
 							
 							<br><br>
 							
-							<p class="w3-center">success/error message will go here</p>
+							<p class="w3-center" id="send-message-result"></p>
 							
 							<div class="w3-clear"></div>
+							
+							<script type="text/javascript">
+								$('#send-msg-button').on('click', function() {
+									$.post('/members/send-message', { to: $('#members option:selected').val(), subject: $('#subject').val(), message: $('#message').val() }, function(data) {
+										if (jQuery.isEmptyObject(data)) {
+											$('#send-message-result').html("Error sending your message");
+										} else {
+											$('#send-message-result').html(data.success);
+										} 
+									}, "json");
+								});
+							</script>
 						</div>
 					</div>
 				</div>
