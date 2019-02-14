@@ -544,23 +544,6 @@
 					
 					<?php echo $this->paginationControl($this->paginator, 'sliding', 'paginator.phtml', array('route' => 'members/messages')); ?>
 					<br class="w3-clear">
-					
-					<script type="text/javascript">
-					/*
-						$.getJSON('/members/messages/get-messages')
-						.done(function(result) {
-							$('#msg-table').attr('style', '');
-							$('#msg-table').attr('style', 'width: 100%;');
-							
-							$.each(result, function(i, item) {
-								$('#msg-table').find('tbody tr').append('<td>' + result[i].pmsg_from + '</td><td>' +
-									result[i].pmsg_subject + '</td><td>' + result[i].pmsg_message + '</td>' + 
-									'<td>' + result[i].pmsg_drec + '</td>' + '<td>' + '<input type="checkbox" class="w3-check"></td>');
-							});
-						}).fail(function(result) {
-							console.log(result.error);
-						}); */
-					</script>
 					</div>
 				</div>
 			</div>
