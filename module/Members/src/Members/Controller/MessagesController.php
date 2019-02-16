@@ -62,6 +62,7 @@ class MessagesController extends AbstractActionController
         return new ViewModel(array('paginator' => $paginator, 'members' => $this->getMessagesService()->getMembers()));
     }
     
+    
     public function getMessagesService()
     {
         if (!$this->messages_service) {
