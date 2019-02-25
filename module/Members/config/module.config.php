@@ -21,6 +21,8 @@ return array(
             'Members\Controller\Feed'           => 'Members\Controller\FeedController',
             'Members\Controller\Chat'           => 'Members\Controller\ChatController',
             'Members\Controller\SendMessage'    => 'Members\Controller\SendMessageController',
+            'Members\Controller\MarkAsRead'     => 'Members\Controller\MarkAsReadController',
+            'Members\Controller\MarkAsUnread'   => 'Members\Controller\MarkAsUnreadController',
         ),
     ),
 
@@ -108,18 +110,27 @@ return array(
                         ),
                     ),
                     
-                    /*
-                    'list-messages' => array(
-                        'type' => 'Segment',
+                    'mark-as-read' => array(
+                        'type' => 'Literal',
                         'options' => array(
-                            'route' => '/list-messages[/page/:page]',
-                            
+                            'route' =>'/mark-as-read',
                             'defaults' => array(
-                                'controller' => 'Members\Controller\ListMessages',
-                                'action' => 'index',
+                                'controller' => 'Members\Controller\MarkAsRead',
+                                'action'   => 'index',
                             ),
                         ),
-                    ), */
+                    ),
+                    
+                    'mark-as-unread' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/mark-as-unread',
+                            'defaults' => array(
+                                'controller' => 'Members\Controller\MarkAsUnread',
+                                'action'   => 'index',
+                             ),
+                        ),
+                    ),
 
                     'profile' => array(
                         'type'    => 'Segment',

@@ -493,29 +493,31 @@
 							  foreach ($this->paginator as $value):
                                   if ($value->active == 1):
 						?>
-								  <tr class="w3-hover-text-red w3-text-black">
+								  <tr class="w3-hover-text-red w3-text-black mark-as-unread">
 								  	  <td>
-								  	      <b><?php echo $value->from; ?></b>
+								  	      <?php echo $value->from; ?>
 								  	  </td>
 								  	  
 								  	  <td>
-								  	      <b><?php echo $value->subject; ?></b>
+								  	      <?php echo $value->subject; ?>
 								  	  </td>
 								  	  
 								  	  <td>
-								  	      <b><?php echo $value->message; ?></b>
+								  	      <?php echo $value->message; ?>
 								  	  </td>
 								  	  
 								  	  <td>
-								  	      <b><?php echo $value->date_sent; ?></b>
+								  	      <?php echo $value->date_sent; ?>
 								  	  </td>
 								  	  
 								  	  <td>
-										 <input type="checkbox" class="w3-check">&nbsp; Mark As Read
+										 <input type="checkbox" class="w3-check" onchange='markAsRead(this);' id="<?php echo $value->id; ?>">
+									  	 &nbsp; <label class="mu-text">Mark As Read</label>
 									  </td>
 								  </tr>
 						<?php else: ?>
-							<tr class="w3-hover-text-red w3-text-black">
+							<tr class="w3-hover-text-red w3-text-black mark-as-read">
+								  	  
 								<td>
 									<?php echo $value->from; ?>	
 								</td>
@@ -533,7 +535,8 @@
 								</td>	
 								
 								<td>
-									<input type="checkbox" class="w3-check">&nbsp; Mark As Unread
+									<input type="checkbox" class="w3-check" onchange='markAsUnread(this);' id="<?php echo $value->id; ?>">
+									&nbsp; <label class="mu-text">Mark As Unread</label>
 								</td>							
 							</tr>
 						<?php 

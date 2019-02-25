@@ -16,6 +16,12 @@ class Messages implements InputFilterAwareInterface
 {
     
     /**
+     * @var int
+     */
+    public $id;
+    
+    
+    /**
      * @var string
      */
     public $from;
@@ -53,6 +59,7 @@ class Messages implements InputFilterAwareInterface
     
     public function exchangeArray($data)
     {
+        $this->id        = (!empty($data['id']))            ? $data['id']            : null;
         $this->from      = (!empty($data['from']))          ? $data['from']          : null;
         $this->subject   = (!empty($data['subject']))       ? $data['subject']       : null;
         $this->message   = (!empty($data['message']))       ? $data['message']       : null;

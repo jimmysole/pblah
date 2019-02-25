@@ -79,6 +79,14 @@
             .w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section {
             	overflow-y: scroll;
             }
+            
+            .mark-as-read {
+            	font-weight: normal;
+            }
+            
+            .mark-as-unread {
+            	font-weight: bold;
+            }
         </style>
 
 		<script type="text/javascript">
@@ -157,6 +165,72 @@
 		 	}
 
 		 	var chat = new pBlahChat();
+
+
+		 	function markAsRead(checkbox) {
+		 		var current_row = $(checkbox).closest("tr");
+		 		
+				if (checkbox.checked) {
+					/*
+					var column1 = current_row.find("td:eq(0)").text();
+					var column2 = current_row.find("td:eq(1)").text();
+					var column3 = current_row.find("td:eq(2)").text();
+					var column4 = current_row.find("td:eq(3)").text();
+					
+					var data = column1 + " " + column2 + " " + column3 + " " + column4;
+
+					current_row.find("label").html("Mark As Unread");
+					
+					$(current_row).toggleClass("mark-as-unread", false);
+					$(current_row).addClass("mark-as-read");
+
+					*/
+
+					$.post('/members/mark-as-read', { id: checkbox.id })
+					.done(function(data) {
+						current_row.find("label").html("Mark As Unread");
+
+						$(current_row).toggleClass("mark-as-unread", false);
+						$(current_row).addClass('mark-as-read');
+
+						console.log(data);
+					}).fail(function(data) {
+						console.log(data);
+					}); 
+				} else {
+					$(current_row).toggleClass("mark-as-read", false);
+					$(current_row).addClass("mark-as-unread");
+
+					current_row.find("label").html("Mark As Read");
+				} 
+		 	}
+
+
+		 	function markAsUnread(checkbox) {
+				var current_row = $(checkbox).closest("tr");
+				
+		 		if (checkbox.checked) {
+					var column1 = current_row.find("td:eq(0)").text();
+					var column2 = current_row.find("td:eq(1)").text();
+					var column3 = current_row.find("td:eq(2)").text();
+					var column4 = current_row.find("td:eq(3)").text();
+
+					var data = column1 + " " + column2 + " " + column3 + " " + column4;
+					
+					$(current_row).toggleClass("mark-as-read", false);
+					$(current_row).addClass("mark-as-unread");
+					
+					/*
+					$.post('/members/mark-as-read', { id: checkbox.id }, function() {
+						var table = $(this).closest('td');
+
+						table.toggleClass("mark-as-read");
+					}); */
+				} else {
+					$(current_row).toggleClass("mark-as-unread", false);
+					$(current_row).addClass("mark-as-read");
+				} 
+		 	}
 		</script>
     </head>
 

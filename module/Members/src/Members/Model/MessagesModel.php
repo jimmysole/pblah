@@ -17,6 +17,7 @@ use Members\Model\Filters\Messages;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Db\Sql\Insert;
+use Zend\Db\Sql\Update;
 
 
 class MessagesModel implements MessagesInterface
@@ -151,6 +152,53 @@ class MessagesModel implements MessagesInterface
         }
         
         return false;
+    }
+    
+    
+    public function markAsRead($id)
+    {
+        $select = new Select();
+        
+        $select->columns(array('active', 'id'))
+        ->from('private_messages')
+        ->where(array('id' => $id));
+        
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($query->count() > 0) {
+            foreach ($query as $key => $result) {
+                $row = $result;
+            }
+            
+            // update active status to zero now
+            $update = new Update();
+            
+            $update->table('private_messages')
+            ->set(array('active' => 0))
+            ->where(array('id' => $row['id']));
+            
+            $query = $this->sql->getAdapter()->query(
+                $this->sql->buildSqlString($update),
+                Adapter::QUERY_MODE_EXECUTE
+            );
+            
+            if ($query->count() > 0) {
+                return true;
+            } else {
+                throw new MessagesException("Error marking your message as read, please try again.");
+            }
+        } else {
+            throw new MessagesException("Message was not found.");
+        }
+    }
+    
+    
+    public function markAsUnread($id)
+    {
+        
     }
     
     
