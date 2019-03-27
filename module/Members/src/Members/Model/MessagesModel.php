@@ -169,26 +169,31 @@ class MessagesModel implements MessagesInterface
         );
         
         if ($query->count() > 0) {
-            foreach ($query as $key => $result) {
+            foreach ($query as $result) {
                 $row = $result;
             }
             
-            // update active status to zero now
-            $update = new Update();
-            
-            $update->table('private_messages')
-            ->set(array('active' => 0))
-            ->where(array('id' => $row['id']));
-            
-            $query = $this->sql->getAdapter()->query(
-                $this->sql->buildSqlString($update),
-                Adapter::QUERY_MODE_EXECUTE
-            );
-            
-            if ($query->count() > 0) {
-                return true;
+            if ($row['active'] != 0) {
+                // update active status to zero now
+                $update = new Update();
+                
+                $update->table('private_messages')
+                ->set(array('active' => 0))
+                ->where(array('id' => $row['id']));
+                
+                $query = $this->sql->getAdapter()->query(
+                    $this->sql->buildSqlString($update),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                if ($query->count() > 0) {
+                    return true;
+                } else {
+                    throw new MessagesException("Error marking your message as read, please try again.");
+                }
             } else {
-                throw new MessagesException("Error marking your message as read, please try again.");
+                // @todo figure out a way around this 
+                throw new MessagesException("Checked message is already marked as read.");
             }
         } else {
             throw new MessagesException("Message was not found.");
@@ -198,7 +203,47 @@ class MessagesModel implements MessagesInterface
     
     public function markAsUnread($id)
     {
+        $select = new Select();
         
+        $select->columns(array('active', 'id'))
+        ->from('private_messages')
+        ->where(array('id' => $id));
+        
+        $query = $this->sql->getAdapter()->query(
+            $this->sql->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if ($query->count() > 0) {
+            foreach ($query as $result) {
+                $row = $result;
+            }
+            
+            if ($row['active'] != 1) {
+                // update active status to 1 now
+                $update = new Update();
+                
+                $update->table('private_messages')
+                ->set(array('active' => 1))
+                ->where(array('id' => $row['id']));
+                
+                $query = $this->sql->getAdapter()->query(
+                    $this->sql->buildSqlString($update),
+                    Adapter::QUERY_MODE_EXECUTE
+                );
+                
+                if ($query->count() > 0) {
+                    return true;
+                } else {
+                    throw new MessagesException("Error marking your message as unread, please try again.");
+                }
+            } else {
+                // @todo figure out a way around this 
+                throw new MessagesException("Checked message is already marked as unread.");
+            }
+        } else {
+            throw new MessagesException("Message was not found.");
+        }
     }
     
     

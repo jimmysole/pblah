@@ -3,6 +3,7 @@ namespace Members\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Members\Model\Exceptions\MessagesException;
 
 
 class MarkAsUnreadController extends AbstractActionController
@@ -19,7 +20,13 @@ class MarkAsUnreadController extends AbstractActionController
         $view_model = new ViewModel();
         $view_model->setTerminal(true);
         
-        
+        try {
+            $id = $this->params()->fromPost('id');
+            
+            echo $this->getMessagesService()->markAsUnread($id);
+        } catch (MessagesException $e) {
+            echo $e->getMessage();
+        }
         
         return $view_model;
     }

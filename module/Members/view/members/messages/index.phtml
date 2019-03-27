@@ -502,7 +502,7 @@
 								  	      <?php echo $value->subject; ?>
 								  	  </td>
 								  	  
-								  	  <td>
+								  	  <td style="text-overflow: ellipsis;">
 								  	      <?php echo $value->message; ?>
 								  	  </td>
 								  	  
@@ -516,8 +516,7 @@
 									  </td>
 								  </tr>
 						<?php else: ?>
-							<tr class="w3-hover-text-red w3-text-black mark-as-read">
-								  	  
+							<tr class="w3-hover-text-red w3-text-black mark-as-read">  
 								<td>
 									<?php echo $value->from; ?>	
 								</td>
@@ -526,7 +525,7 @@
 									<?php echo $value->subject; ?>
 								</td>
 								
-								<td>
+								<td style="text-overflow: ellipsis;">
 									<?php echo $value->message; ?>
 								</td>
 
