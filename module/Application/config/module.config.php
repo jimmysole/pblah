@@ -10,7 +10,7 @@ return array(
             'Application\Controller\Logout'      => 'Application\Controller\LogoutController',
             'Application\Controller\Register'    => 'Application\Controller\RegisterController',
             'Application\Controller\Verify'      => 'Application\Controller\VerifyController',
-            'Application\Controller\Forum'       => 'Application\Controller\ForumController',
+            //'Application\Controller\Forum'       => 'Application\Controller\ForumController',
         ),
     ),
 
@@ -115,6 +115,7 @@ return array(
                         ),
                     ),
 
+                    /*
                     'forum' => array(
                         'type'    => 'Segment',
                         'options' => array(
@@ -129,7 +130,7 @@ return array(
                                 'action'     => 'index',
                             ),
                         ),
-                    ),
+                    ), */
                 ),
             ),
         ),

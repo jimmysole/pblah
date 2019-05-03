@@ -29,27 +29,32 @@ class MembersController extends AbstractActionController
         
         $layout = $this->layout();
         
-        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos', 'status'));
+        $dir = @array_diff(scandir(getcwd() . './data/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos', 'status'));
         
         if (count($dir) > 0) {
             $images = array();
-            
+
+            $gcdr = getcwd() . "./data/";
+
             foreach ($dir as $value) {
-                $images[] = "<img src=\"/images/profile/$params/$value\" class=\"w3-margin-bottom w3-round w3-border\" style=\"width: 100%; height: 88px;\">";
+                $images[] = "<img src='$gcdr' . 'images/profile/$params/$value' class='w3-margin-bottom w3-round w3-border' style='width: 100%; height: 88px;'>";
             }
             
             natsort($images);
             
             $layout->setVariable('my_images', $images);
         } else {
-            $images[] = "<img src=\"/images/profile/avatar2.png\" class=\"w3-margin-bottom w3-round w3-border\" style=\"width: 100%; height: 88px;\">";
+            $gcdr = "../data";
+
+            //  $images[] = "<img src='$gcdr' . 'images/profile/$params/$value' class='w3-margin-bottom w3-round w3-border' style='width: 100%; height: 88px;'>";
+            $images[] = "<img src=\"$gcdr/images/avatar2.png\" class=\"w3-margin-bottom w3-round w3-border\" style=\"width: 100%; height: 88px;\">";
             
             $layout = $this->layout();
             
             $layout->setVariable('my_images', $images);
         }
         
-        $video_dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/videos/', 1), array('.', '..'));
+        $video_dir = @array_diff(scandir(getcwd() . './data/images/profile/' . $params . '/videos/', 1), array('.', '..'));
         
         if (count($video_dir) > 0) {
             $videos = array();

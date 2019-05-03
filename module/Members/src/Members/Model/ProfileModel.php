@@ -512,7 +512,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
             // first check if a location was provided using a closure
             $write_location = function() {
                 if (null !== $this->photo_album_location) {
-                    @file_put_contents(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_'
+                    @file_put_contents('./data/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_'
                         . $this->photo_album_create_date . '/location.txt', $this->photo_album_location);
                     
                     return true;
@@ -530,21 +530,21 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
             // if not, create the directory with the user's username
             // and then create a directory with the album name
             // and upload the photos
-            if (is_dir(getcwd() . '/public/images/profile/' . $this->user)) {
-                @mkdir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date, 0777);
+            if (is_dir( '/data' . $this->user)) {
+                @mkdir('./data/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date);
                 
                 // write the htaccess file
                 // to prevent hotlinking
-                $server_name = str_replace(array('https', 'http', 'www'), '', $_SERVER['HTTP_HOST']);
-                
+                //$server_name = str_replace(array('https', 'http', 'www'), '', $_SERVER['HTTP_HOST']);
+                /*
                 $data = "
                     RewriteEngine on
                     RewriteCond %{HTTP_REFERER} !^$
                     RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$server_name [NC]
                     RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]";
-                
+
                 file_put_contents(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date . '/.htaccess', $data);
-                
+                */
                 
                 // handle the photos now
                 if (count($album_photos, 1) > 1) {
@@ -557,7 +557,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                         $temp = $value['tmp_name'];
                         
                         @move_uploaded_file($temp, 
-                            getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date . '/' . $file);
+                            './data/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date . '/' . $file);
                     }
                     
                     return true;
@@ -569,7 +569,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                     $file_name = $album_photos['photos'][0]['name'];
                     
                     @move_uploaded_file($album_photos['photos'][0]['tmp_name'], 
-                        getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date . '/' . $file_name);
+                        './data' . $this->user . '/albums/' . $this->photo_album_filtered_name . '_' . $this->photo_album_create_date . '/' . $file_name);
                     
                     return true;
                 } else {
@@ -590,7 +590,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
     {
         $photos = array();
         
-        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/edited_photos/', 1), array('.', '..')) as $edited_photos) {
+        foreach (array_diff(scandir('./data/images/profile/' . $this->user . '/edited_photos/', 1), array('.', '..')) as $edited_photos) {
             if (count($edited_photos, 1) > 0) {
                 $photos[] = $edited_photos;
             } else {
@@ -615,13 +615,13 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
             
             // check whether the other album exists
             // if it does, copy the files from one album to the other album
-            foreach (glob(getcwd() . '/public/images/profile/' . $this->user . '/albums/*', GLOB_ONLYDIR) as $dir) {
+            foreach (glob('./data/images/profile/' . $this->user . '/albums/*', GLOB_ONLYDIR) as $dir) {
                 $replace[] = basename($dir);
             }
             
             if (in_array($other_album, $replace)) {
-                foreach (glob(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $other_album . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE) as $files) {
-                    copy($files, getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $first_album . '/' . substr(strrchr($files, '/'), 1));
+                foreach (glob('./data/images/profile/' . $this->user . '/albums/' . $other_album . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE) as $files) {
+                    copy($files, './data/images/profile/' . $this->user . '/albums/' . $first_album . '/' . substr(strrchr($files, '/'), 1));
                 }
                 
                 return true;
@@ -634,7 +634,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
                 $file = $value['name'];
                 $temp = $value['tmp_name'];
                 
-                $file_info[$file] = getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $first_album . '/' . $file;
+                $file_info[$file] = './data/images/profile/' . $this->user . '/albums/' . $first_album . '/' . $file;
                 
                 move_uploaded_file($temp, $file_info[$file]);
             }
@@ -653,10 +653,10 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
         $photos   = array();
         $img_size = array();
         
-        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $album, 1), array('.', '..', '.htaccess', 'location.txt', 'edited_photos')) as $photo) {
+        foreach (array_diff(scandir('./data/images/profile/' . $this->user . '/albums/' . $album, 1), array('.', '..', '.htaccess', 'location.txt', 'edited_photos')) as $photo) {
             if (count($photo, 1) > 0) {
                 $photos[]   = $photo;
-                $img_size[] = getimagesize(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $album . '/' . $photo);
+                $img_size[] = getimagesize('./data/images/profile/' . $this->user . '/albums/' . $album . '/' . $photo);
             } else {
                 $photos[] = null;
             }
@@ -671,7 +671,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      */
     public function getImageSize($photo)
     {
-        return getimagesize('./public' . $photo);
+        return getimagesize('./data/' . $photo);
     }
     
     
@@ -681,11 +681,11 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      */
     public function deletePhotosFromAlbum(array $images)
     {
-        foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_name, 1), array('.', '..', '.htaccess', 'location.txt')) as $value) {
+        foreach (array_diff(scandir('./data/images/profile/' . $this->user . '/albums/' . $this->photo_album_name, 1), array('.', '..', 'location.txt')) as $value) {
             // retrieve the files selected from the album
             if (in_array($value, $images)) {
                 foreach ($images as $v) {
-                    unlink(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $this->photo_album_name . '/' . $v);
+                    unlink('./data/images/profile/' . $this->user . '/albums/' . $this->photo_album_name . '/' . $v);
                 }
             } 
         }
@@ -742,14 +742,14 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
         // delete supplied albums
         if (count($album, 1) > 0) {
             foreach ($album['album'] as $key => $value) {
-                if (is_dir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/')) {
+                if (is_dir('./data/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/')) {
                     // remove the files in the directory
                     // then remove the directory itself
-                    foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/', 1), array('.', '..')) as $files) {
-                        unlink(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/' . $files);
+                    foreach (array_diff(scandir('./data/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/', 1), array('.', '..')) as $files) {
+                        unlink('./data/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/' . $files);
                     }
                     
-                    if (rmdir(getcwd() . '/public/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/')) {
+                    if (rmdir('./data/images/profile/' . $this->user . '/albums/' . str_replace('remove_', '', $value) . '/')) {
                         // directory removed
                         // continue until all albums are gone
                         continue;
@@ -774,12 +774,12 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
      */
     public function getAlbums()
     {
-        if (is_dir(getcwd() . '/public/images/profile/' . $this->user . '/albums/')) {
+        if (is_dir('./data/images/profile/' . $this->user . '/albums/')) {
             // scan the albums directory
             $files = array();
             $album_name = array();
             
-            foreach (glob(getcwd() . '/public/images/profile/' . $this->user . '/albums/*', GLOB_ONLYDIR) as $dir) {
+            foreach (glob('./data/images/profile/' . $this->user . '/albums/*', GLOB_ONLYDIR) as $dir) {
                 $album_name = basename($dir);
                 
                 $files[$album_name] = glob($dir . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE);
@@ -813,7 +813,7 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
             // scan for the file (location.txt)
             // if found, update the location inside location.txt
             // if not, bail
-            $file = getcwd() . '/public/images/profile/' . $this->user . '/albums/' . $album_name . '/location.txt';
+            $file = './data/images/profile/' . $this->user . '/albums/' . $album_name . '/location.txt';
             
             if (file_exists($file)) {
                 $fp = @fopen($file, "w");
@@ -848,8 +848,8 @@ class ProfileModel implements ProfileInterface, PhotoAlbumInterface, EditPhotoAl
     public function editName($current_album_name, $album_new_name)
     {
         // rename the photo album directory
-        if (@rename(getcwd() . '/public/images/' . $this->user . '/' . $current_album_name . '/',
-            getcwd() . '/public/images/profile/' . $this->user . '/' . $album_new_name . '_' . date('Y-m-d', strtotime('now')))) {
+        if (@rename('./data/images/' . $this->user . '/' . $current_album_name . '/',
+            './data/images/profile/' . $this->user . '/' . $album_new_name . '_' . date('Y-m-d', strtotime('now')))) {
             return true;
         } else {
             throw new PhotoAlbumException("Error changing the name of your photo album, please try again.");

@@ -6,6 +6,7 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Http;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\ResultSet\ResultSet;
 
 use Members\Model\ProfileModel;
 use Members\Model\GroupsModel;
@@ -15,7 +16,6 @@ use Members\Model\FriendsModel;
 use Members\Model\FeedModel;
 use Members\Model\ChatModel;
 use Members\Model\MessagesModel;
-use Zend\Db\ResultSet\ResultSet;
 use Members\Model\Filters\Messages;
 
 class Module implements AutoloaderProviderInterface
@@ -60,7 +60,7 @@ class Module implements AutoloaderProviderInterface
     {
         $matches = $e->getRouteMatch();
         
-        if (! $matches) {
+        if (!$matches) {
             return $e;
         }
         
@@ -74,14 +74,17 @@ class Module implements AutoloaderProviderInterface
             ->getServiceManager()
             ->get('pblah-auth');
         
-        if (! $auth_service->hasIdentity()) {
+        if (!$auth_service->hasIdentity()) {
             $response = $e->getResponse();
+
             $response->setStatusCode(302);
+
             $response->getHeaders()->addHeaderLine('Location', $e->getRouter()
                 ->assemble([], array(
                 'name' => 'home/member-login'
             )));
             $response->sendHeaders();
+
             return $response;
         }
         

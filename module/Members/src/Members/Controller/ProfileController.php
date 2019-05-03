@@ -35,7 +35,7 @@ class ProfileController extends AbstractActionController
 
         $layout = $this->layout();
         
-        $dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos'));
+        $dir = @array_diff(scandir('./data/images/profile/' . $params . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos'));
 
         if (count($dir) > 0) {
             $images = array();
@@ -57,7 +57,7 @@ class ProfileController extends AbstractActionController
             $layout->setVariable('my_images', $images);
         }
         
-        $video_dir = @array_diff(scandir(getcwd() . '/public/images/profile/' . $params . '/videos/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos'));
+        $video_dir = @array_diff(scandir('./data/images/profile/' . $params . '/videos/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos'));
         
         if (count($video_dir) > 0) {
             $videos = array();
@@ -82,10 +82,10 @@ class ProfileController extends AbstractActionController
                 $file_info = array();
                 
                 // make directory if it doesn't exist
-                if (!is_dir(getcwd() . '/public/images/profile/' . $this->identity())) {
-                    mkdir(getcwd() . '/public/images/profile/' . $this->identity(), 0777);
-                    mkdir(getcwd() . '/public/images/profile/' . $this->identity() . '/current');
-                    mkdir(getcwd() . '/public/images/profile/' . $this->identity() . '/videos');
+                if (!is_dir('./data/images/profile/' . $this->identity())) {
+                    mkdir('./data/images/profile/' . $this->identity(), 0777);
+                    mkdir('./data/images/profile/' . $this->identity() . '/current');
+                    mkdir('./data/images/profile/' . $this->identity() . '/videos');
                     
                     // make the htaccess file
                     $server = str_replace(array('https', 'http', 'www'), '', $_SERVER['SERVER_NAME']);
@@ -96,20 +96,20 @@ class ProfileController extends AbstractActionController
                         RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?$server [NC]
                         RewriteRule \.(jpg|jpeg|png|gif|mp4)$ - [NC,F,L]";
                     
-                    file_put_contents(getcwd() . '/public/images/profile/' . $this->identity() . '/.htaccess', $data);
+                    file_put_contents('./data/images/profile/' . $this->identity() . '/.htaccess', $data);
                    
                     if (!is_array($_FILES[$this->identity()]['name'])) {
                         $file_name = $_FILES[$this->identity()]['name'];
                         
                         move_uploaded_file(trim($_FILES[$this->identity()]['tmp_name']),
-                            getcwd() . '/public/images/profile/' . $this->identity() . '/' . str_replace(' ', '', $_FILES[$this->identity()]['name']));
+                            './data/images/profile/' . $this->identity() . '/' . str_replace(' ', '', $_FILES[$this->identity()]['name']));
                         
-                        $file_info[$file_name] = getcwd() . '/public/images/profile/' . $this->identity() . '/' . $file_name;
+                        $file_info[$file_name] = './data/images/profile/' . $this->identity() . '/' . $file_name;
                         
-                        foreach (@array_diff(scandir(getcwd() . '/public/images/profile/' . $this->identity() . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos')) as $files) {
+                        foreach (@array_diff(scandir('./data/images/profile/' . $this->identity() . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos')) as $files) {
                             if (preg_match("/(.mp4)$/", $files)) {
-                                rename(getcwd() . '/public/images/profile/' . $this->identity() . '/' . $files,
-                                    getcwd() . '/public/images/profile/' . $this->identity() . '/videos/' . $files);
+                                rename( './data/images/profile/' . $this->identity() . '/' . $files,
+                                    './data/images/profile/' . $this->identity() . '/videos/' . $files);
                             }
                         }
                     } else {
@@ -120,10 +120,10 @@ class ProfileController extends AbstractActionController
                         for ($i=0; $i<count($file_count); $i++) {
                             $file_name = $_FILES[$this->identity()]['name'][$i];
                             
-                            $file_info[$file_name] = getcwd() . '/public/images/profile/' . $this->identity() . '/' . $file_name;
+                            $file_info[$file_name] = './data/images/profile/' . $this->identity() . '/' . $file_name;
                             
                             move_uploaded_file($_FILES[$this->identity()]['tmp_name'],
-                                getcwd() . '/public/images/profile/' . $this->identity() . '/' . $_FILES[$this->identity()]['name']);
+                                getcwd() . './data/images/profile/' . $this->identity() . '/' . $_FILES[$this->identity()]['name']);
                         }
                     }
                     
@@ -133,14 +133,14 @@ class ProfileController extends AbstractActionController
                         $file_name = $_FILES[$this->identity()]['name'];
                         
                         move_uploaded_file($_FILES[$this->identity()]['tmp_name'],
-                            getcwd() . '/public/images/profile/' . $this->identity() . '/' . str_replace(' ', '', $_FILES[$this->identity()]['name']));
+                            './data/images/profile/' . $this->identity() . '/' . str_replace(' ', '', $_FILES[$this->identity()]['name']));
 
-                        $file_info[$file_name] = getcwd() . '/public/images/profile/' . $this->identity() . '/' . $file_name;
+                        $file_info[$file_name] = './data/images/profile/' . $this->identity() . '/' . $file_name;
                         
-                        foreach (@array_diff(scandir(getcwd() . '/public/images/profile/' . $this->identity() . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos')) as $files) {
+                        foreach (@array_diff(scandir('./data/images/profile/' . $this->identity() . '/', 1), array('.', '..', 'current', '.htaccess', 'albums', 'edited_photos', 'videos')) as $files) {
                             if (preg_match("/(.mp4)$/", $files)) {
-                                rename(getcwd() . '/public/images/profile/' . $this->identity() . '/' . $files,
-                                    getcwd() . '/public/images/profile/' . $this->identity() . '/videos/' . $files);
+                                rename('./data/images/profile/' . $this->identity() . '/' . $files,
+                                    './data/images/profile/' . $this->identity() . '/videos/' . $files);
                             }
                         }
                     } else {
@@ -151,10 +151,10 @@ class ProfileController extends AbstractActionController
                         for ($i=0; $i<count($file_count); $i++) {
                             $file_name = $_FILES[$this->identity()]['name'][$i];
 
-                            $file_info[$file_name] = getcwd() . '/public/images/profile/' . $this->identity() . '/' . $file_name;
+                            $file_info[$file_name] = './data/images/profile/' . $this->identity() . '/' . $file_name;
 
                             move_uploaded_file($_FILES[$this->identity()]['tmp_name'],
-                                getcwd() . '/public/images/profile/' . $this->identity() . '/' . $_FILES[$this->identity()]['name']);
+                                './data/images/profile/' . $this->identity() . '/' . $_FILES[$this->identity()]['name']);
                         }
                     }
 
@@ -223,7 +223,7 @@ class ProfileController extends AbstractActionController
         $files = array();
         $album_name = array();
         
-        foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
+        foreach (glob('./data/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
             $album_name = basename($dir);
             
             $files[$album_name] = glob($dir . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE);
@@ -298,7 +298,7 @@ class ProfileController extends AbstractActionController
         $files = array();
         $album_name = array();
         
-        foreach (glob(getcwd() . '/public/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
+        foreach (glob('./data/images/profile/' . $identity . '/albums/*', GLOB_ONLYDIR) as $dir) {
             $album_name = basename($dir);
             
             $files[$album_name] = glob($dir . '/*.{jpg,png,gif,JPG,PNG,GIF}', GLOB_BRACE);
@@ -530,7 +530,7 @@ class ProfileController extends AbstractActionController
             try {
                 $params = $this->params()->fromPost();
 
-                $this->getProfileService()->makeProfile(array(
+                $this->getProfileService()->createProfile(array(
                     'display_name'  => $params['display_name'],
                     'email_address' => $params['email_address'],
                     'age'           => $params['age'],
@@ -803,34 +803,35 @@ class ProfileController extends AbstractActionController
             $identity = $this->identity();
 
 
-            if ($mime_check->file(getcwd() . '/public/images/profile/' . $identity . '/' . basename($src)) == "image/jpg" || $mime_check->file(getcwd() . '/public/images/profile/'. $identity . '/' . basename($src)) == 'image/jpeg') {
-                if (!$img = @imagecreatefromjpeg(getcwd() . '/public/images/profile/' . $identity . '/' . basename($src))) {
+            if ($mime_check->file('./data/images/profile/' . $identity . '/' . basename($src)) == "image/jpg" ||
+                $mime_check->file('/.data/images/profile/'. $identity . '/' . basename($src)) == 'image/jpeg') {
+                if (!$img = @imagecreatefromjpeg('./data/images/profile/' . $identity . '/' . basename($src))) {
                     $this->flashMessenger()->addErrorMessage("Image is not a valid jpeg image!");
                     return $this->redirect()->toRoute('members/profile', array('action' => 'crop-profile-image-failure'));
                 } else {
-                    $img = imagecreatefromjpeg(getcwd() . '/public/images/profile/' . $identity . '/' . basename($src));
+                    $img = imagecreatefromjpeg('./data/images/profile/' . $identity . '/' . basename($src));
                     $true_color = imagecreatetruecolor($tw, $th);
 
                     imagecopyresampled($true_color, $img, 0, 0, $x, $y, $tw, $th, $w, $h);
 
-                    $dest_source = getcwd() . '/public/images/profile/' . $this->identity() . '/current/' . basename($src);
+                    $dest_source = './data/images/profile/' . $this->identity() . '/current/' . basename($src);
 
                     imagejpeg($true_color, $dest_source, $img_quality);
 
                     // cropped okay
                     return $this->redirect()->toRoute('members', array('action' => 'index'));
                 }
-            } else if ($mime_check->file(getcwd() . '/public/images/profile/' . $identity . '/' . basename($src)) == "image/png") {
-                if (!$img = @imagecreatefrompng(getcwd() . '/public/images/profile/' . $identity . '/' . basename($src))) {
+            } else if ($mime_check->file('./data/images/profile/' . $identity . '/' . basename($src)) == "image/png") {
+                if (!$img = @imagecreatefrompng( './data/images/profile/' . $identity . '/' . basename($src))) {
                     $this->flashMessenger()->addErrorMessage("Image is not a valid png image!");
                     return $this->redirect()->toRoute('members/profile', array('action' => 'crop-profile-image-failure'));
                 } else {
-                    $img = imagecreatefrompng(getcwd() . '/public/images/profile/' . $identity . '/' . basename($src));
+                    $img = imagecreatefrompng( './data/images/profile/' . $identity . '/' . basename($src));
                     $true_color = imagecreatetruecolor($tw, $th);
 
                     imagecopyresampled($true_color, $img, 0, 0, $x, $y, $tw, $th, $w, $h);
 
-                    $dest_source = getcwd() . '/public/images/profile/' . $this->identity() . '/current/' . basename($src);
+                    $dest_source = './data/images/profile/' . $this->identity() . '/current/' . basename($src);
 
                     imagepng($true_color, $dest_source, $img_quality);
                 }
@@ -863,8 +864,8 @@ class ProfileController extends AbstractActionController
             $params = $this->params()->fromPost();
 
             // remove all previous images
-            foreach (array_diff(scandir(getcwd() . '/public/images/profile/' . $this->identity() . '/current/', 1), array('.', '..')) as $values) {
-                unlink(getcwd() . '/public/images/profile/' . $this->identity() . '/current/' . $values);
+            foreach (array_diff(scandir('./data/images/profile/' . $this->identity() . '/current/', 1), array('.', '..')) as $values) {
+                unlink('./data/images/profile/' . $this->identity() . '/current/' . $values);
             }
 
             $img_quality = 100;
@@ -872,7 +873,7 @@ class ProfileController extends AbstractActionController
             $width  = 200;
             $height = 200;
 
-            list($w, $h) = getimagesize(getcwd() . '/public/' . $params['image']);
+            list($w, $h) = getimagesize('./data/' . $params['image']);
 
             $ratio = $w / $h;
 
@@ -884,11 +885,11 @@ class ProfileController extends AbstractActionController
 
             $true_color = imagecreatetruecolor($width, $height);
 
-            $img = imagecreatefromjpeg(getcwd() . '/public/images/profile/' . $this->identity() . '/' . basename($params['image']));
+            $img = imagecreatefromjpeg('./data/images/profile/' . $this->identity() . '/' . basename($params['image']));
 
             imagecopyresampled($true_color, $img, 0, 0, 0, 0, $width, $height, $w, $h);
 
-            $dest_source = getcwd() . '/public/images/profile/' . $this->identity() . '/current/' . basename($params['image']);
+            $dest_source = './data/images/profile/' . $this->identity() . '/current/' . basename($params['image']);
 
             imagejpeg($true_color, $dest_source, $img_quality);
         }
@@ -908,7 +909,7 @@ class ProfileController extends AbstractActionController
         $params = $this->identity();
 
         
-        $dir = @array_diff(@scandir(getcwd() . '/public/images/profile/' . $params . '/current/', 1), array('.', '..'));
+        $dir = @array_diff(@scandir('./data/images/profile/' . $params . '/current/', 1), array('.', '..'));
 
         
         if (!$dir) {

@@ -42,7 +42,7 @@ class RegisterController extends AbstractActionController
                 $register->exchangeArray($form->getData());
 
                 if ($this->getRegisterInstance()->handleRegistration($register) !== false) {
-                    $this->flashMessenger()->addSuccessMessage("Registration Successful! Please check your email address provided for a verification link to finish the reigstration process.");
+                    $this->flashMessenger()->addSuccessMessage("Registration Successful! Please check your email address provided for a verification link to finish the registration process.");
 
                     return $this->redirect()->toUrl('success');
                 } else {

@@ -88,6 +88,7 @@ class RegisterModel
      * Handles the registration part
      * @param Register $register
      * @return string|boolean
+     * @throws \Exception
      */
     public function handleRegistration(Register $register)
     {

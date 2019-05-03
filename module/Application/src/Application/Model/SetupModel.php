@@ -431,9 +431,41 @@ class SetupModel
 
             return true;
     }
+    
+    
+    public function makeMember(Setup $setup)
+    {
+        $select = new Select();
+        
+        // check if the admin is already a member first
+        $select->columns(array(
+            'id'
+        ))
+        ->from('members')
+        ->where(array(
+            'username' => $setup->username));
+        
+        $rowset = $this->adapter->query(
+            $this->sql->buildSqlString($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
+        if (count($rowset) > 0) {
+            return false;
+        }
+        
+        $this->insertMemberValues(new Insert('members'), array('username', 'password'),
+            array(
+                'username' => $setup->username,
+                'password' => password_hash($setup->password, PASSWORD_DEFAULT),
+            ));
+        
+        return true;
+    }
 
     /**
      * Runs a query
+     * @param array $tables
      * @return bool
      */
     public function query(array $tables)
@@ -450,7 +482,7 @@ class SetupModel
 
 
     /**
-     * Method that handles insertion of admin credentials
+     * Method that handles insertion of admin credentials for setup
      * @param Insert $table
      * @param array $columns
      * @param array $data
@@ -470,6 +502,30 @@ class SetupModel
             Adapter::QUERY_MODE_EXECUTE
         );
 
+        return true;
+    }
+    
+    
+    /**
+     * Method the handles insertion of member credentials for setup
+     * @param Insert $table
+     * @param array $columns
+     * @param array $data
+     * @return boolean
+     */
+    public function insertMemberValues(Insert $table, array $columns, array $data)
+    {
+        $table->columns(array($columns[0], $columns[1]))
+        ->values(array(
+            'username' => $data['username'],
+            'password' => $data['password'],
+        ));
+        
+        $this->adapter->query(
+            $this->sql->buildSqlString($table),
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        
         return true;
     }
 }

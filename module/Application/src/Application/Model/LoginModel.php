@@ -115,6 +115,7 @@ class LoginModel
      * @param mixed $password
      * @param mixed $session_id
      * @return boolean
+     * @throws \Exception
      */
     public function insertSession($username, $password, $session_id)
     {
@@ -168,7 +169,7 @@ class LoginModel
 
         if (count($user_id) > 0) {
             // user id found
-            // find the ocrresponding group id(s)
+            // find the corresponding group id(s)
             $group_select = new Select();
 
             $group_select->columns(array('member_id', 'group_id'))

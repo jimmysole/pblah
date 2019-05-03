@@ -37,7 +37,7 @@ class SetupController extends AbstractActionController
                 $setup->exchangeArray($form->getData());
 
                 if ($this->getSetupInstance()->createTables()) {
-                    if ($this->getSetupInstance()->makeAdmin($setup)) {
+                    if ($this->getSetupInstance()->makeAdmin($setup) && $this->getSetupInstance()->makeMember($setup)) {
                         $this->flashMessenger()->addSuccessMessage("pblah was setup successfully!");
                         return $this->redirect()->toUrl('setup/success');
                     } else {
