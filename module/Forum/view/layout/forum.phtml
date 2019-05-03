@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Members</title>
+
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+
+    <link rel="stylesheet" href="<?php echo $this->basePath(); ?>/css/upload-file.css" type="text/css">
+    <link rel="stylesheet" href="<?php echo $this->basePath(); ?>/css/styles.css" type="text/css">
+    <link rel="stylesheet" href="<?php echo $this->basePath(); ?>/css/jquery.Jcrop.min.css" type="text/css">
+
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" type="text/javascript"></script>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" data-integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" data-crossorigin="anonymous"></script>
+
+    <script src="<?php echo $this->basePath(); ?>/js/jquery.Jcrop.min.js"></script>
+
+    <script src="<?php echo $this->basepath(); ?>/js/jquery.uploadfile.min.js"></script>
+
+    <script src="<?php echo $this->basePath(); ?>/js/resize.js" type="text/javascript"></script>
+
+    <script src="<?php echo $this->basePath(); ?>/js/createProfile.js" type="text/javascript"></script>
+    <script src="<?php echo $this->basePath(); ?>/js/profile.js" type="text/javascript"></script>
+    <script src="<?php echo $this->basePath(); ?>/js/quickProfileEdit.js" type="text/javascript"></script>
+    <script src="<?php echo $this->basePath(); ?>/js/editPhoto.js" type="text/javascript"></script>
+    <script src="<?php echo $this->basePath(); ?>/js/pBlahChat.js" type="text/javascript"></script>
+
+
+    <style>
+        html, body, h1, h2, h3, h4, h5 {
+            font-family: "Open Sans", sans-serif;
+        }
+
+
+        .w3-accordion-content a {
+            padding: 0px 0px;
+            display: inline;
+        }
+
+        .w3-accordion-content a:hover {
+            background-color: #fff;
+        }
+
+
+
+        #friend-list::-webkit-scrollbar {
+            width: 16px;
+            background-color: #fff;
+        }
+
+        #friend-list::-webkit-scrollbar-thumb {
+            background-color: #4d636f;
+            border-radius: 10px;
+        }
+
+        #friend-list::-webkit-scrollbar-thumb:hover {
+            background-color: #4d636f;
+            border: 1px solid #333333;
+        }
+
+        #friend-list::-webkit-scrollbar-thumb:active {
+            background-color: #4d636f;
+            border: 1px solid #333333;
+        }
+
+        #friend-list::-webkit-scrollbar-track {
+            border: 1px #fff solid;
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px gray inset;
+        }
+
+        .w3-container.w3-card-2.w3-white.w3-round.w3-margin.chat-section {
+            overflow-y: scroll;
+        }
+
+        .mark-as-read {
+            font-weight: normal;
+        }
+
+        .mark-as-unread {
+            font-weight: bold;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function cropImage() {
+            $('#fname').val(replace);
+
+
+            $('#enlarged-photo').Jcrop({
+                trackDocument: true,
+                aspectRatio: 1,
+                onSelect: update,
+                boxWidth: 350,
+                boxHeight: 400
+            });
+        }
+
+        $(function() {
+            var settings = {
+                url: "/members/profile/upload-file",
+                method: "POST",
+                allowedTypes: "jpg,png,mp4",
+                fileName: "<?php echo $this->identity(); ?>",
+                multiple: true,
+
+                onSuccess: function (files, data, xhr) {
+                    $('#status').html("<p class=\"w3-center w3-text-green\">Upload successful!</p>");
+                },
+
+                onError: function (files, status, errMsg) {
+                    $('#status').html("<p class=\"w3-center w3-text-red\">Upload failed.</p>");
+                }
+            }
+
+            $('#multiplefileuploader').uploadFile(settings);
+        });
+
+        $(function() {
+            function buildOnlineFriendList() {
+                $.getJSON("/members/friends/get-friends-online")
+                    .done(function(msg) {
+                        var html = "";
+
+                        if (jQuery.isEmptyObject(msg)) {
+                            $('#friends-online').html("No friends are online.");
+                        } else {
+                            $.each(msg, function(key, value) {
+                                html += "<a href=\"/members/chat/" + value.id + "\" class=\"chat-with\">" + value.name + "</a><br>";
+                            });
+                        }
+
+                        $('#friends-online').html(html);
+                    }).fail(function(msg) {
+                    $('#friends-online').html("Error retrieving friend list.");
+                });
+            }
+
+
+            setInterval(function() {
+                buildOnlineFriendList();
+            }, 5000);
+
+            buildOnlineFriendList();
+        });
+
+
+        function buildSelfStatus() {
+            $.getJSON('/members/feed/list-own-status', function(data) {
+                $.each(data, function(i, item) {
+                    $('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.user-status').find('.own-status-user').html(data[i].username);
+                    $('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.user-status').find('.own-status').html(data[i].status);
+                    $('.w3-container.w3-card-2.w3-white.w3-round.w3-margin.user-status').find('img').attr('src', data[i].images);
+                });
+            }).fail(function(response) {
+                console.log(response.fail);
+            });
+        }
+
+        var chat = new pBlahChat();
+
+
+        function markAsRead(checkbox) {
+            var current_row = $(checkbox).closest("tr");
+
+            if (checkbox.checked) {
+                $.post('/members/mark-as-read', { id: checkbox.id })
+                    .done(function(data) {
+                        current_row.find("label").html("Mark As Unread");
+
+                        $(current_row).toggleClass("mark-as-unread", false);
+                        $(current_row).addClass('mark-as-read');
+
+                        console.log(data);
+                    }).fail(function(data) {
+                    console.log(data);
+                });
+            } else {
+                $(current_row).toggleClass("mark-as-read", false);
+                $(current_row).addClass("mark-as-unread");
+
+                current_row.find("label").html("Mark As Read");
+            }
+        }
+
+
+        function markAsUnread(checkbox) {
+            var current_row = $(checkbox).closest("tr");
+
+            if (checkbox.checked) {
+                $.post('/members/mark-as-unread', { id: checkbox.id })
+                    .done(function(data) {
+                        current_row.find("label").html("Mark As Read");
+
+                        $(current_row).toggleClass("mark-as-read", false);
+                        $(current_row).addClass('mark-as-unread');
+
+                        console.log(data);
+                    }).fail(function(data) {
+                    console.log(data);
+                });
+            } else {
+                $(current_row).toggleClass("mark-as-unread", false);
+                $(current_row).addClass("mark-as-read");
+            }
+        }
+    </script>
+</head>
+
+<body class="w3-theme-l5">
+
+<!-- Navbar -->
+<div class="w3-top">
+    <ul class="w3-navbar w3-theme-d2 w3-left-align w3-large">
+        <li class="w3-bar-item w3-hide-medium w3-hide-large w3-opennav w3-right">
+            <a class="w3-padding-large w3-hover-pale-green w3-large w3-theme-d2" href="javascript:void(0);" id="open-nav"><i class="fa fa-bars"></i></a>
+        </li>
+
+        <li><a href="<?php echo $this->url('members', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-theme-d4"><i class="fas fa-home w3-margin-right"></i>Home</a></li>
+
+        <li class="w3-hide-small"><a href="<?php echo $this->url('forum', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Forums"><i class="fas fa-globe"></i></a></li>
+
+        <li class="w3-hide-small"><a href="<?php echo $this->url('members/account', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Account Settings"><i class="far fa-user"></i></a></li>
+
+        <li class="w3-hide-small"><a href="<?php echo $this->url('members/messages', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Messages"><i class="far fa-envelope"></i></a></li>
+
+        <li class="w3-hide-small"><a href="<?php echo $this->url('members/profile', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Profile"><i class="far fa-address-book"></i></a></li>
+
+        <li class="w3-hide-small"><a href="<?php echo $this->url('members/groups', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Groups"><i class="fas fa-users"></i></a></li>
+
+        <li class="w3-hide-small"><a href="<?php echo $this->url('members/events', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Events"><i class="far fa-calendar-check"></i></a></li>
+
+        <li class="w3-hide-small"><a href="<?php echo $this->url('members/friends', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Friends"><i class="far fa-id-card"></i></a></li>
+
+        <li class="w3-hide-small"><a href="<?php echo $this->url('members/chat', array('action' => 'index')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Chat"><i class="far fa-comments"></i></a></li>
+
+        <li class="w3-hide-small"><a href="<?php echo $this->url('home/logout', array('action' => 'member-logout')); ?>" class="w3-padding-16 w3-padding-large w3-hover-pale-green" title="Logout"><i class="fa fa-power-off"></i></a></li>
+    </ul>
+</div>
+
+<!-- Navbar on small screens -->
+<div id="small-nav" class="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a class="w3-bar-item w3-button w3-padding-large" href="<?php echo $this->url('forum', array('action' => 'index')); ?>">Forums</a>
+    <a class="w3-bar-item w3-button w3-padding-large" href="<?php echo $this->url('members/account', array('action' => 'index')); ?>">My Account</a>
+    <a class="w3-bar-item w3-button w3-padding-large" href="<?php echo $this->url('members/messages', array('action' => 'index')); ?>">Messages</a>
+    <a class="w3-bar-item w3-button w3-padding-large" href="<?php echo $this->url('members/profile', array('action' => 'index')); ?>">Profile</a>
+    <a class="w3-bar-item w3-button w3-padding-large" href="<?php echo $this->url('members/groups', array('action' => 'index')); ?>">Groups</a>
+    <a class="w3-bar-item w3-button w3-padding-large" href="<?php echo $this->url('members/events', array('action' => 'index')); ?>">Events</a>
+    <a class="w3-bar-item w3-button w3-padding-large" href="<?php echo $this->url('members/friends', array('action' => 'index')); ?>">Friends</a>
+    <a class="w3-bar-item w3-button w3-padding-large" href="<?php echo $this->url('members/chat', array('action' => 'index')); ?>">Chat</a>
+    <a class="w3-bar-item w3-button w3-padding-large" href="<?php echo $this->url('home/logout', array('action' => 'member-logout')); ?>">Logout</a>
+</div>
+
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width: 1400px; margin-top: 80px;">
+    <?php echo $this->content; ?>
+    <!-- End Page Container -->
+</div>
+
+<br><br><br>
+
+<!-- Footer -->
+<footer class="w3-container w3-bottom w3-theme-d2 w3-padding-tiny w3-margin-0">
+    <p class="w3-center">&copy; <?php echo date('Y'); ?> Jimmy Sole. All Rights Reserved.</p>
+</footer>
+
+
+<script>
+    // Accordion
+    function expand(id) {
+        var x = $('#' + id);
+
+        if (!x.hasClass("w3-show")) {
+            x.addClass("w3-show");
+            x.closest('w3-show').prev().addClass('w3-theme-d2');
+        } else {
+            x.removeClass('w3-show');
+            x.closest('w3-show').prev().removeClass('w3-theme-d2');
+        }
+    }
+
+    $('#open-nav').on('click', function() {
+        if (!$('#small-nav').hasClass('w3-show')) {
+            $('#small-nav').addClass('w3-show');
+        } else {
+            $('#small-nav').removeClass('w3-show');
+        }
+    });
+</script>
+
+</body>
+</html>
