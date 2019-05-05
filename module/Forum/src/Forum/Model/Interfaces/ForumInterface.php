@@ -15,5 +15,26 @@ interface ForumInterface
     public function getMessages();
     
     
+    /**
+     * Gets all the topics for the forum
+     * @return array
+     * @throws ForumException
+     */
+    public function getTopics();
     
+    
+    /**
+     * Gets the number of replies for a topic/message
+     * @return int
+     * @throws ForumException
+     */
+    public function getNumOfReplies();
+    
+    
+    /**
+     * Gets the text of the replies for a topic/message
+     * @return array
+     * @throws ForumException
+     */
+    public function getRepliesText();
 }
