@@ -12,7 +12,7 @@ interface ForumInterface
      * @return array
      * @throws ForumException
      */
-    public function getMessages();
+    public function getMessages($board_id);
     
     
     /**
